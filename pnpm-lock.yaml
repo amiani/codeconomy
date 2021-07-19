@@ -4,6 +4,8 @@ importers:
 
   .:
     specifiers:
+      '@a-type/rapier2d-node': ^0.6.0
+      '@dimforge/rapier2d': ^0.7.0
       '@javelin/ecs': workspace:*
       '@javelin/hrtime-loop': workspace:*
       '@javelin/net': workspace:*
@@ -21,6 +23,8 @@ importers:
       vite: ^2.1.3
       vite-plugin-node: ^0.0.8
     dependencies:
+      '@a-type/rapier2d-node': 0.6.0
+      '@dimforge/rapier2d': 0.7.0
       '@javelin/ecs': link:packages/ecs
       '@javelin/hrtime-loop': link:packages/hrtime-loop
       '@javelin/net': link:packages/net
@@ -71,6 +75,10 @@ importers:
       '@msgpack/msgpack': 2.7.0
 
 packages:
+
+  /@a-type/rapier2d-node/0.6.0:
+    resolution: {integrity: sha512-9bw4bgK3Ppe21VUQUW0j6bhY+ZnigH5m5NKxCkMDlw2qgWqvmfvZPjQz+IFfJSbXmqrF6JxSCg+Bd1/dTLLOuQ==}
+    dev: false
 
   /@babel/code-frame/7.14.5:
     resolution: {integrity: sha512-9pzDqyc6OLDaqe+zbACgFkb6fKMNG6CObKpnYXChRsvYGyEdc7CA2BaqeOM+vOtCS5ndmJicPJhKAwYRI6UfFw==}
@@ -315,6 +323,10 @@ packages:
       '@babel/helper-validator-identifier': 7.14.5
       to-fast-properties: 2.0.0
     dev: true
+
+  /@dimforge/rapier2d/0.7.0:
+    resolution: {integrity: sha512-zG+pWsvw/LBNMBXNfCJQwCjSdIo8Bec4yJgS/al2HFlLQ/GUmaB+jJKsfPHj2VC7PLaycrpoAi/VaOP67kPmkg==}
+    dev: false
 
   /@msgpack/msgpack/2.7.0:
     resolution: {integrity: sha512-mlRYq9FSsOd4m+3wZWatemn3hGFZPWNJ4JQOdrir4rrMK2PyIk26idKBoUWrqF3HJJHl+5GpRU+M0wEruJwecg==}

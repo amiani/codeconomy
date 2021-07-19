@@ -8,6 +8,8 @@
     "start:server": "ts-node server/index.ts"
   },
   "dependencies": {
+    "@a-type/rapier2d-node": "^0.6.0",
+    "@dimforge/rapier2d": "^0.7.0",
     "@javelin/ecs": "workspace:*",
     "@javelin/hrtime-loop": "workspace:*",
     "@javelin/net": "workspace:*",
