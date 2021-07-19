@@ -1,0 +1,33 @@
+{
+  "name": "codeconomy",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "run-p start:*",
+    "start:client": "vite --config client/vite.config.ts",
+    "start:server": "ts-node server/index.ts"
+  },
+  "dependencies": {
+    "@javelin/ecs": "workspace:*",
+    "@javelin/hrtime-loop": "workspace:*",
+    "@javelin/net": "workspace:*",
+    "@javelin/pack": "workspace:*",
+    "@web-udp/client": "^4.2.1",
+    "@web-udp/server": "^4.2.1",
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0",
+    "ts-node": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^16.3.3",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "@vitejs/plugin-react-refresh": "^1.3.1",
+    "typescript": "^4.3.2",
+    "vite": "^2.1.3",
+    "vite-plugin-node": "^0.0.8"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}
