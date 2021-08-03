@@ -1,4 +1,4 @@
-import { boolean, number, registerSchema } from "@javelin/ecs"
+import { boolean, number, string, registerSchema } from "@javelin/ecs"
 
 export const Player = {
   clientId: number,
@@ -8,26 +8,35 @@ export const Player = {
 export const Transform = {
   x: number,
   y: number,
-  // add some overhead for comparison between update/patch
-  extra: number,
-  extra2: number,
-  extra3: number,
-  extra4: number,
-  extra5: number,
-  extra6: number,
-  extra7: number,
-  extra8: number,
+  rotation: number,
 }
 
-export const Big = {
-  placeholder: number,
+export const Body = {
+  handle: number
 }
 
-export const Shell = {
-  value: number,
+export const Script = {
 }
+
+export const Team = {
+  id: number
+}
+
+export const Health = {
+  current: number,
+  max: number,
+}
+
+export const Sprite = {
+  x: number,
+  y: number,
+}
+
 
 registerSchema(Player, 1)
 registerSchema(Transform, 2)
-registerSchema(Big, 3)
-registerSchema(Shell, 4)
+registerSchema(Body, 3)
+registerSchema(Script, 4)
+registerSchema(Team, 5)
+registerSchema(Health, 6)
+registerSchema(Sprite, 7)

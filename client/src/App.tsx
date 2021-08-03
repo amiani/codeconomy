@@ -1,8 +1,10 @@
 import React, { forwardRef, useEffect, useRef } from "react"
 import "./App.css"
 import { Canvas, CanvasRef } from "./Canvas"
+import Game from './Game'
 import { useWindowSize } from "./hooks/useWindowSize"
 import { world } from "./world"
+import * as PIXI from 'pixi.js'
 
 const Render = forwardRef<CanvasRef>(function Render(props, ref) {
   const size = useWindowSize()
@@ -10,13 +12,11 @@ const Render = forwardRef<CanvasRef>(function Render(props, ref) {
 })
 
 function App() {
-  const canvas = useRef<CanvasRef>(null)
-
   useEffect(() => {
     let running = true
     const step = (t: number) => {
       if (running) {
-        world.step(canvas.current)
+        world.step()
         requestAnimationFrame(step)
       }
     }
@@ -30,7 +30,7 @@ function App() {
 
   return (
     <div className="App">
-      <Render ref={canvas} />
+      <Game />
     </div>
   )
 }
