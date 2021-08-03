@@ -20,12 +20,8 @@ const rapier = require("@a-type/rapier2d-node")
 
 import { Player, Transform, Body, Script, Team } from "./components"
 import {
-  BIG_PRIORITY,
-  ENTITY_COUNT,
   MESSAGE_MAX_BYTE_LENGTH,
   SEND_RATE,
-  SMALL_PRIORITY,
-  SWAP_INTERVAL,
   TICK_RATE,
 } from "./env"
 import { udp } from "./net"
@@ -39,7 +35,6 @@ export const world = createWorld<Clock>()
 const players = createQuery(Player)
 const transforms = createQuery(Transform)
 const transformsBody = createQuery(Transform, Body)
-//const transforms
 
 function getInitialMessage(world: World) {
   const producer = createMessageProducer()
