@@ -1,12 +1,10 @@
-import { World, createQuery } from "@javelin/ecs"
+import { World, createQuery, toComponent, component } from "@javelin/ecs"
 import ivm from "isolated-vm"
 const rapier = require('@a-type/rapier2d-node')
 
-import { Body, Script, Team } from '../components'
-import useIsolates from '../isolates'
+import { Body, Script, Context, Action } from '../components'
 
-
-const scriptsBodyTeam = createQuery(Script, Body, Team)
+const scriptsContextBodyAction = createQuery(Script, Context, Body, Action)
 
 const createState = (body: typeof rapier.RigidBody) => ({
 	position: body.translation(),
@@ -14,15 +12,14 @@ const createState = (body: typeof rapier.RigidBody) => ({
 })
 
 export default function scriptSystem(world: World) {
-	const { isolates, contexts } = useIsolates()
-
-	scriptsBodyTeam(async (e, [script, bodyComp, team]) => {
+	scriptsContextBodyAction(async (e, [script, contextComp, bodyComp, action]) => {
 		const body = bodyComp as typeof rapier.Body
-		const context = contexts[team.id]
+		const context = contextComp as ivm.Context
 		const state = createState(body)
 		await context.global.set('state', state, { copy: true })
-		const action = await (<ivm.Script>script).run(context, { copy: true })
-		body.applyForce({ x: action.throttle, y: 0 }, true)
-		body.applyTorque(action.rotate, true)
+		const a = await (<ivm.Script>script).run(context, { copy: true })
+		action.throttle = a.throttle
+		action.rotate = a.rotate
+		action.fire = a.fire
 	})
 }

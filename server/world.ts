@@ -1,5 +1,4 @@
 import {
-  Component,
   component,
   toComponent,
   ComponentOf,
@@ -14,38 +13,53 @@ import {
   useInit,
   World,
 } from "@javelin/ecs"
-import { Clock, createHrtimeLoop } from "@javelin/hrtime-loop"
+import { Clock } from "@javelin/hrtime-loop"
 import { createMessageProducer, encode } from "@javelin/net"
 const rapier = require("@a-type/rapier2d-node")
 
-import { Player, Transform, Body, Script, Team } from "./components"
+import {
+  Player,
+  Transform,
+  Body,
+  Script,
+  Context,
+  SpriteData,
+  Team,
+  Action
+} from "./components"
 import {
   MESSAGE_MAX_BYTE_LENGTH,
   SEND_RATE,
-  TICK_RATE,
 } from "./env"
 import { udp } from "./net"
 import testScript from './systems/testScript'
 import scriptSystem from "./systems/scriptSystem"
-import usePhysics from './physics'
-import useIsolates from './isolates'
+import physicsSystem from './systems/physicsSystem'
+import useSimulation from './simulation'
+import useIsolates, { createContext } from './isolates'
 
 export const world = createWorld<Clock>()
 
-const players = createQuery(Player)
 const transforms = createQuery(Transform)
-const transformsBody = createQuery(Transform, Body)
+const players = createQuery(Player)
+const transformsSpriteData = createQuery(Transform, SpriteData)
 
 function getInitialMessage(world: World) {
   const producer = createMessageProducer()
-  for (const [entities, [transforms, bodies]] of transformsBody) {
+  for (const [entities, [transforms, spriteDatas]] of transformsSpriteData) {
     for (let i = 0; i < entities.length; i++) {
       const e = entities[i]
       const t = transforms[i]
-      const b = bodies[i]
-      producer.attach(e, [t, b])
+      const s = spriteDatas[i]
+      producer.attach(e, [t, s])
     }
   }
+  console.log('get initial')
+  /*
+  transformsSpriteData((e, [transform, data]) => {
+    producer.attach(e, [transform, data])
+  })
+  */
   return producer.take()
 }
 
@@ -73,51 +87,43 @@ const useProducer = createImmutableRef(() =>
   createMessageProducer({ maxByteLength: MESSAGE_MAX_BYTE_LENGTH }),
 )
 
-function createShip(x = 0, y = 0, team = 0) {
+const createShip = (x = 0, y = 0, team = 0) => {
   const bodyDesc = rapier.RigidBodyDesc.newDynamic()
     .setTranslation(x, y)
     .setLinearDamping(0.9)
     .setAngularDamping(0.9)
-  
-  const physics = usePhysics()
-  const body = physics.createRigidBody(bodyDesc)
   const colliderDesc = rapier.ColliderDesc.cuboid(1, 1)
+  
+  const physics = useSimulation()
+  const body = physics.createRigidBody(bodyDesc)
   physics.createCollider(colliderDesc, body.handle)
 
   const { isolates, contexts } = useIsolates()
-  const script = isolates[0].compileScriptSync(testScript)
+  const isolate = isolates[team]
+  const script = isolate.compileScriptSync(testScript)
+  const context = createContext(isolate)
   return [
     toComponent(body, Body),
     component(Transform, { x, y }),
     toComponent(script, Script),
+    toComponent(context, Context),
     component(Team, { id: team }),
+    component(SpriteData, { name: "ship" }),
+    component(Action)
   ]
 }
 
-function copyBodyToTransform(
-  body: typeof rapier.Body,
-  transform: ComponentOf<typeof Transform>)
-{
-  const translation = body.translation()
-  transform.x = translation.x
-  transform.y = translation.y
-  transform.rotation = body.rotation()
-}
 
 world.addSystem(function spawn({ create }) {
   if (useInit()) {
     // spawn boxes at semi-random points
-    create(...createShip(-10, 0, 0))
-    create(...createShip(10, 0, 1))
+    create(...(createShip(-10, 0, 0)))
+    create(...(createShip(10, 0, 1)))
   }
 })
 
 world.addSystem(scriptSystem)
-
-world.addSystem(function physics({ latestTickData: dt }) {
-  const physics = usePhysics()
-  physics.step()
-})
+world.addSystem(physicsSystem)
 
 world.addSystem(world => {
   const send = useInterval((1 / SEND_RATE) * 1000)
@@ -125,13 +131,11 @@ world.addSystem(world => {
   const producer = useProducer()
 
   useMonitor(
-    transformsBody,
+    transforms,
     producer.attach,
     producer.detach
   )
-
-  transformsBody((e, [transform, body]) => {
-    copyBodyToTransform(body, transform)
+  transforms((e, [transform]) => {
     producer.update(e, [transform])
   })
 

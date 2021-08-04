@@ -17,6 +17,8 @@ export const Body = {
 
 export const Script = {}
 
+export const Context = {}
+
 export const Team = {
   id: number
 }
@@ -32,6 +34,15 @@ export const Sprite = {
   rotation: number
 }
 
+export const SpriteData = {
+  name: string,
+}
+
+export const Action = {
+  throttle: number,
+  rotate: number,
+  fire: boolean
+}
 
 registerSchema(Player, 1)
 registerSchema(Transform, 2)
@@ -40,3 +51,6 @@ registerSchema(Script, 4)
 registerSchema(Team, 5)
 registerSchema(Health, 6)
 registerSchema(Sprite, 7)
+registerSchema(SpriteData, 8)
+registerSchema(Context, 9)
+registerSchema(Action, 10)

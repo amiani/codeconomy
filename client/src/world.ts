@@ -9,12 +9,12 @@ import {
 import { createMessageHandler } from "@javelin/net"
 import { Client } from "@web-udp/client"
 import * as PIXI from "pixi.js"
-import { Transform, Body, Sprite } from "../../server/components"
+import { Transform, Body, Sprite, SpriteData } from "../../server/components"
 import { viewport, app } from "./pixiApp"
 
 export const transforms = createQuery(Transform)
-export const bodies = createQuery(Transform, Body)
 const transformsSprite = createQuery(Transform, Sprite)
+const spriteDatas = createQuery(SpriteData)
 
 export const useNet = createEffect(
   world => {
@@ -56,15 +56,16 @@ const copyTransformToSprite = (
 
 world.addSystem(world => {
   useMonitor(
-    transforms,
-    (e, [transform]) => {
-      const sprite = viewport.addChild(new PIXI.Sprite(app.loader.resources.ship.texture))
+    spriteDatas,
+    (e, [data]) => {
+      console.log('got sprite data component')
+      const sprite = viewport.addChild(
+        new PIXI.Sprite(app.loader.resources[data.name].texture))
       sprite.anchor.x = 0.5
       sprite.anchor.y = 0.5
-      copyTransformToSprite(transform, sprite)
       world.attachImmediate(e, [toComponent(sprite, Sprite)])
     },
-    (e, [transform]) => {}
+    (e, [data]) => {}
   )
 
   transformsSprite((e, [transform, sprite]) => {
