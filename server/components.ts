@@ -30,6 +30,7 @@ export const Health = {
 export const Sprite = {
   x: number,
   y: number,
+  rotation: number
 }
 
 

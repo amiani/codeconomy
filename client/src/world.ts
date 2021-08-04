@@ -4,6 +4,7 @@ import {
   createWorld,
   useMonitor,
   toComponent,
+  ComponentOf
 } from "@javelin/ecs"
 import { createMessageHandler } from "@javelin/net"
 import { Client } from "@web-udp/client"
@@ -44,22 +45,29 @@ world.addSystem(world => {
   const net = useNet()
 })
 
+const copyTransformToSprite = (
+  transform: ComponentOf<typeof Transform>,
+  sprite: ComponentOf<typeof Sprite>
+) => {
+  sprite.x = transform.x * 32
+  sprite.y = transform.y * 32
+  sprite.rotation = transform.rotation
+}
+
 world.addSystem(world => {
   useMonitor(
     transforms,
     (e, [transform]) => {
       const sprite = viewport.addChild(new PIXI.Sprite(app.loader.resources.ship.texture))
-      sprite.x = transform.x * 32
-      sprite.y = transform.y * 32
       sprite.anchor.x = 0.5
       sprite.anchor.y = 0.5
+      copyTransformToSprite(transform, sprite)
       world.attachImmediate(e, [toComponent(sprite, Sprite)])
     },
     (e, [transform]) => {}
   )
 
   transformsSprite((e, [transform, sprite]) => {
-    sprite.x = transform.x * 32
-    sprite.y = transform.y * 32
+    copyTransformToSprite(transform, sprite)
   })
 })
