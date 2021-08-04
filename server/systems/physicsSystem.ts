@@ -43,6 +43,7 @@ const createLaser = (
 }
 
 export default function physicsSystem(world: World) {
+	const sim = useSimulation()
 	bodiesActionTeam((e, [bodyComp, action, team]) => {
 		const body = bodyComp as typeof rapier.Body
 		body.applyForce({ x: action.throttle, y: 0 }, true)
