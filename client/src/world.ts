@@ -41,6 +41,10 @@ export const useNet = createEffect(
 export const world = createWorld()
 
 world.addSystem(world => {
+  const net = useNet()
+})
+
+world.addSystem(world => {
   useMonitor(
     transforms,
     (e, [transform]) => {
@@ -53,10 +57,7 @@ world.addSystem(world => {
     },
     (e, [transform]) => {}
   )
-})
 
-world.addSystem(world => {
-  const net = useNet()
   transformsSprite((e, [transform, sprite]) => {
     sprite.x = transform.x * 32
     sprite.y = transform.y * 32
