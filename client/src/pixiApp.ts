@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { Viewport } from 'pixi-viewport'
 import ship from '../../assets/images/ship1.png'
+import smallbluelaser from '../../assets/images/smallbluelaser.png'
 
 const app = new PIXI.Application({
 	width: window.innerWidth,
@@ -27,6 +28,9 @@ viewport
 viewport.fit()
 viewport.moveCenter(0, 0)
 
-app.loader.add('ship', ship).load()
+app.loader
+    .add('ship', ship)
+    .add('smallbluelaser', smallbluelaser)
+    .load()
 
 export { app, viewport }
