@@ -35,7 +35,7 @@ export const Sprite = {
 }
 
 export const SpriteData = {
-  name: string,
+  name: { ...string, length: 64 }
 }
 
 export const Action = {

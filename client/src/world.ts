@@ -9,7 +9,7 @@ import {
 import { createMessageHandler } from "@javelin/net"
 import { Client } from "@web-udp/client"
 import * as PIXI from "pixi.js"
-import { Transform, Body, Sprite, SpriteData } from "../../server/components"
+import { Transform, Body, Sprite, SpriteData, Action } from "../../server/components"
 import { viewport, app } from "./pixiApp"
 
 export const transforms = createQuery(Transform)
@@ -58,7 +58,6 @@ world.addSystem(world => {
   useMonitor(
     spriteDatas,
     (e, [data]) => {
-      console.log('got sprite data component')
       const sprite = viewport.addChild(
         new PIXI.Sprite(app.loader.resources[data.name].texture))
       sprite.anchor.x = 0.5
