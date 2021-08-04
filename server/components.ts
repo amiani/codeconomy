@@ -15,8 +15,7 @@ export const Body = {
   handle: number
 }
 
-export const Script = {
-}
+export const Script = {}
 
 export const Team = {
   id: number
