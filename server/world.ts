@@ -16,7 +16,7 @@ import {
   Team,
   Action
 } from "./components"
-import testScript from './systems/testScript'
+import testScript from './testScript'
 import scriptSystem from "./systems/scriptSystem"
 import physicsSystem from './systems/physicsSystem'
 import netSystem from './systems/netSystem'
