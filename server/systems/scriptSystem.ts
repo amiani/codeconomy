@@ -21,7 +21,7 @@ export default function scriptSystem(world: World) {
 		const state = createState(body)
 		context.global.setSync('state', state, { copy: true })
 		const action = (<ivm.Script>script).runSync(context, { copy: true })
-		body.applyForce({ x: action.throttle, y: 0 }, true)
+		//body.applyForce({ x: action.throttle, y: 0 }, true)
 		body.applyTorque(action.rotate, true)
 	})
 }

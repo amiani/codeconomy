@@ -2,16 +2,17 @@ import * as PIXI from 'pixi.js';
 import { Viewport } from 'pixi-viewport'
 import ship from '../../assets/images/ship1.png'
 
-export const app = new PIXI.Application({
+const app = new PIXI.Application({
 	width: window.innerWidth,
 	height: window.innerHeight,
 	resolution: window.devicePixelRatio,
 	antialias: true,
 })
 
-export const viewport = new Viewport({
-    screenWidth: window.innerWidth,
-    screenHeight: window.innerHeight,
+console.log(app.view.width)
+const viewport = new Viewport({
+    screenWidth: app.view.width,
+    screenHeight: app.view.height,
     worldWidth: 1000,
     worldHeight: 1000,
 
@@ -25,4 +26,8 @@ viewport
     .drag()
     .wheel()
     .decelerate()
+viewport.moveCenter(0, 0)
+//viewport.fit()
 app.loader.add('ship', ship).load()
+
+export { app, viewport }

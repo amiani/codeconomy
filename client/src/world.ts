@@ -1,25 +1,16 @@
 import {
-  Entity,
-  component,
   createEffect,
   createQuery,
   createWorld,
-  number,
-  useInterval,
   useMonitor,
-  useRef,
   toComponent,
 } from "@javelin/ecs"
 import { createMessageHandler } from "@javelin/net"
 import { Client } from "@web-udp/client"
 import * as PIXI from "pixi.js"
 import { Transform, Body, Sprite } from "../../server/components"
-import { viewport, app } from "./app"
+import { viewport, app } from "./pixiApp"
 
-const Camera = {
-  x: number,
-  y: number,
-}
 export const transforms = createQuery(Transform)
 export const bodies = createQuery(Transform, Body)
 const transformsSprite = createQuery(Transform, Sprite)
@@ -66,26 +57,6 @@ world.addSystem(world => {
 })
 
 world.addSystem(world => {
-  const { create, attachImmediate, latestTickData: canvas } = world
-  const net = useNet()
-  const rate = useRef(0)
-  const update = useInterval(1000)
-  const cameraEntity = useRef<Entity | -1>(-1)
-
-  if (update) {
-    rate.value = net.bytes / 1000
-    net.bytes = 0
-  }
-
-  if (cameraEntity.value === -1) {
-    cameraEntity.value = create()
-    attachImmediate(cameraEntity.value, [component(Camera)])
-  }
-
-  const camera = world.get(cameraEntity.value, Camera)
-  //const offsetX = camera.x - canvas.width / 2
-  //const offsetY = camera.y - canvas.height / 2
-
   transformsSprite((e, [transform, sprite]) => {
     sprite.x = transform.x * 32
     sprite.y = transform.y * 32

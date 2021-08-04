@@ -1,5 +1,5 @@
 import React, { MutableRefObject, useEffect, useRef } from "react"
-import { app } from './app'
+import { app } from './pixiApp'
 
 export default function Game() {
 	const ref = useRef() as MutableRefObject<HTMLDivElement>
