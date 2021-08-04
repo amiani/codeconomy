@@ -117,8 +117,8 @@ const createShip = (x = 0, y = 0, team = 0) => {
 world.addSystem(function spawn({ create }) {
   if (useInit()) {
     // spawn boxes at semi-random points
-    create(...(createShip(-10, 0, 0)))
-    create(...(createShip(10, 0, 1)))
+    create(...createShip(-10, 0, 0))
+    create(...createShip(10, 0, 1))
   }
 })
 
