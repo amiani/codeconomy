@@ -44,7 +44,6 @@ world.addSystem(world => {
   useMonitor(
     transforms,
     (e, [transform]) => {
-      console.log('add sprite')
       const sprite = viewport.addChild(new PIXI.Sprite(app.loader.resources.ship.texture))
       sprite.x = transform.x * 32
       sprite.y = transform.y * 32
@@ -57,6 +56,7 @@ world.addSystem(world => {
 })
 
 world.addSystem(world => {
+  const net = useNet()
   transformsSprite((e, [transform, sprite]) => {
     sprite.x = transform.x * 32
     sprite.y = transform.y * 32
