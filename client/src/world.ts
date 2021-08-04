@@ -44,12 +44,12 @@ world.addSystem(world => {
   useMonitor(
     transforms,
     (e, [transform]) => {
-      const sprite = new PIXI.Sprite(app.loader.resources.ship.texture)
+      console.log('add sprite')
+      const sprite = viewport.addChild(new PIXI.Sprite(app.loader.resources.ship.texture))
       sprite.x = transform.x * 32
       sprite.y = transform.y * 32
       sprite.anchor.x = 0.5
       sprite.anchor.y = 0.5
-      viewport.addChild(sprite)
       world.attachImmediate(e, [toComponent(sprite, Sprite)])
     },
     (e, [transform]) => {}

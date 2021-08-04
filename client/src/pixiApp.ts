@@ -5,11 +5,9 @@ import ship from '../../assets/images/ship1.png'
 const app = new PIXI.Application({
 	width: window.innerWidth,
 	height: window.innerHeight,
-	resolution: window.devicePixelRatio,
 	antialias: true,
 })
 
-console.log(app.view.width)
 const viewport = new Viewport({
     screenWidth: app.view.width,
     screenHeight: app.view.height,
@@ -26,8 +24,14 @@ viewport
     .drag()
     .wheel()
     .decelerate()
-viewport.moveCenter(0, 0)
-//viewport.fit()
 app.loader.add('ship', ship).load()
+
+/*
+const dot = viewport.addChild(new PIXI.Graphics())
+dot.beginFill(0xffffff)
+dot.drawCircle(0, 0, 20)
+*/
+viewport.fit()
+viewport.moveCenter(0, 0)
 
 export { app, viewport }
