@@ -97,7 +97,7 @@ function createShip(x = 0, y = 0, team = 0) {
 function copyBodyToTransform(
   body: typeof rapier.Body,
   transform: ComponentOf<typeof Transform>)
-  {
+{
   const translation = body.translation()
   transform.x = translation.x
   transform.y = translation.y
@@ -151,5 +151,3 @@ world.addSystem(world => {
     })
   }
 })
-
-createHrtimeLoop(world.step, (1 / TICK_RATE) * 1000).start()
