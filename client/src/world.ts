@@ -54,8 +54,8 @@ world.addSystem(world => {
     transforms,
     (e, [transform]) => {
       const sprite = new PIXI.Sprite(pixiApp.loader.resources.ship.texture)
-      sprite.x = transform.x
-      sprite.y = transform.y
+      sprite.x = transform.x * 32
+      sprite.y = transform.y * 32
       sprite.anchor.x = 0.5
       sprite.anchor.y = 0.5
       pixiApp.stage.addChild(sprite)
@@ -87,7 +87,7 @@ world.addSystem(world => {
   //const offsetY = camera.y - canvas.height / 2
 
   transformsSprite((e, [transform, sprite]) => {
-    sprite.x = transform.x
-    sprite.y = transform.y
+    sprite.x = transform.x * 32
+    sprite.y = transform.y * 32
   })
 })
