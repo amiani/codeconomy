@@ -1,4 +1,4 @@
-import { World, createQuery, toComponent, component } from "@javelin/ecs"
+import { World, createQuery } from "@javelin/ecs"
 import ivm from "isolated-vm"
 const rapier = require('@a-type/rapier2d-node')
 
