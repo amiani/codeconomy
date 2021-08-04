@@ -32,9 +32,9 @@ const createShip = (x = 0, y = 0, team = 0) => {
     .setAngularDamping(0.9)
   const colliderDesc = rapier.ColliderDesc.cuboid(1, 1)
   
-  const physics = useSimulation()
-  const body = physics.createRigidBody(bodyDesc)
-  physics.createCollider(colliderDesc, body.handle)
+  const sim = useSimulation()
+  const body = sim.createRigidBody(bodyDesc)
+  sim.createCollider(colliderDesc, body.handle)
 
   const { isolates, contexts } = useIsolates()
   const isolate = isolates[team]
