@@ -14,7 +14,7 @@ import { createMessageHandler } from "@javelin/net"
 import { Client } from "@web-udp/client"
 import * as PIXI from "pixi.js"
 import { Transform, Body, Sprite } from "../../server/components"
-import pixiApp from "./pixiApp"
+import { viewport, app } from "./app"
 
 const Camera = {
   x: number,
@@ -53,12 +53,12 @@ world.addSystem(world => {
   useMonitor(
     transforms,
     (e, [transform]) => {
-      const sprite = new PIXI.Sprite(pixiApp.loader.resources.ship.texture)
+      const sprite = new PIXI.Sprite(app.loader.resources.ship.texture)
       sprite.x = transform.x * 32
       sprite.y = transform.y * 32
       sprite.anchor.x = 0.5
       sprite.anchor.y = 0.5
-      pixiApp.stage.addChild(sprite)
+      viewport.addChild(sprite)
       world.attachImmediate(e, [toComponent(sprite, Sprite)])
     },
     (e, [transform]) => {}

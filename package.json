@@ -17,6 +17,7 @@
     "@web-udp/client": "^4.2.1",
     "@web-udp/server": "^4.2.1",
     "isolated-vm": "^4.3.3",
+    "pixi-viewport": "^4.32.0",
     "pixi.js": "^6.1.0",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",

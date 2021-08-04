@@ -73,9 +73,11 @@ const useProducer = createImmutableRef(() =>
   createMessageProducer({ maxByteLength: MESSAGE_MAX_BYTE_LENGTH }),
 )
 
-function createShip(x = 0, y = 0) {
+function createShip(x = 0, y = 0, team = 0) {
   const bodyDesc = rapier.RigidBodyDesc.newDynamic()
     .setTranslation(x, y)
+    .setLinearDamping(0.9)
+    .setAngularDamping(0.9)
   
   const physics = usePhysics()
   const body = physics.createRigidBody(bodyDesc)
@@ -88,7 +90,7 @@ function createShip(x = 0, y = 0) {
     toComponent(body, Body),
     component(Transform, { x, y }),
     toComponent(script, Script),
-    component(Team, { id: 0 }),
+    component(Team, { id: team }),
   ]
 }
 
@@ -105,10 +107,8 @@ function copyBodyToTransform(
 world.addSystem(function spawn({ create }) {
   if (useInit()) {
     // spawn boxes at semi-random points
-    for (let i = 0; i < 1; i++) {
-      const x = (Math.random() - 0.5) * 100
-      create(...createShip(x, 0))
-    }
+    create(...createShip(-10, 0, 0))
+    create(...createShip(10, 0, 1))
   }
 })
 
