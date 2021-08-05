@@ -26,8 +26,8 @@ export default createEffect(world => {
 			(e, [body]) => sim.removeRigidBody(body)
 		)
 		bulletsBody((e, [bullet, bodyComp]) => {
-			const body = bodyComp as typeof rapier.Body
 			if (bullet.lifetime >= 0) {
+				const body = bodyComp as typeof rapier.Body
 				body.setLinvel(bullet.velocity, true)
 			} else {
 				world.destroy(e)

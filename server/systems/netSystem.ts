@@ -55,7 +55,7 @@ export default function netSystem(world: World) {
   useMonitor(
     transformsSpriteData,
     producer.attach,
-    producer.detach
+    producer.destroy
   )
   transforms((e, [transform]) => {
     producer.update(e, [transform])

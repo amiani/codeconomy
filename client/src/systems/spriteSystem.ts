@@ -5,6 +5,7 @@ import { Sprite, SpriteData, Transform } from '../../../server/components'
 import { app, viewport } from '../pixiApp'
 
 const transformsSprite = createQuery(Transform, Sprite)
+const sprites = createQuery(Sprite)
 const spriteDatas = createQuery(SpriteData)
 
 const copyTransformToSprite = (
@@ -24,9 +25,15 @@ export default function spriteSystem(world: World) {
         new PIXI.Sprite(app.loader.resources[data.name].texture))
       sprite.anchor.x = 0.5
       sprite.anchor.y = 0.5
-      world.attach(e, toComponent(sprite, Sprite))
+      world.attachImmediate(e, [toComponent(sprite, Sprite)])
     },
     (e, [data]) => {}
+  )
+
+  useMonitor(
+    sprites,
+    (e, [sprite]) => {},
+    (e, [sprite]) => viewport.removeChild(sprite as PIXI.Sprite)
   )
 
   transformsSprite((e, [transform, sprite]) => {
