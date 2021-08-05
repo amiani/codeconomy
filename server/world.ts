@@ -38,7 +38,7 @@ const createShip = (x = 0, y = 0, team = 0) => {
   const body = sim.createRigidBody(bodyDesc)
   sim.createCollider(colliderDesc, body.handle)
 
-  const { isolates, contexts } = useIsolates()
+  const isolates = useIsolates()
   const isolate = isolates[team]
   const script = isolate.compileScriptSync(testScript)
   const context = createContext(isolate)
