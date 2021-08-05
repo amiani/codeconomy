@@ -24,7 +24,7 @@ export default function spriteSystem(world: World) {
         new PIXI.Sprite(app.loader.resources[data.name].texture))
       sprite.anchor.x = 0.5
       sprite.anchor.y = 0.5
-      world.attachImmediate(e, [toComponent(sprite, Sprite)])
+      world.attach(e, toComponent(sprite, Sprite))
     },
     (e, [data]) => {}
   )

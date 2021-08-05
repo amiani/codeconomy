@@ -53,7 +53,7 @@ export default function netSystem(world: World) {
   const producer = useProducer()
 
   useMonitor(
-    transforms,
+    transformsSpriteData,
     producer.attach,
     producer.detach
   )

@@ -14,7 +14,8 @@ import {
   Context,
   SpriteData,
   Team,
-  Action
+  Action,
+  Weapon
 } from "./components"
 import testScript from './testScript'
 import scriptSystem from "./systems/scriptSystem"
@@ -31,6 +32,7 @@ const createShip = (x = 0, y = 0, team = 0) => {
     .setLinearDamping(0.9)
     .setAngularDamping(0.9)
   const colliderDesc = rapier.ColliderDesc.cuboid(1, 1)
+		.setCollisionGroups(0x00010001)
   
   const sim = useSimulation()
   const body = sim.createRigidBody(bodyDesc)
@@ -45,6 +47,7 @@ const createShip = (x = 0, y = 0, team = 0) => {
     component(Transform, { x, y }),
     toComponent(script, Script),
     toComponent(context, Context),
+		component(Weapon, { damage: 1, maxCooldown: 0.3, currentCooldown: 0 }),
     component(Team, { id: team }),
     component(SpriteData, { name: "ship" }),
     component(Action)
@@ -55,7 +58,7 @@ world.addSystem(function spawn({ create }) {
   if (useInit()) {
     // spawn boxes at semi-random points
     create(...createShip(-10, 0, 0))
-    create(...createShip(10, 0, 1))
+    //create(...createShip(10, 0, 1))
   }
 })
 

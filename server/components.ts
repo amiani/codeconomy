@@ -35,13 +35,25 @@ export const Sprite = {
 }
 
 export const SpriteData = {
-  name: { ...string, length: 64 }
+  name: { ...string, length: 32 }
 }
 
 export const Action = {
   throttle: number,
   rotate: number,
   fire: boolean
+}
+
+export const Weapon = {
+  damage: number,
+  maxCooldown: number,
+  currentCooldown: number,
+}
+
+const Vec = { x: number, y: number }
+export const Bullet = {
+  velocity: Vec,
+  lifetime: number,
 }
 
 registerSchema(Player, 1)
@@ -54,3 +66,5 @@ registerSchema(Sprite, 7)
 registerSchema(SpriteData, 8)
 registerSchema(Context, 9)
 registerSchema(Action, 10)
+registerSchema(Weapon, 11)
+registerSchema(Bullet, 12)
