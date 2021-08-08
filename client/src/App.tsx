@@ -30,27 +30,31 @@ const [code, setCode] = useState(`function add(a, b) {
 }
 `)
 
+const [hidden, setHidden] = useState(false)
+
   return (
     <div className="App">
       <Game />
-      <Editor
-        value={code}
-        onValueChange={setCode}
-        highlight={code => highlight(code, languages.js, 'js')}
-        padding={10}
-        style={{
-          fontFamily: '"Fira code", "Fira Mono", Consolas, Menlo, monospace',
-          fontSize: 12,
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          background: 'white',
-        }}
-      />
-
+      <div
+        className="editor"
+        style={{ position: 'absolute', top: 0, left: 0 }}>
+        {!hidden && <Editor
+          value={code}
+          onValueChange={setCode}
+          highlight={code => highlight(code, languages.js, 'js')}
+          padding={10}
+          style={{
+            fontFamily: '"Fira code", "Fira Mono", Consolas, Menlo, monospace',
+            fontSize: 12,
+            background: 'white',
+          }}
+        />}
+        <button onClick={e => { setHidden(!hidden) }}>{hidden ? 'Show' : 'Hide'}</button>
+        {!hidden && <button onClick={e => console.log()}>Upload</button>}
+      </div>
     </div>
-  )
-}
+    )
+  }
 
-;(window as any).world = world
+  ;(window as any).world = world
 export default App
