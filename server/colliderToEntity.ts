@@ -8,7 +8,6 @@ const bodies = createQuery(Body)
 export default createEffect(world => {
 	const entities = new Map<typeof rapier.CollisionHandle, Entity>()
 
-
 	return () => {
 		useMonitor(
 			bodies,

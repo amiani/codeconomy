@@ -4,6 +4,7 @@ import {
 	toComponent,
 	component,
 	Entity,
+	useMonitor,
 } from '@javelin/ecs'
 import useColliderToEntity from '../colliderToEntity'
 const rapier = require('@a-type/rapier2d-node')
@@ -23,11 +24,11 @@ const bodiesActionTeamWeapon = createQuery(Body, Action, Team, Weapon)
 
 const createLaser = (
 	world: World,
-	e: Entity,
 	position: { x: number; y: number },
 	rotation: number,
 	team: number
 ) => {
+	const e = world.create()
 	const speed = 100
 	const velocity = { x: Math.cos(rotation) * speed, y: Math.sin(rotation) * speed }
 	const bodyDesc = rapier.RigidBodyDesc.newKinematicVelocityBased()
@@ -42,6 +43,7 @@ const createLaser = (
 
 	const sim = useSimulation()
 	const body = sim.createRigidBody(bodyDesc)
+	console.log(`New bullet created: ${e}: ${body.handle}`)
 	const collider = sim.createCollider(colliderDesc, body.handle)
 	const colliderToEntity = useColliderToEntity()
 	colliderToEntity.set(collider.handle, e)
@@ -55,6 +57,7 @@ const createLaser = (
 	)
 }
 
+const bodies = createQuery(Body)
 export default function physicsSystem(world: World) {
 	const colliderToEntity = useColliderToEntity()
 	const sim = useSimulation()
@@ -63,8 +66,7 @@ export default function physicsSystem(world: World) {
 		body.applyForce({ x: action.throttle, y: 0 }, true)
 		body.applyTorque(action.rotate, true)
 		if (action.fire && weapon.currentCooldown <= 0) {
-			const entity = world.create()
-			createLaser(world, entity, body.translation(), body.rotation(), team.id)
+			createLaser(world, body.translation(), body.rotation(), team.id)
 			weapon.currentCooldown = weapon.maxCooldown
 		}
 		weapon.currentCooldown -= sim.timestep
