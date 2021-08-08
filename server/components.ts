@@ -45,6 +45,11 @@ export const Action = {
   fire: boolean
 }
 
+const Timer = {
+  current: number,
+  max: number,
+}
+
 export const Weapon = {
   damage: number,
   maxCooldown: number,
@@ -56,6 +61,10 @@ export const Bullet = {
   velocity: Vec,
   lifetime: number,
   damage: number
+}
+
+export const Spawner = {
+  timer: Timer,
 }
 
 registerSchema(Player, 1)
@@ -70,3 +79,4 @@ registerSchema(Context, 9)
 registerSchema(Action, 10)
 registerSchema(Weapon, 11)
 registerSchema(Bullet, 12)
+registerSchema(Spawner, 13)

@@ -56,6 +56,7 @@ const createLaser = (
 }
 
 export default function physicsSystem(world: World) {
+	const colliderToEntity = useColliderToEntity()
 	const sim = useSimulation()
 	bodiesActionTeamWeapon((e, [bodyComp, action, team, weapon]) => {
 		const body = bodyComp as typeof rapier.Body

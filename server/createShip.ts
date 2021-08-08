@@ -1,0 +1,46 @@
+import { component, Entity, toComponent, World } from "@javelin/ecs"
+import useSimulation from './simulation'
+import useColliderToEntity from './colliderToEntity'
+import useIsolates, { createContext } from './isolates'
+import testScript from './testScript'
+import { Action, Body, Context, Health, Script, SpriteData, Team, Transform, Weapon } from "./components"
+
+const rapier = require("@a-type/rapier2d-node")
+
+export default function createShip(world: World, x = 0, y = 0, team = 0) {
+	console.log(`Creating ship at ${x}, ${y}`)
+	const e = world.create()
+	const bodyDesc = rapier.RigidBodyDesc.newDynamic()
+		.setTranslation(x, y)
+		.setRotation(Math.PI * team)
+		.setLinearDamping(0.9)
+		.setAngularDamping(0.9)
+	const colliderDesc = rapier.ColliderDesc.cuboid(1, 1)
+			.setCollisionGroups(0x00010000 * (team+1) + 0x0004 * (2-team))
+		.setActiveEvents(
+		rapier.ActiveEvents.CONTACT_EVENTS
+		| rapier.ActiveEvents.INTERSECTION_EVENTS)
+	
+	const sim = useSimulation()
+	const body = sim.createRigidBody(bodyDesc)
+	const collider = sim.createCollider(colliderDesc, body.handle)
+	const colliderToEntity = useColliderToEntity()
+	colliderToEntity.set(collider.handle, e)
+	
+
+	const isolates = useIsolates()
+	const isolate = isolates[team]
+	const script = isolate.compileScriptSync(testScript)
+	const context = createContext(isolate)
+	world.attach(e,
+		toComponent(body, Body),
+		component(Transform, { x, y }),
+		toComponent(script, Script),
+		toComponent(context, Context),
+		component(Weapon, { damage: 1, maxCooldown: 0.3, currentCooldown: 0 }),
+		component(Team, { id: team }),
+		component(SpriteData, { name: "ship" }),
+		component(Action),
+		component(Health, { current: 100, max: 100 })
+	)
+}
