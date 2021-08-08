@@ -16,7 +16,6 @@ const useNet = createEffect(
       if (user) {
         const token: string = await user.getIdToken(true)
         const connection = await client.connect({ metadata: { token } })
-        connection.send(
         connection.messages.subscribe(message => {
           state.bytes += message.byteLength
           handler.push(message)

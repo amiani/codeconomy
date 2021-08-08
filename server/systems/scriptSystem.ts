@@ -1,8 +1,10 @@
-import { World, createQuery, Entity } from "@javelin/ecs"
+import { World, createQuery, Entity, toComponent } from "@javelin/ecs"
 import ivm from "isolated-vm"
 const rapier = require('@a-type/rapier2d-node')
 
-import { Body, Script, Context, Action, Ship, Health, Team, Transform } from '../components'
+import { Body, Script, Context, Action, Ship, Health, Team, Transform, Isolate } from '../components'
+import scriptTopic from "../scriptTopic"
+import { usePlayers } from "./netSystem"
 
 const scriptsContextBodyActionTeam = createQuery(Script, Context, Body, Action, Team)
 const shipsTransformTeamHealth = createQuery(Ship, Transform, Team, Health)
@@ -27,6 +29,19 @@ interface ShipState {
 }
 
 export default function scriptSystem(world: World) {
+	const players = usePlayers()
+	for (const scriptEvent of scriptTopic) {
+		const e = players.get(scriptEvent.uid)
+		try {
+			const isolate = world.get(e, Isolate) as ivm.Isolate
+			const script = isolate.compileScriptSync(scriptEvent.code)
+			world.attach(e, toComponent(script, Script))
+			console.log('got new script')
+		} catch (e) {
+			console.log(e)
+		}
+	}
+
 	const ships: Array<Map<Entity, ShipState>> = [new Map(), new Map()]
 	shipsTransformTeamHealth((e, [ship, transform, team, health]) => {
 		ships[team.id].set(e, {

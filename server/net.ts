@@ -1,20 +1,33 @@
 import { Server } from "@web-udp/server"
 import { createServer } from "http"
+import * as admin from 'firebase-admin'
+import scriptTopic from './scriptTopic'
+import Fastify from 'fastify'
 
-export const server = createServer((req, res) => {
-	console.log('got request', req.method)
-	if (req.method === 'POST') {
-		if (req.headers['content-type'] === 'text/plain') {
-			let body = ''
-			req.on('data', (data) => {
-				body += data
-			})
-			req.on('end', () => {
-				console.log(body)
-				res.writeHead(200, { 'content-type': 'text/plain' })
-				res.end('script received')
-			})
-		}
+const authenticate = async (key: any, req: any) => {
+	console.log(key)
+	try {
+		const decodedToken = await admin.auth().verifyIdToken(key)
+		return true
+	} catch (error) {
+		console.error(error)
+		return false
 	}
+}
+
+export const fastify = Fastify()
+fastify
+	.register(require('fastify-cors'), {
+		allowedHeaders: ['authorization', 'content-type'],
+	})
+	.register(require('fastify-bearer-auth'), {
+		keys: new Set(),
+		auth: authenticate
+	})
+
+fastify.after(() => {
+	fastify.post('/upload', async (req, reply) => {
+	})
 })
-export const udp = new Server({ server })
+
+export const udp = new Server({ server: fastify.server })

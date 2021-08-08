@@ -21,6 +21,8 @@ export const Script = {}
 
 export const Context = {}
 
+export const Isolate = {}
+
 export const Team = {
   id: number
 }
@@ -66,6 +68,7 @@ export const Bullet = {
 
 export const Spawner = {
   timer: Timer,
+  owner: number
 }
 
 export const Ship = {

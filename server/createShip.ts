@@ -1,13 +1,18 @@
 import { component, Entity, toComponent, World } from "@javelin/ecs"
 import useSimulation from './simulation'
 import useColliderToEntity from './colliderToEntity'
-import useIsolates, { createContext } from './isolates'
-import testScript from './testScript'
+import ivm from 'isolated-vm'
 import { Action, Body, Context, Health, Script, Ship, SpriteData, Team, Transform, Weapon } from "./components"
 
 const rapier = require("@a-type/rapier2d-node")
 
-export default function createShip(world: World, x = 0, y = 0, team = 0) {
+export default function createShip(
+	world: World,
+	x: number, y: number,
+	team: number,
+	script: ivm.Script,
+	isolate: ivm.Isolate,
+) {
 	console.log(`Creating ship at ${x}, ${y}`)
 	const e = world.create()
 	const bodyDesc = rapier.RigidBodyDesc.newDynamic()
@@ -27,11 +32,7 @@ export default function createShip(world: World, x = 0, y = 0, team = 0) {
 	const colliderToEntity = useColliderToEntity()
 	colliderToEntity.set(collider.handle, e)
 	
-
-	const isolates = useIsolates()
-	const isolate = isolates[team]
-	const script = isolate.compileScriptSync(testScript)
-	const context = createContext(isolate)
+	const context = isolate.createContextSync()
 	world.attach(e,
 		component(Ship),
 		component(Transform, { x, y }),

@@ -1,17 +1,24 @@
 import { createQuery, World } from '@javelin/ecs'
 import { Clock } from '@javelin/hrtime-loop'
+import ivm from 'isolated-vm'
 
-import { Spawner, Team, Transform } from '../components'
+import { Isolate, Script, Spawner, Team, Transform } from '../components'
 import createShip from '../createShip'
 
 const spawnersTransformTeam = createQuery(Spawner, Transform, Team)
 
-export default function spawnerSystem(world: World): void {
+export default function spawnSystem(world: World): void {
 	const clock = world.latestTickData as Clock
 	spawnersTransformTeam((e, [spawner, transform, team]) => {
 		spawner.timer.current -= clock.dt / 1000
 		if (spawner.timer.current <= 0) {
-			createShip(world, transform.x, transform.y, team.id)
+			try {
+				const script = world.get(spawner.owner, Script) as ivm.Script
+				const isolate = world.get(spawner.owner, Isolate) as ivm.Isolate
+				createShip(world, transform.x, transform.y, team.id, script, isolate)
+			} catch (e) {
+				console.error(e)
+			}
 			spawner.timer.current = spawner.timer.max
 		}
 	})

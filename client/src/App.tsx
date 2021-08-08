@@ -3,11 +3,8 @@ import "./App.css"
 import Game from './Game'
 import { world } from "./world"
 import Editor from './Editor'
-//import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import firebase from 'firebase/app';
 import 'firebase/auth'
-import { useRef } from '@javelin/ecs'
-//import * as firebaseui from 'firebaseui'
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -20,24 +17,6 @@ const firebaseConfig = {
   measurementId: "G-HG70D4SBGN"
 };
 firebase.initializeApp(firebaseConfig);
-
-/*
-// Configure FirebaseUI.
-const uiConfig = {
-  // Popup signin flow rather than redirect flow.
-  signInFlow: 'popup',
-  signInOptions: [
-    firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID
-  ],
-  callbacks: {
-    signInSuccessWithAuthResult: (authResult: any, redirectUrl: any) => {
-      console.log(authResult)
-      return true
-    }
-  }
-  // We will display Google and Facebook as auth providers.
-};
-*/
 
 function App() {
   useEffect(() => {
@@ -56,22 +35,30 @@ function App() {
     }
   }, [])
 
+  const [token, setToken] = useState('')
   useEffect(() => {
     firebase.auth().signInAnonymously()
+    firebase.auth().onAuthStateChanged(async user => {
+      if (user) {
+        setToken(await user.getIdToken())
+      }
+    })
     return () => {
     }
   }, [])
 
-	const [code, setCode] = useState(`function add(a, b) {
-	return a + b;
-	}
+	const [code, setCode] = useState(`
+    function add(a, b) {
+      return a + b;
+    }
 	`)
 
   const upload = () => {
-    fetch('http://localhost:8000', {
+    fetch('http://localhost:8000/upload', {
       method: 'POST',
       headers: {
-        'content-type': 'text/plain'
+        'authorization': `Bearer ${token}`,
+        'content-type': 'application/json'
       },
       body: code
     })
@@ -79,7 +66,6 @@ function App() {
 
   return (
     <div className="App">
-      {/*<StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />*/}
       <Game />
       <Editor
         code={code}

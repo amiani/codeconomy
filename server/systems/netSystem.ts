@@ -4,13 +4,18 @@ import {
 	createImmutableRef,
 	createQuery,
 	Entity,
+	toComponent,
 	useInterval,
 	useMonitor,
 	World
 } from "@javelin/ecs"
+import { Clock } from "@javelin/hrtime-loop"
 import { createMessageProducer, encode } from "@javelin/net"
 import * as admin from 'firebase-admin'
-import { Body, Player, SpriteData, Transform } from "../components"
+import ivm from 'isolated-vm'
+
+import { Isolate, Player, Script, SpriteData, Transform } from "../components"
+import createSpawner from "../createSpawner"
 import { MESSAGE_MAX_BYTE_LENGTH, SEND_RATE } from "../env"
 import { udp } from "../net"
 
@@ -26,7 +31,13 @@ function getInitialMessage(world: World) {
   return producer.take()
 }
 
-const useClients = createEffect(({ create, destroy }) => {
+export const usePlayers = createEffect(world => {
+  const players = new Map()
+  return () => players
+})
+
+const useClients = createEffect((world: World<Clock>) => {
+  const players = usePlayers()
   const clients = new Map()
   const send_u = (entity: Entity, data: ArrayBuffer) =>
     clients.get(entity).send(data)
@@ -36,13 +47,21 @@ const useClients = createEffect(({ create, destroy }) => {
     const { token } = connection.metadata
     try {
       const decodedToken = await admin.auth().verifyIdToken(token)
-      const entity = create(
-        component(Player, { uid: decodedToken.uid })
+      const uid = decodedToken.uid
+      const isolate = new ivm.Isolate({ memoryLimit: 128 })
+      const entity = world.create(
+        component(Player, { uid }),
+        toComponent(isolate, Isolate),
       )
       clients.set(entity, connection)
+      players.set(uid, entity)
+
+      createSpawner(world, -10, 0, 0, entity)
+
       connection.closed.subscribe(() => {
-        destroy(entity)
+        world.destroy(entity)
         clients.delete(entity)
+        players.delete(entity)
       })
     } catch (e) {
       console.error(e)

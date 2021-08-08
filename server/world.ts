@@ -1,45 +1,41 @@
 import {
-  component,
   createWorld,
   useInit,
   Entity,
+  toComponent,
 } from "@javelin/ecs"
 import { Clock } from "@javelin/hrtime-loop"
 const rapier = require("@a-type/rapier2d-node")
+import ivm from 'isolated-vm'
 
-import {
-  Transform,
-  Spawner,
-  Team
-} from "./components"
 import scriptSystem from "./systems/scriptSystem"
 import physicsSystem from './systems/physicsSystem'
 import netSystem from './systems/netSystem'
 import collisionTopic from "./collisionTopic"
+import scriptTopic from "./scriptTopic"
 import damageSystem from "./systems/damageSystem"
-import spawnerSystem from "./systems/spawnerSystem"
-import createShip from "./createShip"
+import spawnerSystem from "./systems/spawnSystem"
+import createSpawner from "./createSpawner"
+import { Isolate, Script } from "./components"
+import testScript from "./testScript"
 
 export const world = createWorld<Clock>({
-  topics: [collisionTopic]
+  topics: [
+    collisionTopic,
+    scriptTopic
+  ]
 })
 
 
-const createSpawner = (e: Entity, x: number, y: number, team: number) => {
-  console.log(`Creating spawner at ${x}, ${y}`)
-  world.attach(e,
-    component(Transform, { x, y }),
-    component(Spawner, { 
-      timer: { current: 0, max: 10 }
-    }),
-    component(Team, { id: team }),
-  )
-}
-
 world.addSystem(function spawn(world) {
   if (useInit()) {
-    createSpawner(world.create(), -10, 0, 0)
-    createSpawner(world.create(), 10, 10, 1)
+    const isolate = new ivm.Isolate({ memoryLimit: 128 })
+    const script = isolate.compileScriptSync(testScript)
+    const owner = world.create(
+      toComponent(script, Script),
+      toComponent(isolate, Isolate)
+    )
+    createSpawner(world, 10, 10, 1, owner)
   }
 })
 
