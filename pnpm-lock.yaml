@@ -11,6 +11,7 @@ importers:
       '@javelin/net': workspace:*
       '@javelin/pack': workspace:*
       '@types/node': ^16.4.9
+      '@types/prismjs': ^1.16.6
       '@types/react': ^17.0.0
       '@types/react-dom': ^17.0.0
       '@types/uuid': ^8.3.1
@@ -20,8 +21,10 @@ importers:
       isolated-vm: ^4.3.3
       pixi-viewport: ^4.32.0
       pixi.js: ^6.1.0
+      prismjs: ^1.24.1
       react: ^17.0.0
       react-dom: ^17.0.0
+      react-simple-code-editor: ^0.11.0
       ts-node: ^9.1.1
       typescript: ^4.1.2
       uuid: ^8.3.2
@@ -39,12 +42,15 @@ importers:
       isolated-vm: 4.3.3
       pixi-viewport: 4.32.0
       pixi.js: 6.1.0
+      prismjs: 1.24.1
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
+      react-simple-code-editor: 0.11.0_react-dom@17.0.2+react@17.0.2
       ts-node: 9.1.1_typescript@4.3.5
       uuid: 8.3.2
     devDependencies:
       '@types/node': 16.4.9
+      '@types/prismjs': 1.16.6
       '@types/react': 17.0.14
       '@types/react-dom': 17.0.9
       '@types/uuid': 8.3.1
@@ -915,6 +921,10 @@ packages:
     resolution: {integrity: sha512-HXhRf581nCItzn8yevv4LYt+bJ5cBbDBAJExbDPMeU/2n5/j0ZemGpayahFBP4xL7RseaCLASLD9i9AYyDe7Nw==}
     dev: true
 
+  /@types/prismjs/1.16.6:
+    resolution: {integrity: sha512-dTvnamRITNqNkqhlBd235kZl3KfVJQQoT5jkXeiWSBK7i4/TLKBNLV0S1wOt8gy4E2TY722KLtdmv2xc6+Wevg==}
+    dev: true
+
   /@types/prop-types/15.7.4:
     resolution: {integrity: sha512-rZ5drC/jWjrArrS8BR6SIr4cWpW09RNTYt9AMZo3Jwwif+iacXAqgVjm0B0Bv/S1jhDXKHqRVNCbACkJ89RAnQ==}
     dev: true
@@ -1662,6 +1672,10 @@ packages:
       source-map-js: 0.6.2
     dev: true
 
+  /prismjs/1.24.1:
+    resolution: {integrity: sha512-mNPsedLuk90RVJioIky8ANZEwYm5w9LcvCXrxHlwf4fNVSn8jEipMybMkWUyyF0JhnC+C4VcOVSBuHRKs1L5Ow==}
+    dev: false
+
   /process-nextick-args/2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
     dev: false
@@ -1705,6 +1719,16 @@ packages:
     resolution: {integrity: sha512-PgidR3wST3dDYKr6b4pJoqQFpPGNKDSCDx4cZoshjXipw3LzO7mG1My2pwEzz2JVkF+inx3xRpDeQLFQGH/hsQ==}
     engines: {node: '>=0.10.0'}
     dev: true
+
+  /react-simple-code-editor/0.11.0_react-dom@17.0.2+react@17.0.2:
+    resolution: {integrity: sha512-xGfX7wAzspl113ocfKQAR8lWPhavGWHL3xSzNLeseDRHysT+jzRBi/ExdUqevSMos+7ZtdfeuBOXtgk9HTwsrw==}
+    peerDependencies:
+      react: ^16.0.0
+      react-dom: ^16.0.0
+    dependencies:
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+    dev: false
 
   /react/17.0.2:
     resolution: {integrity: sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==}
