@@ -3,7 +3,7 @@ import useSimulation from './simulation'
 import useColliderToEntity from './colliderToEntity'
 import useIsolates, { createContext } from './isolates'
 import testScript from './testScript'
-import { Action, Body, Context, Health, Script, SpriteData, Team, Transform, Weapon } from "./components"
+import { Action, Body, Context, Health, Script, Ship, SpriteData, Team, Transform, Weapon } from "./components"
 
 const rapier = require("@a-type/rapier2d-node")
 
@@ -33,8 +33,9 @@ export default function createShip(world: World, x = 0, y = 0, team = 0) {
 	const script = isolate.compileScriptSync(testScript)
 	const context = createContext(isolate)
 	world.attach(e,
-		toComponent(body, Body),
+		component(Ship),
 		component(Transform, { x, y }),
+		toComponent(body, Body),
 		toComponent(script, Script),
 		toComponent(context, Context),
 		component(Weapon, { damage: 1, maxCooldown: 0.3, currentCooldown: 0 }),

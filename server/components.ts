@@ -67,6 +67,9 @@ export const Spawner = {
   timer: Timer,
 }
 
+export const Ship = {
+}
+
 registerSchema(Player, 1)
 registerSchema(Transform, 2)
 registerSchema(Body, 3)
@@ -80,3 +83,4 @@ registerSchema(Action, 10)
 registerSchema(Weapon, 11)
 registerSchema(Bullet, 12)
 registerSchema(Spawner, 13)
+registerSchema(Ship, 14)

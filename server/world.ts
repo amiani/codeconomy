@@ -38,7 +38,7 @@ const createSpawner = (e: Entity, x: number, y: number, team: number) => {
 world.addSystem(function spawn({ create }) {
   if (useInit()) {
     createSpawner(create(), -50, 0, 0)
-    createSpawner(create(), 50, 10, 0)
+    createSpawner(create(), 50, 10, 1)
   }
 })
 
