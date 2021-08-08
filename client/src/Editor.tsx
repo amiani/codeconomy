@@ -5,11 +5,13 @@ import 'prismjs/themes/prism.css'
 import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-javascript';
 
-export default function Editor() {
-	const [code, setCode] = useState(`function add(a, b) {
-	return a + b;
-	}
-	`)
+interface EditorProps {
+	code: string,
+	setCode: (code: string) => void,
+	upload: () => void
+}
+
+export default function Editor({ code, setCode, upload }: EditorProps) {
 
 	const [hidden, setHidden] = useState(false)
 
@@ -17,19 +19,21 @@ export default function Editor() {
 		<div
 			className="editor"
 			style={{ position: 'absolute', top: 0, left: 0 }}>
-			{!hidden && <SimpleEditor
-			value={code}
-			onValueChange={setCode}
-			highlight={code => highlight(code, languages.js, 'js')}
-			padding={10}
-			style={{
-				fontFamily: '"Fira code", "Fira Mono", Consolas, Menlo, monospace',
-				fontSize: 12,
-				background: 'white',
-			}}
-			/>}
+			{!hidden &&
+				<SimpleEditor
+					value={code}
+					onValueChange={setCode}
+					highlight={code => highlight(code, languages.js, 'js')}
+					padding={10}
+					style={{
+						fontFamily: '"Fira code", "Fira Mono", Consolas, Menlo, monospace',
+						fontSize: 12,
+						background: 'white',
+					}}
+				/>
+			}
 			<button onClick={e => { setHidden(!hidden) }}>{hidden ? 'Show' : 'Hide'}</button>
-			{!hidden && <button onClick={e => console.log()}>Upload</button>}
+			{!hidden && <button onClick={upload}>Upload</button>}
 		</div>
 	)
 }

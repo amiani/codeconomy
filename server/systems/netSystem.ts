@@ -9,7 +9,8 @@ import {
 	World
 } from "@javelin/ecs"
 import { createMessageProducer, encode } from "@javelin/net"
-import { Player, SpriteData, Transform } from "../components"
+import * as admin from 'firebase-admin'
+import { Body, Player, SpriteData, Transform } from "../components"
 import { MESSAGE_MAX_BYTE_LENGTH, SEND_RATE } from "../env"
 import { udp } from "../net"
 
@@ -31,13 +32,21 @@ const useClients = createEffect(({ create, destroy }) => {
     clients.get(entity).send(data)
   const api = { send_u }
 
-  udp.connections.subscribe(connection => {
-    const entity = create(component(Player))
-    clients.set(entity, connection)
-    connection.closed.subscribe(() => {
-      destroy(entity)
-      clients.delete(entity)
-    })
+  udp.connections.subscribe(async connection => {
+    const { token } = connection.metadata
+    try {
+      const decodedToken = await admin.auth().verifyIdToken(token)
+      const entity = create(
+        component(Player, { uid: decodedToken.uid })
+      )
+      clients.set(entity, connection)
+      connection.closed.subscribe(() => {
+        destroy(entity)
+        clients.delete(entity)
+      })
+    } catch (e) {
+      console.error(e)
+    }
   })
 
   return function useClients() {

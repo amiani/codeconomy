@@ -3,7 +3,6 @@ import {
 	createQuery,
 	toComponent,
 	component,
-	Entity,
 	useMonitor,
 } from '@javelin/ecs'
 import useColliderToEntity from '../colliderToEntity'
@@ -43,7 +42,7 @@ const createLaser = (
 
 	const sim = useSimulation()
 	const body = sim.createRigidBody(bodyDesc)
-	console.log(`New bullet created: ${e}: ${body.handle}`)
+	//console.log(`New bullet created: ${e}: ${body.handle}`)
 	const collider = sim.createCollider(colliderDesc, body.handle)
 	const colliderToEntity = useColliderToEntity()
 	colliderToEntity.set(collider.handle, e)
@@ -59,8 +58,8 @@ const createLaser = (
 
 const bodies = createQuery(Body)
 export default function physicsSystem(world: World) {
-	const colliderToEntity = useColliderToEntity()
 	const sim = useSimulation()
+	const colliderToEntity = useColliderToEntity()
 	bodiesActionTeamWeapon((e, [bodyComp, action, team, weapon]) => {
 		const body = bodyComp as typeof rapier.Body
 		body.applyForce({ x: action.throttle, y: 0 }, true)

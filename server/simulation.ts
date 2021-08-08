@@ -4,7 +4,6 @@ import { Body, Bullet, Transform } from "./components"
 import useColliderToEntity from "./colliderToEntity"
 import collisionTopic from "./collisionTopic"
 
-const bodies = createQuery(Body)
 const transformsBody = createQuery(Transform, Body)
 const bulletsBody = createQuery(Bullet, Body)
 
@@ -24,29 +23,12 @@ export default createEffect((world: World) => {
 
 	return () => {
 		//console.log('useSimulation')
-		useMonitor(
-			bodies,
-			(e, [body]) => {
-				console.log(`${e}: ${body.handle} has been added`)
-			},
-			(e, [body]) => {
-				console.log(`Removing body for ${e}: ${body.handle}`)
-				sim.removeRigidBody(body)
-			}
-		)
 
 		bulletsBody((e, [bullet, bodyComp]) => {
-			//console.log(bodyComp.handle)
 			if (bullet.lifetime >= 0) {
-				try {
-					const body = bodyComp as typeof rapier.Body
-					body.setLinvel(bullet.velocity, true)
-				} catch (error) {
-					console.log(`Error setting velocity for ${e}: ${bodyComp.handle}`)
-					console.log(error)
-				}
+				const body = bodyComp as typeof rapier.Body
+				body.setLinvel(bullet.velocity, true)
 			} else {
-				console.log(`Destroy ${e}: out of time`)
 				world.destroy(e)
 			}
 			bullet.lifetime -= sim.timestep

@@ -4,6 +4,7 @@ import { boolean, number, string, registerSchema } from "@javelin/ecs"
 export const Player = {
   clientId: number,
   initialized: boolean,
+  uid: { ...string, length: 36 }
 }
 
 export const Transform = {

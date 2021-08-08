@@ -1,8 +1,12 @@
-import { createQuery, Entity, World } from "@javelin/ecs";
+import { createQuery, Entity, useMonitor, World } from "@javelin/ecs";
 import collisionTopic from "../collisionTopic"
-import { Bullet, Health } from "../components"
+import { Body, Bullet, Health } from "../components"
+import useSimulation from '../simulation'
+import useColliderToEntity from '../colliderToEntity'
+const rapier = require('@a-type/rapier2d-node')
 
 const healths = createQuery(Health)
+const bodies = createQuery(Body)
 
 const tryDamage = (world: World, e: Entity, damage: number) => {
 	const health = world.tryGet(e, Health)
@@ -34,4 +38,25 @@ export default function damageSystem(world: World) {
 			world.destroy(e)
 		}
 	})
+	const sim = useSimulation()
+	const entities = useColliderToEntity()
+	useMonitor(
+		bodies,
+		() => {},
+		(e, [body]: [typeof rapier.Body]) => {
+			//console.log(`${e}: ${body.handle} Removing collider mapping`)
+			const handle = body.collider(0)
+			entities.delete(handle)
+		}
+	)
+	useMonitor(
+		bodies,
+		(e, [body]) => {
+			//console.log(`${e}: ${body.handle} has been added`)
+		},
+		(e, [body]) => {
+			//console.log(`Removing body for ${e}: ${body.handle}`)
+			sim.removeRigidBody(body)
+		}
+	)
 }

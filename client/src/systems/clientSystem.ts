@@ -1,6 +1,8 @@
 import { createEffect, World } from '@javelin/ecs'
 import { createMessageHandler } from '@javelin/net'
 import { Client } from "@web-udp/client"
+import firebase from 'firebase'
+import 'firebase/auth'
 
 const useNet = createEffect(
   world => {
@@ -10,12 +12,16 @@ const useNet = createEffect(
     })
     const handler = createMessageHandler(world)
 
-    client.connect().then(c =>
-      c.messages.subscribe(message => {
-        state.bytes += message.byteLength
-        handler.push(message)
-      }),
-    )
+    firebase.auth().onAuthStateChanged(async user => {
+      if (user) {
+        const token: string = await user.getIdToken(true)
+        const c = await client.connect({ metadata: { token } })
+        c.messages.subscribe(message => {
+          state.bytes += message.byteLength
+          handler.push(message)
+        })
+      }
+    })
 
     return () => {
       handler.system()
