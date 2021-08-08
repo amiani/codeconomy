@@ -33,15 +33,15 @@ export default function createShip(world: World, x = 0, y = 0, team = 0) {
 	const script = isolate.compileScriptSync(testScript)
 	const context = createContext(isolate)
 	world.attach(e,
-		//component(Ship),
+		component(Ship),
 		component(Transform, { x, y }),
-		//toComponent(body, Body),
-		//toComponent(script, Script),
-		//toComponent(context, Context),
-		//component(Weapon, { damage: 1, maxCooldown: 0.3, currentCooldown: 0 }),
-		//component(Team, { id: team }),
+		toComponent(body, Body),
+		toComponent(script, Script),
+		toComponent(context, Context),
+		component(Weapon, { damage: 1, maxCooldown: 0.3, currentCooldown: 0 }),
+		component(Team, { id: team }),
 		component(SpriteData, { name: "ship" }),
-		//component(Action),
-		//component(Health, { current: 100, max: 100 })
+		component(Action),
+		component(Health, { current: 100, max: 100 })
 	)
 }

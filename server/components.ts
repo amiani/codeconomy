@@ -68,6 +68,7 @@ export const Spawner = {
 }
 
 export const Ship = {
+  dummy: number
 }
 
 registerSchema(Player, 1)
