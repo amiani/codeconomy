@@ -16,6 +16,7 @@ import { udp } from "../net"
 const transforms = createQuery(Transform)
 const players = createQuery(Player)
 const transformsSpriteData = createQuery(Transform, SpriteData)
+const spriteDatas = createQuery(SpriteData)
 
 function getInitialMessage(world: World) {
   const producer = createMessageProducer()
@@ -68,6 +69,7 @@ export default function netSystem(world: World) {
       if (p.initialized) {
         packet = message
       } else {
+        console.log('sending initial message')
         packet = getInitialMessage(world)
         p.initialized = true
       }

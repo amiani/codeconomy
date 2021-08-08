@@ -17,11 +17,13 @@ export default function damageSystem(world: World) {
 		let bullet = world.tryGet(collision.entity1, Bullet)
 		if (bullet) {
 			tryDamage(world, collision.entity2, bullet.damage)
+			console.log(`Destroy ${collision.entity1}: bullet collided`)
 			world.destroy(collision.entity1)
 		}
 		bullet = world.tryGet(collision.entity2, Bullet)
 		if (bullet) {
 			tryDamage(world, collision.entity1, bullet.damage)
+			console.log(`Destroy ${collision.entity2}: bullet collided`)
 			world.destroy(collision.entity2)
 		}
 	}

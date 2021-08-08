@@ -18,6 +18,7 @@ import netSystem from './systems/netSystem'
 import collisionTopic from "./collisionTopic"
 import damageSystem from "./systems/damageSystem"
 import spawnerSystem from "./systems/spawnerSystem"
+import createShip from "./createShip"
 
 export const world = createWorld<Clock>({
   topics: [collisionTopic]
@@ -35,15 +36,16 @@ const createSpawner = (e: Entity, x: number, y: number, team: number) => {
   )
 }
 
-world.addSystem(function spawn({ create }) {
+world.addSystem(function spawn(world) {
   if (useInit()) {
-    createSpawner(create(), -50, 0, 0)
-    createSpawner(create(), 50, 10, 1)
+    createShip(world, -10, 0, 0)
+    //createSpawner(create(), -10, 0, 0)
+    //createSpawner(create(), 10, 10, 1)
   }
 })
 
-world.addSystem(spawnerSystem)
-world.addSystem(scriptSystem)
-world.addSystem(physicsSystem)
-world.addSystem(damageSystem)
+//world.addSystem(spawnerSystem)
+//world.addSystem(scriptSystem)
+//world.addSystem(physicsSystem)
+//world.addSystem(damageSystem)
 world.addSystem(netSystem)

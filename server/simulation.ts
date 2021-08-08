@@ -1,5 +1,5 @@
 const rapier = require("@a-type/rapier2d-node")
-import { ComponentOf, createEffect, createQuery, useMonitor } from "@javelin/ecs"
+import { ComponentOf, createEffect, createQuery, useMonitor, World } from "@javelin/ecs"
 import { Body, Bullet, Transform } from "./components"
 import useColliderToEntity from "./colliderToEntity"
 import collisionTopic from "./collisionTopic"
@@ -18,22 +18,35 @@ const copyBodyToTransform = (
 	transform.rotation = body.rotation()
 }
 
-export default createEffect(world => {
+export default createEffect((world: World) => {
 	const sim = new rapier.World({ x: 0, y: 0 })
 	const eventQueue = new rapier.EventQueue(true)
 
 	return () => {
+		//console.log('useSimulation')
 		useMonitor(
 			bodies,
-			() => {},
-			(e, [body]) => sim.removeRigidBody(body)
+			(e, [body]) => {
+				console.log(`${e}: ${body.handle} has been added`)
+			},
+			(e, [body]) => {
+				console.log(`Removing body for ${e}: ${body.handle}`)
+				sim.removeRigidBody(body)
+			}
 		)
 
 		bulletsBody((e, [bullet, bodyComp]) => {
+			//console.log(bodyComp.handle)
 			if (bullet.lifetime >= 0) {
-				const body = bodyComp as typeof rapier.Body
-				body.setLinvel(bullet.velocity, true)
+				try {
+					const body = bodyComp as typeof rapier.Body
+					body.setLinvel(bullet.velocity, true)
+				} catch (error) {
+					console.log(`Error setting velocity for ${e}: ${bodyComp.handle}`)
+					console.log(error)
+				}
 			} else {
+				console.log(`Destroy ${e}: out of time`)
 				world.destroy(e)
 			}
 			bullet.lifetime -= sim.timestep
@@ -41,6 +54,7 @@ export default createEffect(world => {
 		transformsBody((e, [transform, body]) => {
 			copyBodyToTransform(body, transform)
 		})
+
 
 		sim.step(eventQueue)
 		const colliderToEntity = useColliderToEntity()
