@@ -15,8 +15,9 @@ const useNet = createEffect(
     firebase.auth().onAuthStateChanged(async user => {
       if (user) {
         const token: string = await user.getIdToken(true)
-        const c = await client.connect({ metadata: { token } })
-        c.messages.subscribe(message => {
+        const connection = await client.connect({ metadata: { token } })
+        connection.send(
+        connection.messages.subscribe(message => {
           state.bytes += message.byteLength
           handler.push(message)
         })
