@@ -3,7 +3,9 @@ import {
 	createQuery,
 	toComponent,
 	component,
+	Entity,
 } from '@javelin/ecs'
+import useColliderToEntity from '../colliderToEntity'
 const rapier = require('@a-type/rapier2d-node')
 
 import useSimulation from '../simulation'
@@ -20,6 +22,8 @@ import {
 const bodiesActionTeamWeapon = createQuery(Body, Action, Team, Weapon)
 
 const createLaser = (
+	world: World,
+	e: Entity,
 	position: { x: number; y: number },
 	rotation: number,
 	team: number
@@ -32,19 +36,23 @@ const createLaser = (
 		.setLinvel(velocity.x, velocity.y)
 
 	const colliderDesc = rapier.ColliderDesc.cuboid(16, 2)
-		.setCollisionGroups(0x00020002)
+		.setCollisionGroups(0x00040000 * (team + 1) + 2 - team)
+		.setIsSensor(true)
+		.setActiveEvents(rapier.ActiveEvents.INTERSECTION_EVENTS)
 
 	const sim = useSimulation()
 	const body = sim.createRigidBody(bodyDesc)
-	sim.createCollider(colliderDesc, body.handle)
+	const collider = sim.createCollider(colliderDesc, body.handle)
+	const colliderToEntity = useColliderToEntity()
+	colliderToEntity.set(collider.handle, e)
 
-	return [
+	world.attach(e,
 		toComponent(body, Body),
 		component(Transform, position),
 		component(Team, { id: team }),
-		component(Bullet, { velocity, lifetime: 2 }),
+		component(Bullet, { velocity, lifetime: 1, damage: 1 }),
 		component(SpriteData, { name: 'smallbluelaser' })
-	]
+	)
 }
 
 export default function physicsSystem(world: World) {
@@ -54,7 +62,8 @@ export default function physicsSystem(world: World) {
 		body.applyForce({ x: action.throttle, y: 0 }, true)
 		body.applyTorque(action.rotate, true)
 		if (action.fire && weapon.currentCooldown <= 0) {
-			world.create(...createLaser(body.translation(), body.rotation(), team.id))
+			const entity = world.create()
+			createLaser(world, entity, body.translation(), body.rotation(), team.id)
 			weapon.currentCooldown = weapon.maxCooldown
 		}
 		weapon.currentCooldown -= sim.timestep

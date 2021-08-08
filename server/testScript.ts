@@ -1,7 +1,7 @@
 export default `
 	action = {
 		throttle: 3,
-		rotate: 3,
+		rotate: 0,
 		fire: true
 	}
 `

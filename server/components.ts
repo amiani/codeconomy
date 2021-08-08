@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { boolean, number, string, registerSchema } from "@javelin/ecs"
 
 export const Player = {
@@ -54,6 +55,7 @@ const Vec = { x: number, y: number }
 export const Bullet = {
   velocity: Vec,
   lifetime: number,
+  damage: number
 }
 
 registerSchema(Player, 1)

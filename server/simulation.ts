@@ -1,6 +1,8 @@
 const rapier = require("@a-type/rapier2d-node")
 import { ComponentOf, createEffect, createQuery, useMonitor } from "@javelin/ecs"
 import { Body, Bullet, Transform } from "./components"
+import useColliderToEntity from "./colliderToEntity"
+import collisionTopic from "./collisionTopic"
 
 const bodies = createQuery(Body)
 const transformsBody = createQuery(Transform, Body)
@@ -18,6 +20,7 @@ const copyBodyToTransform = (
 
 export default createEffect(world => {
 	const sim = new rapier.World({ x: 0, y: 0 })
+	const eventQueue = new rapier.EventQueue(true)
 
 	return () => {
 		useMonitor(
@@ -25,6 +28,7 @@ export default createEffect(world => {
 			() => {},
 			(e, [body]) => sim.removeRigidBody(body)
 		)
+
 		bulletsBody((e, [bullet, bodyComp]) => {
 			if (bullet.lifetime >= 0) {
 				const body = bodyComp as typeof rapier.Body
@@ -37,7 +41,23 @@ export default createEffect(world => {
 		transformsBody((e, [transform, body]) => {
 			copyBodyToTransform(body, transform)
 		})
-		sim.step()
+
+		sim.step(eventQueue)
+		const colliderToEntity = useColliderToEntity()
+		eventQueue.drainIntersectionEvents((
+			handle1: typeof rapier.CollisionHandle,
+			handle2: typeof rapier.CollisionHandle,
+			started: boolean,
+		) => {
+			if (started) {
+				const entity1 = colliderToEntity.get(handle1)
+				const entity2 = colliderToEntity.get(handle2)
+				if (entity1 !== undefined && entity2 !== undefined) {
+					collisionTopic.push({ type: "collision", entity1, entity2 })
+				}
+			}
+		})
+
 		return sim
 	}
 }, { shared: true })
