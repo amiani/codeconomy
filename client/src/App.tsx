@@ -48,8 +48,10 @@ function App() {
   }, [])
 
 	const [code, setCode] = useState(`
-    function add(a, b) {
-      return a + b;
+    action = {
+      throttle: 10,
+      rotate: 0,
+      fire: false
     }
 	`)
 
