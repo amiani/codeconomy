@@ -2,7 +2,17 @@ import { World, createQuery, Entity, toComponent } from "@javelin/ecs"
 import ivm from "isolated-vm"
 const rapier = require('@a-type/rapier2d-node')
 
-import { Body, Script, Context, Action, Ship, Health, Team, Transform, Isolate } from '../components'
+import {
+	Body,
+	Script,
+	Context,
+	Action,
+	Ship,
+	Health,
+	Team,
+	Transform,
+	Isolate
+} from '../components'
 import scriptTopic from "../scriptTopic"
 import { usePlayers } from "./netSystem"
 

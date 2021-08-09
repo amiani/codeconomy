@@ -4,7 +4,7 @@ import { Client } from "@web-udp/client"
 import firebase from 'firebase'
 import 'firebase/auth'
 
-const useNet = createEffect(
+export const useNet = createEffect(
   world => {
     const state = { bytes: 0 }
     const client = new Client({

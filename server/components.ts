@@ -1,5 +1,11 @@
 //@ts-nocheck
-import { boolean, number, string, registerSchema } from "@javelin/ecs"
+import {
+  boolean,
+  number,
+  string,
+  registerSchema,
+  arrayOf
+} from "@javelin/ecs"
 
 export const Player = {
   clientId: number,
@@ -11,6 +17,15 @@ export const Transform = {
   x: number,
   y: number,
   rotation: number,
+}
+
+export const Interpolate = {
+  x: number,
+  y: number,
+  rotation: number,
+  buffer: arrayOf(arrayOf(number)),
+  adaptiveSendRate: number,
+  lastUpdateTime: number,
 }
 
 export const Body = {

@@ -1,20 +1,27 @@
-import { ComponentOf, createQuery, toComponent, useMonitor, World } from '@javelin/ecs'
+import {
+  ComponentOf,
+  createQuery,
+  toComponent,
+  useMonitor,
+  World
+} from '@javelin/ecs'
 import * as PIXI from 'pixi.js'
 
-import { Sprite, SpriteData, Transform } from '../../../server/components'
+import { Interpolate, Sprite, SpriteData, Transform } from '../../../server/components'
 import { app, viewport } from '../pixiApp'
 
-const transformsSprite = createQuery(Transform, Sprite)
+const interpolatedSprites = createQuery(Interpolate, Sprite)
+const transformSprites = createQuery(Transform, Sprite)
 const sprites = createQuery(Sprite)
 const spriteDatas = createQuery(SpriteData)
 
-const copyTransformToSprite = (
-  transform: ComponentOf<typeof Transform>,
+const copyInterpolateToSprite = (
+  interpolate: ComponentOf<typeof Interpolate>,
   sprite: ComponentOf<typeof Sprite>
 ) => {
-  sprite.x = transform.x * 32
-  sprite.y = transform.y * 32
-  sprite.rotation = transform.rotation
+  sprite.x = interpolate.x * 32
+  sprite.y = interpolate.y * 32
+  sprite.rotation = interpolate.rotation
 }
 
 export default function spriteSystem(world: World) {
@@ -36,7 +43,7 @@ export default function spriteSystem(world: World) {
     (e, [sprite]) => viewport.removeChild(sprite as PIXI.Sprite)
   )
 
-  transformsSprite((e, [transform, sprite]) => {
-    copyTransformToSprite(transform, sprite)
+  interpolatedSprites((e, [interpolate, sprite]) => {
+    copyInterpolateToSprite(interpolate, sprite)
   })
 }

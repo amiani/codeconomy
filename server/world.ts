@@ -1,11 +1,9 @@
 import {
   createWorld,
   useInit,
-  Entity,
   toComponent,
 } from "@javelin/ecs"
 import { Clock } from "@javelin/hrtime-loop"
-const rapier = require("@a-type/rapier2d-node")
 import ivm from 'isolated-vm'
 
 import scriptSystem from "./systems/scriptSystem"

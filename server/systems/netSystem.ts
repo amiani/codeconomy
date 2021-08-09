@@ -14,7 +14,7 @@ import { createMessageProducer, encode } from "@javelin/net"
 import * as admin from 'firebase-admin'
 import ivm from 'isolated-vm'
 
-import { Isolate, Player, Script, SpriteData, Transform } from "../components"
+import { Isolate, Player, SpriteData, Transform } from "../components"
 import createSpawner from "../createSpawner"
 import { MESSAGE_MAX_BYTE_LENGTH, SEND_RATE } from "../env"
 import { udp } from "../net"
