@@ -41,7 +41,7 @@ export default function createShip(
 		toComponent(body, Body),
 		toComponent(script, Script),
 		toComponent(context, Context),
-		component(Weapon, { damage: 1, maxCooldown: 0.3, currentCooldown: 0 }),
+		component(Weapon, { damage: 1, maxCooldown: 0.1, currentCooldown: 0 }),
 		component(Team, { id: team }),
 		component(SpriteData, { name: "ship" }),
 		component(Action),

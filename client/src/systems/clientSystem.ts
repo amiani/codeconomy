@@ -11,19 +11,30 @@ export const useNet = createEffect(
       url: `${window.location.hostname}:8000`,
     })
     const handler = createMessageHandler(world)
+    const messages = Array<ArrayBuffer>()
 
     firebase.auth().onAuthStateChanged(async user => {
       if (user) {
         const token: string = await user.getIdToken(true)
         const connection = await client.connect({ metadata: { token } })
-        connection.messages.subscribe(message => {
-          state.bytes += message.byteLength
-          handler.push(message)
+        connection.messages.subscribe((message: ArrayBuffer) => {
+          messages.push(message)
         })
       }
     })
 
+    let lastMessageTime = 0
+
     return () => {
+      if (messages.length >= 10) {
+        const message = messages.shift() as ArrayBuffer
+        state.bytes += message.byteLength
+        handler.push(message)
+        console.log(`Time since last message ${performance.now() - lastMessageTime}`)
+        lastMessageTime = performance.now()
+      } else {
+        console.log(`Not enough messages ${messages.length}`)
+      }
       handler.system()
       return Object.assign(state, handler.useInfo())
     }

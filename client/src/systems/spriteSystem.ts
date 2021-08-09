@@ -16,14 +16,17 @@ const sprites = createQuery(Sprite)
 const spriteDatas = createQuery(SpriteData)
 const transformSpriteDatas = createQuery(Transform, SpriteData, Team)
 
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t
+
 const copyInterpolateToSprite = (
   interpolate: ComponentOf<typeof Interpolate>,
   sprite: ComponentOf<typeof Sprite>
 ) => {
-  sprite.x = interpolate.x * 32
-  sprite.y = interpolate.y * 32
-  sprite.rotation = interpolate.rotation
-  sprite.visible = !!interpolate.lastUpdateTime
+  const { start, end } = interpolate
+  const t = (performance.now() - 100 - start.time) / (end.time - start.time)
+  sprite.x = lerp(start.x, end.x, t) * 32
+  sprite.y = lerp(start.y, end.y, t) * 32
+  sprite.rotation = lerp(start.rotation, end.rotation, t)
 }
 
 export default function spriteSystem(world: World) {

@@ -20,12 +20,19 @@ export const Transform = {
 }
 
 export const Interpolate = {
-  x: number,
-  y: number,
-  rotation: number,
-  buffer: arrayOf(arrayOf(number)),
+  start: {
+    x: number,
+    y: number,
+    rotation: number,
+    time: number,
+  },
+  end: {
+    x: number,
+    y: number,
+    rotation: number,
+    time: number,
+  },
   adaptiveSendRate: number,
-  lastUpdateTime: number,
 }
 
 export const Body = {
