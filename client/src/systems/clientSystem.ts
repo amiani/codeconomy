@@ -1,8 +1,9 @@
-import { createEffect, World } from '@javelin/ecs'
+import { createEffect, useInterval, World } from '@javelin/ecs'
 import { createMessageHandler } from '@javelin/net'
 import { Client } from "@web-udp/client"
 import firebase from 'firebase'
 import 'firebase/auth'
+
 
 export const useNet = createEffect(
   world => {
@@ -23,18 +24,27 @@ export const useNet = createEffect(
       }
     })
 
-    let lastMessageTime = 0
+    const consumeMessage = () => {
+      const message = messages.shift() as ArrayBuffer
+      state.bytes += message.byteLength
+      handler.push(message)
+    }
+
+
+    let nextUpdate = 100
 
     return () => {
-      if (messages.length >= 10) {
-        const message = messages.shift() as ArrayBuffer
-        state.bytes += message.byteLength
-        handler.push(message)
-        console.log(`Time since last message ${performance.now() - lastMessageTime}`)
-        lastMessageTime = performance.now()
-      } else {
-        console.log(`Not enough messages ${messages.length}`)
+      let update = useInterval(nextUpdate)
+      while (messages.length > 20) {
+        consumeMessage()
       }
+      if (update) {
+        if (messages.length) {
+          consumeMessage()
+        }
+        nextUpdate = messages.length > 10 ? 100 : 105
+      }
+      console.log(messages.length)
       handler.system()
       return Object.assign(state, handler.useInfo())
     }
