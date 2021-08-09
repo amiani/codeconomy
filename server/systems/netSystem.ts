@@ -22,7 +22,6 @@ import { udp } from "../net"
 const transforms = createQuery(Transform)
 const players = createQuery(Player)
 const transformsSpriteData = createQuery(Transform, SpriteData, Team)
-const spriteDatas = createQuery(SpriteData)
 
 function getInitialMessage(world: World) {
   const producer = createMessageProducer()
@@ -48,19 +47,20 @@ const useClients = createEffect((world: World<Clock>) => {
       const decodedToken = await admin.auth().verifyIdToken(token)
       const uid = decodedToken.uid
       const isolate = new ivm.Isolate({ memoryLimit: 128 })
-      const entity = world.create(
-        component(Player, { uid }),
-        toComponent(isolate, Isolate),
-      )
+      const entity = world.create(toComponent(isolate, Isolate))
+
+      const spawner = createSpawner(world, -10, 0, 0, entity)
+      world.attach(entity, component(Player, {
+        uid,
+        spawners: [spawner]
+      }))
       clients.set(entity, connection)
       players.set(uid, entity)
 
-      createSpawner(world, -10, 0, 0, entity)
-
       connection.closed.subscribe(() => {
         world.destroy(entity)
+        world.destroy(spawner)
         clients.delete(entity)
-        players.delete(entity)
       })
     } catch (e) {
       console.error(e)

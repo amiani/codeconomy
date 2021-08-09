@@ -8,9 +8,9 @@ import {
 } from "@javelin/ecs"
 
 export const Player = {
-  clientId: number,
   initialized: boolean,
-  uid: { ...string, length: 36 }
+  uid: { ...string, length: 36 },
+  spawners: arrayOf(number)
 }
 
 export const Transform = {
@@ -43,7 +43,10 @@ export const Script = {}
 
 export const Context = {}
 
-export const Isolate = {}
+export const Isolate = {
+  isDisposed: boolean,
+  referenceCount: number,
+}
 
 export const Team = {
   id: number

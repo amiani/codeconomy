@@ -1,16 +1,18 @@
-import { component, Entity, World } from "@javelin/ecs"
+import { component, Entity, toComponent, World } from "@javelin/ecs"
 import { Clock } from "@javelin/hrtime-loop"
-import { Spawner, Team, Transform } from "./components"
+import ivm from 'isolated-vm'
+import { Script, Spawner, Team, Transform } from "./components"
 
 export default (
 	world: World<Clock>,
 	x: number,
 	y: number,
 	team: number,
-	owner: number
-): void => {
+  owner: Entity,
+): Entity => {
   console.log(`Creating spawner at ${x}, ${y}`)
-  world.attach(world.create(),
+  const e = world.create()
+  world.attach(e,
     component(Transform, { x, y }),
     component(Spawner, { 
       timer: { current: 0, max: 10 },
@@ -18,4 +20,5 @@ export default (
     }),
     component(Team, { id: team }),
   )
+  return e
 }

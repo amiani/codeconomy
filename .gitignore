@@ -1,3 +1,4 @@
 node_modules
 .DS_Store
 packages
+export_secret.sh

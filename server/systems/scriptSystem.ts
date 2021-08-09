@@ -16,7 +16,7 @@ import {
 import scriptTopic from "../scriptTopic"
 import { usePlayers } from "./netSystem"
 
-const scriptsContextBodyActionTeam = createQuery(Script, Context, Body, Action, Team)
+const scriptShips = createQuery(Script, Context, Body, Action, Team)
 const shipsTransformTeamHealth = createQuery(Ship, Transform, Team, Health)
 
 const createState = (
@@ -42,12 +42,11 @@ export default function scriptSystem(world: World) {
 	const players = usePlayers()
 	for (const scriptEvent of scriptTopic) {
 		const e = players.get(scriptEvent.uid)
-		console.log(`Script arrived for player entity ${e}`)
 		try {
 			const isolate = world.get(e, Isolate) as ivm.Isolate
 			const script = isolate.compileScriptSync(scriptEvent.code)
 			world.attach(e, toComponent(script, Script))
-			console.log('got new script')
+			console.log(`Script arrived for player entity ${e}`)
 		} catch (e) {
 			console.log(e)
 		}
@@ -63,7 +62,7 @@ export default function scriptSystem(world: World) {
 			team: team.id,
 		})
 	})
-	scriptsContextBodyActionTeam(async (e, [script, contextComp, bodyComp, action, team]) => {
+	scriptShips(async (e, [script, contextComp, bodyComp, action, team]) => {
 		const body = bodyComp as typeof rapier.Body
 		const context = contextComp as ivm.Context
 		const allies: Array<ShipState> = []
