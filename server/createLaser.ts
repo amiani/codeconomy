@@ -11,7 +11,7 @@ export default function createLaser(
 	team: number
 ) {
 	const e = world.create()
-	const speed = 10
+	const speed = 100
 	const velocity = { x: Math.cos(rotation) * speed, y: Math.sin(rotation) * speed }
 	const bodyDesc = rapier.RigidBodyDesc.newKinematicVelocityBased()
 		.setTranslation(position.x, position.y)

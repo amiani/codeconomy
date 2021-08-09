@@ -1,6 +1,6 @@
 export default `
 	action = {
-		throttle: 3,
+		throttle: 10,
 		rotate: 0,
 		fire: true
 	}

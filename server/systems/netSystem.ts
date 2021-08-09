@@ -1,13 +1,13 @@
 import {
-	component,
-	createEffect,
-	createImmutableRef,
-	createQuery,
-	Entity,
-	toComponent,
-	useInterval,
-	useMonitor,
-	World
+  component,
+  createEffect,
+  createImmutableRef,
+  createQuery,
+  Entity,
+  toComponent,
+  useInterval,
+  useMonitor,
+  World
 } from "@javelin/ecs"
 import { Clock } from "@javelin/hrtime-loop"
 import { createMessageProducer, encode } from "@javelin/net"
@@ -98,7 +98,6 @@ export default function netSystem(world: World) {
       if (p.initialized) {
         packet = message
       } else {
-        console.log('sending initial message')
         packet = getInitialMessage(world)
         p.initialized = true
       }
