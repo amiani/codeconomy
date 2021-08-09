@@ -1,6 +1,5 @@
 import { component, Entity, toComponent, World } from "@javelin/ecs"
 import { Clock } from "@javelin/hrtime-loop"
-import ivm from 'isolated-vm'
 import { Script, Spawner, Team, Transform } from "./components"
 
 export default (

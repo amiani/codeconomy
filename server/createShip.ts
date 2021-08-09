@@ -3,6 +3,7 @@ import useSimulation from './simulation'
 import useColliderToEntity from './colliderToEntity'
 import ivm from 'isolated-vm'
 import { Action, Body, Context, Health, Script, Ship, SpriteData, Team, Transform, Weapon } from "./components"
+import createContext from "./createContext"
 
 const rapier = require("@a-type/rapier2d-node")
 
@@ -34,7 +35,7 @@ export default function createShip(
 	const colliderToEntity = useColliderToEntity()
 	colliderToEntity.set(collider.handle, e)
 	
-	const context = isolate.createContextSync()
+	const context = createContext(isolate)
 	world.attach(e,
 		component(Ship),
 		component(Transform, { x, y, rotation }),
