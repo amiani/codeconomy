@@ -15,7 +15,8 @@ export default function spawnSystem(world: World): void {
 			try {
 				const script = world.get(spawner.owner, Script) as ivm.Script
 				const isolate = world.get(spawner.owner, Isolate) as ivm.Isolate
-				createShip(world, transform.x, transform.y, team.id, script, isolate)
+				const rot = Math.random() * Math.PI * 2
+				createShip(world, transform.x, transform.y, rot, team.id, script, isolate)
 			} catch (e) {
 				console.error(e)
 			}

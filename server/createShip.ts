@@ -8,7 +8,9 @@ const rapier = require("@a-type/rapier2d-node")
 
 export default function createShip(
 	world: World,
-	x: number, y: number,
+	x: number,
+	y: number,
+	rotation: number,
 	team: number,
 	script: ivm.Script,
 	isolate: ivm.Isolate,
@@ -17,7 +19,7 @@ export default function createShip(
 	const e = world.create()
 	const bodyDesc = rapier.RigidBodyDesc.newDynamic()
 		.setTranslation(x, y)
-		.setRotation(Math.PI * team)
+		.setRotation(rotation)
 		.setLinearDamping(0.9)
 		.setAngularDamping(0.9)
 	const colliderDesc = rapier.ColliderDesc.cuboid(1, 1)
@@ -35,7 +37,7 @@ export default function createShip(
 	const context = isolate.createContextSync()
 	world.attach(e,
 		component(Ship),
-		component(Transform, { x, y }),
+		component(Transform, { x, y, rotation }),
 		toComponent(body, Body),
 		toComponent(script, Script),
 		toComponent(context, Context),
