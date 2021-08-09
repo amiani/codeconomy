@@ -62,7 +62,11 @@ export default function physicsSystem(world: World) {
 	const colliderToEntity = useColliderToEntity()
 	bodiesActionTeamWeapon((e, [bodyComp, action, team, weapon]) => {
 		const body = bodyComp as typeof rapier.Body
-		body.applyForce({ x: action.throttle, y: 0 }, true)
+		const rot = body.rotation()
+		body.applyForce({
+			x: Math.cos(rot) * action.throttle,
+			y: Math.sin(rot) * action.throttle
+		}, true)
 		body.applyTorque(action.rotate, true)
 		if (action.fire && weapon.currentCooldown <= 0) {
 			createLaser(world, body.translation(), body.rotation(), team.id)
