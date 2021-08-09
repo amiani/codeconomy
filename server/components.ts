@@ -50,7 +50,8 @@ export const Health = {
 export const Sprite = {
   x: number,
   y: number,
-  rotation: number
+  rotation: number,
+  visible: boolean
 }
 
 export const SpriteData = {
