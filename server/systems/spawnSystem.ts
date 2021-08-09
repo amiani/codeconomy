@@ -12,13 +12,11 @@ export default function spawnSystem(world: World): void {
 	spawnersTransformTeam((e, [spawner, transform, team]) => {
 		spawner.timer.current -= clock.dt / 1000
 		if (spawner.timer.current <= 0) {
-			try {
+			if (world.has(spawner.owner, Script)) {
 				const script = world.get(spawner.owner, Script) as ivm.Script
 				const isolate = world.get(spawner.owner, Isolate) as ivm.Isolate
 				const rot = Math.random() * Math.PI * 2
 				createShip(world, transform.x, transform.y, rot, team.id, script, isolate)
-			} catch (e) {
-				console.error(e)
 			}
 			spawner.timer.current = spawner.timer.max
 		}
