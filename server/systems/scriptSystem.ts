@@ -32,6 +32,7 @@ export default function scriptSystem(world: World) {
 	const players = usePlayers()
 	for (const scriptEvent of scriptTopic) {
 		const e = players.get(scriptEvent.uid)
+		console.log(`Script arrived for player entity ${e}`)
 		try {
 			const isolate = world.get(e, Isolate) as ivm.Isolate
 			const script = isolate.compileScriptSync(scriptEvent.code)

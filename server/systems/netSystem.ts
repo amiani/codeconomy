@@ -34,7 +34,7 @@ function getInitialMessage(world: World) {
 export const usePlayers = createEffect(world => {
   const players = new Map()
   return () => players
-})
+}, { shared: true })
 
 const useClients = createEffect((world: World<Clock>) => {
   const players = usePlayers()
@@ -53,6 +53,7 @@ const useClients = createEffect((world: World<Clock>) => {
         component(Player, { uid }),
         toComponent(isolate, Isolate),
       )
+      console.log(`New player ${entity}`)
       clients.set(entity, connection)
       players.set(uid, entity)
 

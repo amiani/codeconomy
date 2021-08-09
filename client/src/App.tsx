@@ -60,7 +60,7 @@ function App() {
         'authorization': `Bearer ${token}`,
         'content-type': 'application/json'
       },
-      body: code
+      body: JSON.stringify(code)
     })
   }
 

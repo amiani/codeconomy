@@ -1,11 +1,9 @@
 import { Server } from "@web-udp/server"
-import { createServer } from "http"
 import * as admin from 'firebase-admin'
 import scriptTopic from './scriptTopic'
 import Fastify from 'fastify'
 
 const authenticate = async (key: any, req: any) => {
-	console.log(key)
 	try {
 		const decodedToken = await admin.auth().verifyIdToken(key)
 		return true
@@ -27,6 +25,16 @@ fastify
 
 fastify.after(() => {
 	fastify.post('/upload', async (req, reply) => {
+		const key = req.headers.authorization
+		if (key) {
+			const token = key.substr(7)
+			const decodedToken = await admin.auth().verifyIdToken(token)
+			scriptTopic.push({
+				uid: decodedToken.uid,
+				code: req.body as string
+			})
+			reply.code(200).send()
+		}
 	})
 })
 
