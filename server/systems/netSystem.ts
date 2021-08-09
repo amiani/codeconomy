@@ -26,8 +26,7 @@ const spriteDatas = createQuery(SpriteData)
 
 function getInitialMessage(world: World) {
   const producer = createMessageProducer()
-  transforms(producer.attach)
-  spriteDatas(producer.attach)
+  transformsSpriteData(producer.attach)
   return producer.take()
 }
 
