@@ -35,16 +35,15 @@ export const useNet = createEffect(
 
     return () => {
       let update = useInterval(nextUpdate)
-      while (messages.length > 20) {
+      while (messages.length > 16) {
         consumeMessage()
       }
       if (update) {
         if (messages.length) {
           consumeMessage()
         }
-        nextUpdate = messages.length > 10 ? 100 : 105
+        nextUpdate = messages.length > 8 ? 100 : 105
       }
-      console.log(messages.length)
       handler.system()
       return Object.assign(state, handler.useInfo())
     }
