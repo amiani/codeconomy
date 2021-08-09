@@ -7,27 +7,27 @@ const transforms = createQuery(Transform)
 const interpolates = createQuery(Transform, Interpolate)
 
 const interpBufferPool = createStackPool<number[]>(
-	() => [],
-	i => {
-	  i.length = 0
-	  return i
-	},
-	10000,
+  () => [],
+  i => {
+    i.length = 0
+    return i
+  },
+  10000,
 )
-  
+
 const interpBufferInsert = (
-	x: number,
-	y: number,
-	rotation: number,
-	ip: ComponentOf<typeof Interpolate>,
+  x: number,
+  y: number,
+  rotation: number,
+  ip: ComponentOf<typeof Interpolate>,
 ) => {
-	const item = interpBufferPool.retain()
-	item[0] = performance.now()
-	item[1] = x
-	item[2] = y
-	item[3] = rotation
-	ip.buffer.push(item)
-	return item
+  const item = interpBufferPool.retain()
+  item[0] = performance.now()
+  item[1] = x
+  item[2] = y
+  item[3] = rotation
+  ip.buffer.push(item)
+  return item
 }
 
 export default function interpolateSystem(world: World) {
@@ -44,11 +44,11 @@ export default function interpolateSystem(world: World) {
 
     if (updated.has(e)) {
       interpBufferInsert(
-		  transform.x,
-		  transform.y,
-		  transform.rotation,
-		  interpolate
-		)
+        transform.x,
+        transform.y,
+        transform.rotation,
+        interpolate
+      )
       interpolate.adaptiveSendRate = (now - bufferTime) / 1000
     }
     const renderTime = bufferTime / interpolate.adaptiveSendRate
@@ -68,7 +68,8 @@ export default function interpolateSystem(world: World) {
       const [[t0, x0, y0, r0], [t1, x1, y1, r1]] = buffer
       interpolate.x = x0 + ((x1 - x0) * (renderTime - t0)) / (t1 - t0)
       interpolate.y = y0 + ((y1 - y0) * (renderTime - t0)) / (t1 - t0)
-	  interpolate.rotation = r0 + ((r1 - r0) * (renderTime - t0)) / (t1 - t0)
+      interpolate.rotation = r0 + ((r1 - r0) * (renderTime - t0)) / (t1 - t0)
+      interpolate.lastUpdateTime = performance.now()
     }
   })
 }
