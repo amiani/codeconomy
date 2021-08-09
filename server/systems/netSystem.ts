@@ -14,14 +14,14 @@ import { createMessageProducer, encode } from "@javelin/net"
 import * as admin from 'firebase-admin'
 import ivm from 'isolated-vm'
 
-import { Isolate, Player, SpriteData, Transform } from "../components"
+import { Isolate, Player, SpriteData, Team, Transform } from "../components"
 import createSpawner from "../createSpawner"
 import { MESSAGE_MAX_BYTE_LENGTH, SEND_RATE } from "../env"
 import { udp } from "../net"
 
 const transforms = createQuery(Transform)
 const players = createQuery(Player)
-const transformsSpriteData = createQuery(Transform, SpriteData)
+const transformsSpriteData = createQuery(Transform, SpriteData, Team)
 const spriteDatas = createQuery(SpriteData)
 
 function getInitialMessage(world: World) {
