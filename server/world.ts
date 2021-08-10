@@ -15,7 +15,7 @@ import damageSystem from "./systems/damageSystem"
 import spawnerSystem from "./systems/spawnSystem"
 import createSpawner from "./createSpawner"
 import { Isolate, Script } from "./components"
-import testScript from "./testScript"
+import testScript from "../cards/testScript"
 
 export const world = createWorld<Clock>({
   topics: [
