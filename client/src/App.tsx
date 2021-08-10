@@ -48,11 +48,12 @@ function App() {
   }, [])
 
 	const [code, setCode] = useState(
-  `action = {
-    throttle: 10,
-    rotate: 0,
-    fire: false
-  }`
+  `const run = (state) => {
+      return {
+        throttle: 100,
+        rotate: 1,
+        fire: true
+      }`
   )
 
   const upload = () => {
