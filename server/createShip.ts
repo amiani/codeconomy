@@ -22,7 +22,7 @@ export default function createShip(
 		.setTranslation(x, y)
 		.setRotation(rotation)
 		.setLinearDamping(0.9)
-		.setAngularDamping(0.9)
+		.setAngularDamping(0.7)
 	const colliderDesc = rapier.ColliderDesc.cuboid(1, 1)
 			.setCollisionGroups(0x00010000 * (team+1) + 0x0004 * (2-team))
 		.setActiveEvents(
@@ -36,6 +36,9 @@ export default function createShip(
 	colliderToEntity.set(collider.handle, e)
 	
 	const context = createContext(isolate)
+		const res = (<ivm.Script>script).run(context, { copy: true })
+			.then(value => console.log(`SCRIPT RUN`))
+			.catch(err => console.error(err))
 	world.attach(e,
 		component(Ship),
 		component(Transform, { x, y, rotation }),

@@ -18,6 +18,7 @@ import { usePlayers } from "./netSystem"
 
 const scriptShips = createQuery(Script, Context, Body, Action, Team)
 const shipsTransformTeamHealth = createQuery(Ship, Transform, Team, Health)
+const isolates = createQuery(Isolate)
 
 const createState = (
 	body: typeof rapier.RigidBody,
@@ -31,8 +32,7 @@ const createState = (
 })
 
 interface ShipState {
-	x: number,
-	y: number,
+	position: { x: number, y: number },
 	rotation: number,
 	health: number,
 	team: number,
@@ -55,8 +55,7 @@ export default function scriptSystem(world: World) {
 	const ships: Array<Map<Entity, ShipState>> = [new Map(), new Map()]
 	shipsTransformTeamHealth((e, [ship, transform, team, health]) => {
 		ships[team.id].set(e, {
-			x: transform.x,
-			y: transform.y,
+			position: { x: transform.x, y: transform.y },
 			rotation: transform.rotation,
 			health: health.current,
 			team: team.id,
@@ -75,7 +74,8 @@ export default function scriptSystem(world: World) {
 		const state = createState(body, allies, enemies)
 		await context.global.set('state', state, { copy: true })
 		try {
-			const nextAction = await (<ivm.Script>script).run(context, { copy: true })
+			//const nextAction = await (<ivm.Script>script).run(context, { copy: true })
+			const nextAction = await context.eval(`run(state)`, { copy: true })
 			if (nextAction) {
 				action.throttle = nextAction.throttle
 				action.rotate = nextAction.rotate
@@ -85,4 +85,10 @@ export default function scriptSystem(world: World) {
 			console.log(`${e} threw ${error}`)
 		}
 	})
+
+	/*
+	isolates((e, [isolateComp]) => {
+		//do something with cputime
+	})
+	*/
 }
