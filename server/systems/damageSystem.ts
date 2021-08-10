@@ -8,7 +8,7 @@ const rapier = require('@a-type/rapier2d-node')
 const healths = createQuery(Health)
 const bodies = createQuery(Body)
 
-const tryDamage = (world: World, e: Entity, damage: number) => {
+const applyDamage = (world: World, e: Entity, damage: number) => {
 	const health = world.tryGet(e, Health)
 	if (health) {
 		console.log(`${damage} damage done to entity ${e}`)
@@ -16,20 +16,22 @@ const tryDamage = (world: World, e: Entity, damage: number) => {
 	}
 }
 
+const checkBulletAndDamage = (world: World, entity1: Entity, entity2: Entity) => {
+	try {
+		const bullet = world.tryGet(entity1, Bullet)
+		if (bullet) {
+			applyDamage(world, entity2, bullet.damage)
+			world.destroy(entity1)
+		}
+	} catch (e) {
+		console.log(e)
+	}
+}
+
 export default function damageSystem(world: World) {
 	for (const collision of collisionTopic) {
-		let bullet = world.tryGet(collision.entity1, Bullet)
-		if (bullet) {
-			tryDamage(world, collision.entity2, bullet.damage)
-			console.log(`Destroy ${collision.entity1}: bullet collided`)
-			world.destroy(collision.entity1)
-		}
-		bullet = world.tryGet(collision.entity2, Bullet)
-		if (bullet) {
-			tryDamage(world, collision.entity1, bullet.damage)
-			console.log(`Destroy ${collision.entity2}: bullet collided`)
-			world.destroy(collision.entity2)
-		}
+		checkBulletAndDamage(world, collision.entity1, collision.entity2)
+		checkBulletAndDamage(world, collision.entity2, collision.entity1)
 	}
 
 	healths((e, [health]) => {
