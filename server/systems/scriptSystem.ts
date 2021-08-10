@@ -38,6 +38,12 @@ interface ShipState {
 	team: number,
 }
 
+interface Action {
+	throttle: number,
+	rotate: number,
+	fire: boolean,
+}
+
 export default function scriptSystem(world: World) {
 	const players = usePlayers()
 	for (const scriptEvent of scriptTopic) {
@@ -74,12 +80,11 @@ export default function scriptSystem(world: World) {
 		const state = createState(body, allies, enemies)
 		await context.global.set('state', state, { copy: true })
 		try {
-			//const nextAction = await (<ivm.Script>script).run(context, { copy: true })
-			const nextAction = await context.eval(`run(state)`, { copy: true })
+			const nextAction: Action = await context.eval(`run(state)`, { copy: true })
 			if (nextAction) {
-				action.throttle = nextAction.throttle
-				action.rotate = nextAction.rotate
-				action.fire = nextAction.fire
+				action.throttle = nextAction.throttle ? nextAction.throttle : 0
+				action.rotate = nextAction.rotate ? nextAction.rotate : 0
+				action.fire = nextAction.fire ? nextAction.fire : false
 			}
 		} catch (error) {
 			console.log(`${e} threw ${error}`)
