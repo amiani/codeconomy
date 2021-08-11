@@ -43,6 +43,7 @@ const run = (state) => {
 	const { position, rotation, enemies } = state
 	const action = createAction()
 	if (target) {
+		target = getClosest(target.position, enemies)
         action.rotate = 5 * turnTo(position, rotation, target.position)
 		action.fire = true
 	} else {
