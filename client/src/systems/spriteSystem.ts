@@ -53,7 +53,6 @@ export default function spriteSystem(world: World) {
       }
       world.attachImmediate(e, [toComponent(sprite, Sprite)])
     },
-    (e, [data]) => {}
   )
 
   useMonitor(

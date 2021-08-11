@@ -1,6 +1,6 @@
 import { component, ComponentOf, createQuery, useMonitor, World } from "@javelin/ecs"
 import { Interpolate, Transform } from "../../../server/components"
-import laserTopic from "../laserTopic"
+import laserTopic from "../topics/laserTopic"
 import { useNet } from "./clientSystem"
 
 const transforms = createQuery(Transform)

@@ -1,7 +1,7 @@
 import { World } from '@javelin/ecs';
 //@ts-ignore
 import * as Pizzicato from 'pizzicato'
-import laserTopic from '../laserTopic';
+import laserTopic from '../topics/laserTopic';
 import highZap from '../../../assets/sounds/highzap.wav'
 import useViewport from '../useViewport';
 

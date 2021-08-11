@@ -10,7 +10,7 @@ import scriptSystem from "./systems/scriptSystem"
 import physicsSystem from './systems/physicsSystem'
 import netSystem from './systems/netSystem'
 import collisionTopic from "./collisionTopic"
-import scriptTopic from "./scriptTopic"
+import scriptTopic from "./topics/scriptTopic"
 import damageSystem from "./systems/damageSystem"
 import spawnerSystem from "./systems/spawnSystem"
 import createSpawner from "./createSpawner"

@@ -1,7 +1,7 @@
 import {
   createWorld,
 } from "@javelin/ecs"
-import laserTopic from "./laserTopic"
+import laserTopic from "./topics/laserTopic"
 
 import clientSystem from './systems/clientSystem'
 import interpolateSystem from "./systems/interpolateSystem"
