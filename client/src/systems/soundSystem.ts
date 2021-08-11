@@ -3,6 +3,7 @@ import { World } from '@javelin/ecs';
 import * as Pizzicato from 'pizzicato'
 import laserTopic from '../laserTopic';
 import highZap from '../../../assets/sounds/highzap.wav'
+import useViewport from '../useViewport';
 
 const laserZap = new Pizzicato.Sound({
 	source: 'file',
@@ -14,7 +15,11 @@ const laserZap = new Pizzicato.Sound({
 })
 
 export default function soundSystem(world: World) {
+	const viewport = useViewport()
+	const visibleBounds = viewport.getVisibleBounds()
 	for (const event of laserTopic) {
-		laserZap.play()
+		if (visibleBounds.contains(event.position.x, -event.position.y)) {
+			laserZap.play()
+		}
 	}
 }

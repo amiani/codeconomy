@@ -21,6 +21,7 @@ export default createEffect((world: World) => {
 
 	viewport.fit()
 	viewport.moveCenter(0, 0)
+	viewport.scaled = 32
 
 	return () => {
 		return viewport
