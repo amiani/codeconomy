@@ -7,9 +7,10 @@ import createShip from '../createShip'
 
 const spawnersTransformTeam = createQuery(Spawner, Transform, Team)
 
-export default function spawnSystem(world: World): void {
+export default function spawnSystem(world: World<Clock>): void {
+	const { dt } = world.latestTickData
 	spawnersTransformTeam((e, [spawner, transform, team]) => {
-		//spawner.timer.current -= clock.dt / 1000
+		spawner.timer.current -= dt / 1000
 		if (spawner.timer.current <= 0) {
 			if (world.has(spawner.owner, Script)) {
 				const script = world.get(spawner.owner, Script) as ivm.Script

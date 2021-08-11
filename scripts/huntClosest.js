@@ -25,10 +25,6 @@ const vecToString = (vec) => `[${vec.x}, ${vec.y}]`
 const cross = (a, b) => a.x * b.y - a.y * b.x
 const dot = (a, b) => a.x * b.x + a.y * b.y
 
-const getTargetAngle = (position, targetPosition) => {
-	return Math.atan2(targetPosition.y - position.y, targetPosition.x - position.x)
-}
-
 const angleBetween = (a, b) => Math.atan2(cross(a, b), dot(a, b))
 
 const turnTo = (position, rotation, targetPosition) => {
@@ -44,18 +40,17 @@ const run = (state) => {
 	const action = createAction()
 	if (target) {
 		target = getClosest(target.position, enemies)
-        action.rotate = 5 * turnTo(position, rotation, target.position)
-		action.fire = true
 	} else {
 		target = getClosest(position, enemies)
 	}
+	action.rotate = 9 * turnTo(position, rotation, target.position)
+	action.fire = true
 
 	return action
 }
 
 module.exports = {
 	createVec,
-	getTargetAngle,
 	angleBetween,
 	turnTo
 }
