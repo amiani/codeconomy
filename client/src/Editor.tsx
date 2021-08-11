@@ -1,5 +1,7 @@
 import React, { useState}  from 'react'
 import SimpleEditor from 'react-simple-code-editor'
+//@ts-ignore
+import * as Pizzicato from 'pizzicato'
 import { highlight, languages } from 'prismjs'
 import 'prismjs/themes/prism.css'
 import 'prismjs/components/prism-clike';
@@ -32,8 +34,9 @@ export default function Editor({ code, setCode, upload }: EditorProps) {
 					}}
 				/>
 			}
-			<button onClick={e => { setHidden(!hidden) }}>{hidden ? 'Show' : 'Hide'}</button>
+			<button onClick={e => setHidden(!hidden)}>{hidden ? 'Show' : 'Hide'}</button>
 			{!hidden && <button onClick={upload}>Upload</button>}
+			<button onClick={e => Pizzicato.context.resume()}>Unmute</button>
 		</div>
 	)
 }
