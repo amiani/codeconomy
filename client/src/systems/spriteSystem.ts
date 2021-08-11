@@ -8,7 +8,8 @@ import {
 import * as PIXI from 'pixi.js'
 
 import { Interpolate, Sprite, SpriteData, Team, Transform } from '../../../server/components'
-import { app, viewport } from '../pixiApp'
+import app from '../pixiApp'
+import useViewport from '../useViewport'
 
 const interpolatedSprites = createQuery(Transform, Interpolate, Sprite)
 const transformSprites = createQuery(Transform, Sprite)
@@ -30,6 +31,7 @@ const copyInterpolateToSprite = (
 }
 
 export default function spriteSystem(world: World) {
+  const viewport = useViewport()
   useMonitor(
     transformSpriteDatas,
     (e, [transform, data, team]) => {
