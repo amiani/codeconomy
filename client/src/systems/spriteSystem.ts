@@ -25,8 +25,8 @@ const copyInterpolateToSprite = (
   const { start, end } = interpolate
   const t = (performance.now() - 100 - start.time) / (end.time - start.time)
   sprite.x = lerp(start.x, end.x, t) * 32
-  sprite.y = lerp(start.y, end.y, t) * 32
-  sprite.rotation = lerp(start.rotation, end.rotation, t)
+  sprite.y = -lerp(start.y, end.y, t) * 32
+  sprite.rotation = -lerp(start.rotation, end.rotation, t)
 }
 
 export default function spriteSystem(world: World) {
@@ -37,9 +37,11 @@ export default function spriteSystem(world: World) {
         new PIXI.Sprite(app.loader.resources[data.name].texture))
       sprite.anchor.x = 0.5
       sprite.anchor.y = 0.5
+      sprite.pivot.x = 0.5
+      sprite.pivot.y = 0.5
       sprite.x = transform.x * 32
-      sprite.y = transform.y * 32
-      sprite.rotation = transform.rotation
+      sprite.y = -transform.y * 32
+      sprite.rotation = -transform.rotation
       if (team.id == 0) {
         sprite.tint = 0xff9999
       } else {

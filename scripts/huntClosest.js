@@ -26,28 +26,24 @@ const cross = (a, b) => a.x * b.y - a.y * b.x
 const dot = (a, b) => a.x * b.x + a.y * b.y
 
 const getTargetAngle = (position, targetPosition) => {
-	return Math.atan2(-(targetPosition.y - position.y), targetPosition.x - position.x)
+	return Math.atan2(targetPosition.y - position.y, targetPosition.x - position.x)
 }
 
 const angleBetween = (a, b) => Math.atan2(cross(a, b), dot(a, b))
 
 const turnTo = (position, rotation, targetPosition) => {
 	const unit = { x: Math.cos(rotation), y: Math.sin(rotation) }
-	const targetLocal = { x: targetPosition.x - position.x, y: position.y - targetPosition.y }
+	const targetLocal = { x: targetPosition.x - position.x, y: targetPosition.y - position.y }
 	return angleBetween(unit, targetLocal)
 }
 
 
-let target = { position: { x: 1, y: 1 } }
+let target
 const run = (state) => {
 	const { position, rotation, enemies } = state
 	const action = createAction()
 	if (target) {
         action.rotate = 5 * turnTo(position, rotation, target.position)
-		//@ts-ignore
-		log(`pos: ${vecToString(position)}, rot: ${rotation}, target: ${vecToString(target.position)}`)
-		//@ts-ignore
-		log(`rotate ${action.rotate}`)
 		action.fire = true
 	} else {
 		target = getClosest(position, enemies)
