@@ -4,6 +4,15 @@ import * as PIXI from 'pixi.js';
 
 import app from './pixiApp'
 
+const updateBackground = (background: PIXI.TilingSprite, viewport: Viewport) => {
+	background.x = viewport.left
+	background.y = viewport.top
+	background.tilePosition.x = -viewport.left * viewport.scale.x
+	background.tilePosition.y = -viewport.top * viewport.scale.y
+	background.width = viewport.screenWidth * (32 / viewport.scale.x)
+	background.height = viewport.screenHeight * (32 / viewport.scale.y)
+}
+
 export default createEffect((world: World) => {
 	const viewport = app.stage.addChild(new Viewport({
 		screenWidth: app.view.width,
@@ -26,12 +35,7 @@ export default createEffect((world: World) => {
 
 	viewport.on('moved', () => {
 		if (hasBackground) {
-			background.x = viewport.left
-			background.y = viewport.top
-			background.tilePosition.x = -viewport.left * viewport.scale.x
-			background.tilePosition.y = -viewport.top * viewport.scale.y
-			background.width = viewport.screenWidth * (32 / viewport.scale.x)
-			background.height = viewport.screenHeight * (32 / viewport.scale.y)
+			updateBackground(background, viewport)
 		}
 	})
 
@@ -40,12 +44,11 @@ export default createEffect((world: World) => {
 
 	return () => {
 		if (!hasBackground && app.loader.resources.goldstartile.texture) {
-			background = new PIXI.TilingSprite(
-				app.loader.resources.goldstartile.texture,
-			)
+			background = new PIXI.TilingSprite(app.loader.resources.goldstartile.texture)
 			background.scale.x = 1/viewport.scale.x
 			background.scale.y = 1/viewport.scale.y
 			viewport.addChild(background)
+			updateBackground(background, viewport)
 			hasBackground = true
 		}
 		return viewport
