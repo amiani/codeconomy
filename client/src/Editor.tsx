@@ -20,19 +20,34 @@ export default function Editor({ code, setCode, upload }: EditorProps) {
 	return (
 		<div
 			className="editor"
-			style={{ position: 'absolute', top: 0, left: 0 }}>
+			style={{ 
+				position: 'absolute',
+				top: 0,
+				left: 0,
+			}}
+		>
 			{!hidden &&
-				<SimpleEditor
-					value={code}
-					onValueChange={setCode}
-					highlight={code => highlight(code, languages.js, 'js')}
-					padding={10}
+				<div
 					style={{
-						fontFamily: '"Fira code", "Fira Mono", Consolas, Menlo, monospace',
-						fontSize: 12,
-						background: 'white',
+						overflow: 'auto',
+						flex: 1,
+						maxHeight: '90vh',
+						maxWidth: '50vw',
 					}}
-				/>
+				>
+					<SimpleEditor
+						value={code}
+						onValueChange={setCode}
+						highlight={code => highlight(code, languages.js, 'js')}
+						padding={10}
+						style={{
+							fontFamily: '"Fira code", "Fira Mono", Consolas, Menlo, monospace',
+							fontSize: 12,
+							background: 'white',
+							whiteSpace: 'pre',
+						}}
+					/>
+				</div>
 			}
 			<button onClick={e => setHidden(!hidden)}>{hidden ? 'Show' : 'Hide'}</button>
 			{!hidden && <button onClick={upload}>Upload</button>}
