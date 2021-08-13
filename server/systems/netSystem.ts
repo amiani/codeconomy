@@ -49,7 +49,7 @@ const useClients = createEffect((world: World<Clock>) => {
       const isolate = new ivm.Isolate({ memoryLimit: 128 })
       const entity = world.create(toComponent(isolate, Isolate))
 
-      const spawner = createSpawner(world, -10, 0, 0, entity)
+      const spawner = createSpawner(world, -100, 0, 0, entity, 10)
       world.attach(entity, component(Player, {
         uid,
         spawners: [spawner]

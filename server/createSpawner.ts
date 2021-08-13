@@ -8,13 +8,14 @@ export default (
 	y: number,
 	team: number,
   owner: Entity,
+  spawnTime: number,
 ): Entity => {
   console.log(`Creating spawner at ${x}, ${y}`)
   const e = world.create()
   world.attach(e,
     component(Transform, { x, y }),
     component(Spawner, { 
-      timer: { current: 0, max: 10 },
+      timer: { current: 0, max: spawnTime },
       owner
     }),
     component(Team, { id: team }),

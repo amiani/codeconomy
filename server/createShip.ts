@@ -24,7 +24,7 @@ export default function createShip(
 		.setLinearDamping(0.9)
 		.setAngularDamping(0.7)
 	const colliderDesc = rapier.ColliderDesc.cuboid(1, 1)
-			.setCollisionGroups(0x00010000 + 0x0002)
+			.setCollisionGroups(0x00010000 + 0x0003)
 		.setActiveEvents(
 		rapier.ActiveEvents.CONTACT_EVENTS
 		| rapier.ActiveEvents.INTERSECTION_EVENTS)
@@ -49,6 +49,6 @@ export default function createShip(
 		component(Team, { id: team }),
 		component(SpriteData, { name: "ship" }),
 		component(Action),
-		component(Health, { current: 100, max: 100 })
+		component(Health, { current: 10, max: 10 })
 	)
 }
