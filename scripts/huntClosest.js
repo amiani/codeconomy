@@ -1,6 +1,6 @@
 const createVec = (x, y) => ({ x, y })
 const createAction = () => ({
-	throttle: 50,
+	throttle: 100,
 	rotate: 0,
 	fire: false
 })
@@ -31,8 +31,8 @@ const turnTo = (position, rotation, angularVelocity, targetPosition) => {
 	const unit = { x: Math.cos(rotation), y: Math.sin(rotation) }
 	const targetLocal = { x: targetPosition.x - position.x, y: targetPosition.y - position.y }
 	const error = angleBetween(unit, targetLocal)
-	const kp = 28
-	const kv = -8
+	const kp = 50
+	const kv = -10
 	return kp * error + kv * angularVelocity
 }
 
