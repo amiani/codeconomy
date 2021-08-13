@@ -27,23 +27,26 @@ const dot = (a, b) => a.x * b.x + a.y * b.y
 
 const angleBetween = (a, b) => Math.atan2(cross(a, b), dot(a, b))
 
-const turnTo = (position, rotation, targetPosition) => {
+const turnTo = (position, rotation, angularVelocity, targetPosition) => {
 	const unit = { x: Math.cos(rotation), y: Math.sin(rotation) }
 	const targetLocal = { x: targetPosition.x - position.x, y: targetPosition.y - position.y }
-	return angleBetween(unit, targetLocal)
+	const error = angleBetween(unit, targetLocal)
+	const kp = 28
+	const kv = -8
+	return kp * error + kv * angularVelocity
 }
 
 
 let target
 const run = (state) => {
-	const { position, rotation, enemies } = state
+	const { position, rotation, angularVelocity, enemies } = state
 	const action = createAction()
 	if (target) {
 		target = getClosest(target.position, enemies)
 	} else {
 		target = getClosest(position, enemies)
 	}
-	action.rotate = 9 * turnTo(position, rotation, target.position)
+	action.rotate = turnTo(position, rotation, angularVelocity, target.position)
 	action.fire = true
 
 	return action

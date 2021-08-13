@@ -17,7 +17,7 @@ import scriptTopic from "../topics/scriptTopic"
 import { usePlayers } from "./netSystem"
 
 const scriptShips = createQuery(Script, Context, Body, Action, Team)
-const shipsTransformTeamHealth = createQuery(Ship, Transform, Team, Health)
+const ships = createQuery(Ship, Transform, Team, Health)
 const isolates = createQuery(Isolate)
 
 const createState = (
@@ -26,7 +26,9 @@ const createState = (
 	enemies: Array<ShipState>,
 ) => ({
 	position: body.translation(),
+	velocity: body.linvel(),
 	rotation: body.rotation(),
+	angularVelocity: body.angvel(),
 	allies,
 	enemies,
 })
@@ -58,9 +60,9 @@ export default function scriptSystem(world: World) {
 		}
 	}
 
-	const ships: Array<Map<Entity, ShipState>> = [new Map(), new Map()]
-	shipsTransformTeamHealth((e, [ship, transform, team, health]) => {
-		ships[team.id].set(e, {
+	const shipStates: Array<Map<Entity, ShipState>> = [new Map(), new Map()];
+	ships((e, [ship, transform, team, health]) => {
+		shipStates[team.id].set(e, {
 			position: { x: transform.x, y: transform.y },
 			rotation: transform.rotation,
 			health: health.current,
@@ -71,12 +73,12 @@ export default function scriptSystem(world: World) {
 		const body = bodyComp as typeof rapier.Body
 		const context = contextComp as ivm.Context
 		const allies: Array<ShipState> = []
-		for (const [shipEntity, state] of ships[team.id].entries()) {
+		for (const [shipEntity, state] of shipStates[team.id].entries()) {
 			if (shipEntity !== e) {
 				allies.push(state)
 			}
 		}
-		const enemies = [...ships[1 - team.id].values()]
+		const enemies = [...shipStates[1 - team.id].values()]
 		const state = createState(body, allies, enemies)
 		await context.global.set('state', state, { copy: true })
 		try {
