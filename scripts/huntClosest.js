@@ -46,7 +46,9 @@ const run = (state) => {
 	} else {
 		target = getClosest(position, enemies)
 	}
-	action.rotate = turnTo(position, rotation, angularVelocity, target.position)
+	if (target) {
+		action.rotate = turnTo(position, rotation, angularVelocity, target.position)
+	}
 	action.fire = true
 
 	return action
