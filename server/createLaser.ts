@@ -26,7 +26,6 @@ export default function createLaser(
 
 	const sim = useSimulation()
 	const body = sim.createRigidBody(bodyDesc)
-	//console.log(`New bullet created: ${e}: ${body.handle}`)
 	const collider = sim.createCollider(colliderDesc, body.handle)
 	const colliderToEntity = useColliderToEntity()
 	colliderToEntity.set(collider.handle, e)
