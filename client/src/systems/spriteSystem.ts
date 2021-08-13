@@ -35,23 +35,25 @@ export default function spriteSystem(world: World) {
   useMonitor(
     transformSpriteDatas,
     (e, [transform, data, team]) => {
-      const sprite = viewport.addChild(
-        new PIXI.Sprite(app.loader.resources[data.name].texture))
-      sprite.scale.x = 1/32
-      sprite.scale.y = 1/32
-      sprite.anchor.x = 0.5
-      sprite.anchor.y = 0.5
-      sprite.pivot.x = 0.5
-      sprite.pivot.y = 0.5
-      sprite.x = transform.x * 32
-      sprite.y = -transform.y * 32
-      sprite.rotation = -transform.rotation
-      if (team.id == 0) {
-        sprite.tint = 0xff9999
-      } else {
-        sprite.tint = 0x99ff99
+      const resource = app.loader.resources[data.name]
+      if (resource) {
+        const sprite = viewport.addChild(new PIXI.Sprite(resource.texture))
+        sprite.scale.x = 1/32
+        sprite.scale.y = 1/32
+        sprite.anchor.x = 0.5
+        sprite.anchor.y = 0.5
+        sprite.pivot.x = 0.5
+        sprite.pivot.y = 0.5
+        sprite.x = transform.x * 32
+        sprite.y = -transform.y * 32
+        sprite.rotation = -transform.rotation
+        if (team.id == 0) {
+          sprite.tint = 0xff9999
+        } else {
+          sprite.tint = 0x99ff99
+        }
+        world.attachImmediate(e, [toComponent(sprite, Sprite)])
       }
-      world.attachImmediate(e, [toComponent(sprite, Sprite)])
     },
   )
 

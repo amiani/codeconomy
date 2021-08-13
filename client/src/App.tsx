@@ -19,22 +19,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 function App() {
-  useEffect(() => {
-    let running = true
-    const step = (t: number) => {
-      if (running) {
-        world.step()
-        requestAnimationFrame(step)
-      }
-    }
-
-    requestAnimationFrame(step)
-
-    return () => {
-      running = false
-    }
-  }, [])
-
   const [token, setToken] = useState('')
   useEffect(() => {
     firebase.auth().signInAnonymously()
@@ -49,11 +33,12 @@ function App() {
 
 	const [code, setCode] = useState(
   `const run = (state) => {
-      return {
-        throttle: 100,
-        rotate: 1,
-        fire: true
-      }`
+    return {
+      throttle: 100,
+      rotate: 1,
+      fire: true
+    }
+  }`
   )
 
   const upload = () => {
