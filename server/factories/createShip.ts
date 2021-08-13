@@ -1,9 +1,8 @@
 import { component, Entity, toComponent, World } from "@javelin/ecs"
-import useSimulation from './simulation'
-import useColliderToEntity from './colliderToEntity'
+import { useColliderToEntity, useSimulation } from '../effects'
 import ivm from 'isolated-vm'
-import { Action, Body, Context, Health, Script, Ship, SpriteData, Team, Transform, Weapon } from "./components"
-import createContext from "./createContext"
+import { Action, Body, Context, Health, Script, Ship, SpriteData, Team, Transform, Weapon } from "../components"
+import createContext from "../createContext"
 
 const rapier = require("@a-type/rapier2d-node")
 

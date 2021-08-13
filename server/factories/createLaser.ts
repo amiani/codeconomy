@@ -1,7 +1,6 @@
 import { component, toComponent, World } from "@javelin/ecs"
-import useSimulation from './simulation'
-import useColliderToEntity from './colliderToEntity'
-import { Body, Team, Bullet, SpriteData, Transform } from "./components"
+import { useColliderToEntity, useSimulation } from '../effects'
+import { Body, Team, Bullet, SpriteData, Transform } from "../components"
 const rapier = require('@a-type/rapier2d-node')
 
 export default function createLaser(

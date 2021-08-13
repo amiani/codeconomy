@@ -2,7 +2,7 @@ import { createEffect, World } from '@javelin/ecs'
 import { Viewport } from 'pixi-viewport'
 import * as PIXI from 'pixi.js';
 
-import app from './pixiApp'
+import app from '../pixiApp'
 
 const updateBackground = (background: PIXI.TilingSprite, viewport: Viewport) => {
 	background.x = viewport.left

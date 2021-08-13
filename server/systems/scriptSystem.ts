@@ -13,7 +13,7 @@ import {
 	Transform,
 	Isolate
 } from '../components'
-import scriptTopic from "../topics/scriptTopic"
+import { scriptTopic } from "../topics"
 import { usePlayers } from "./netSystem"
 
 const scriptShips = createQuery(Script, Context, Body, Action, Team)

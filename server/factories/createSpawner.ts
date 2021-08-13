@@ -1,6 +1,6 @@
 import { component, Entity, toComponent, World } from "@javelin/ecs"
 import { Clock } from "@javelin/hrtime-loop"
-import { Script, Spawner, SpriteData, Team, Transform } from "./components"
+import { Script, Spawner, SpriteData, Team, Transform } from "../components"
 
 export default (
 	world: World<Clock>,

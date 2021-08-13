@@ -1,8 +1,7 @@
 import { createQuery, Entity, useMonitor, World } from "@javelin/ecs";
-import collisionTopic from "../collisionTopic"
+import { collisionTopic } from "../topics"
 import { Body, Bullet, Health } from "../components"
-import useSimulation from '../simulation'
-import useColliderToEntity from '../colliderToEntity'
+import { useColliderToEntity, useSimulation } from '../effects'
 const rapier = require('@a-type/rapier2d-node')
 
 const healths = createQuery(Health)

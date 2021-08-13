@@ -15,7 +15,7 @@ import * as admin from 'firebase-admin'
 import ivm from 'isolated-vm'
 
 import { Isolate, Player, SpriteData, Team, Transform } from "../components"
-import createSpawner from "../createSpawner"
+import { createSpawner } from "../factories"
 import { MESSAGE_MAX_BYTE_LENGTH, SEND_RATE } from "../env"
 import { udp } from "../net"
 

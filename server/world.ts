@@ -6,14 +6,9 @@ import {
 import { Clock } from "@javelin/hrtime-loop"
 import ivm from 'isolated-vm'
 
-import scriptSystem from "./systems/scriptSystem"
-import physicsSystem from './systems/physicsSystem'
-import netSystem from './systems/netSystem'
-import collisionTopic from "./collisionTopic"
-import scriptTopic from "./topics/scriptTopic"
-import damageSystem from "./systems/damageSystem"
-import spawnerSystem from "./systems/spawnSystem"
-import createSpawner from "./createSpawner"
+import { damageSystem, netSystem, physicsSystem, scriptSystem, spawnSystem } from "./systems"
+import { collisionTopic, scriptTopic } from "./topics"
+import { createSpawner } from "./factories"
 import { Isolate, Script } from "./components"
 import testScript from "../scripts/testScript"
 
@@ -37,7 +32,7 @@ world.addSystem(function spawn(world) {
   }
 })
 
-world.addSystem(spawnerSystem)
+world.addSystem(spawnSystem)
 world.addSystem(scriptSystem)
 world.addSystem(physicsSystem)
 world.addSystem(damageSystem)

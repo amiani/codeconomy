@@ -3,7 +3,7 @@ import { Clock } from '@javelin/hrtime-loop'
 import ivm from 'isolated-vm'
 
 import { Isolate, Script, Spawner, Team, Transform } from '../components'
-import createShip from '../createShip'
+import { createShip } from '../factories'
 
 const spawnersTransformTeam = createQuery(Spawner, Transform, Team)
 

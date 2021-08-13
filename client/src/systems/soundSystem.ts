@@ -3,7 +3,7 @@ import { World } from '@javelin/ecs';
 import * as Pizzicato from 'pizzicato'
 import laserTopic from '../topics/laserTopic';
 import highZap from '../../../assets/sounds/highzap.wav'
-import useViewport from '../useViewport';
+import useViewport from '../effects/useViewport';
 
 const laserZap = new Pizzicato.Sound({
 	source: 'file',

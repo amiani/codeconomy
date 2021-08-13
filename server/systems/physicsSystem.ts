@@ -5,17 +5,17 @@ import {
 	component,
 	useMonitor,
 } from '@javelin/ecs'
-import useColliderToEntity from '../colliderToEntity'
+import { useColliderToEntity } from '../effects'
 const rapier = require('@a-type/rapier2d-node')
 
-import useSimulation from '../simulation'
+import { useSimulation } from '../effects'
 import {
 	Body,
 	Team,
 	Weapon,
 	Action,
 } from '../components'
-import createLaser from '../createLaser'
+import { createLaser } from '../factories'
 
 const bodiesActionTeamWeapon = createQuery(Body, Action, Team, Weapon)
 

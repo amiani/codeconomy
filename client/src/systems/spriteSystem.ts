@@ -9,7 +9,7 @@ import * as PIXI from 'pixi.js'
 
 import { Interpolate, Sprite, SpriteData, Team, Transform } from '../../../server/components'
 import app from '../pixiApp'
-import useViewport from '../useViewport'
+import useViewport from '../effects/useViewport'
 
 const interpolatedSprites = createQuery(Transform, Interpolate, Sprite)
 const transformSprites = createQuery(Transform, Sprite)
