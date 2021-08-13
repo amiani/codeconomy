@@ -11,12 +11,9 @@ const rapier = require('@a-type/rapier2d-node')
 import useSimulation from '../simulation'
 import {
 	Body,
-	Transform,
 	Team,
-	SpriteData,
 	Weapon,
 	Action,
-	Bullet
 } from '../components'
 import createLaser from '../createLaser'
 
@@ -29,9 +26,10 @@ export default function physicsSystem(world: World) {
 	bodiesActionTeamWeapon((e, [bodyComp, action, team, weapon]) => {
 		const body = bodyComp as typeof rapier.Body
 		const shipRotation = body.rotation()
+		const clampedThrottle = Math.max(Math.min(action.throttle, 100), 0)
 		body.applyForce({
-			x: Math.cos(shipRotation) * action.throttle,
-			y: Math.sin(shipRotation) * action.throttle
+			x: Math.cos(shipRotation) * clampedThrottle,
+			y: Math.sin(shipRotation) * clampedThrottle
 		}, true)
 		body.applyTorque(action.rotate, true)
 
