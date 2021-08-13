@@ -27,12 +27,12 @@ const dot = (a, b) => a.x * b.x + a.y * b.y
 
 const angleBetween = (a, b) => Math.atan2(cross(a, b), dot(a, b))
 
+const kp = 50
+const kv = -10
 const turnTo = (position, rotation, angularVelocity, targetPosition) => {
 	const unit = { x: Math.cos(rotation), y: Math.sin(rotation) }
 	const targetLocal = { x: targetPosition.x - position.x, y: targetPosition.y - position.y }
 	const error = angleBetween(unit, targetLocal)
-	const kp = 50
-	const kv = -10
 	return kp * error + kv * angularVelocity
 }
 
