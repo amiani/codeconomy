@@ -17,9 +17,10 @@ export default function createLaser(
 		.setTranslation(position.x, position.y)
 		.setRotation(rotation)
 		.setLinvel(velocity.x, velocity.y)
+		.setCanSleep(false)
 
-	const colliderDesc = rapier.ColliderDesc.cuboid(16, 2)
-		.setCollisionGroups(0x00040000 * (team + 1) + 2 - team)
+	const colliderDesc = rapier.ColliderDesc.cuboid(.5, 2/32)
+		.setCollisionGroups(0x00020000 + 0x0001)
 		.setIsSensor(true)
 		.setActiveEvents(rapier.ActiveEvents.INTERSECTION_EVENTS)
 

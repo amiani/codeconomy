@@ -24,7 +24,7 @@ export default function createShip(
 		.setLinearDamping(0.9)
 		.setAngularDamping(0.7)
 	const colliderDesc = rapier.ColliderDesc.cuboid(1, 1)
-			.setCollisionGroups(0x00010000 * (team+1) + 0x0004 * (2-team))
+			.setCollisionGroups(0x00010000 + 0x0002)
 		.setActiveEvents(
 		rapier.ActiveEvents.CONTACT_EVENTS
 		| rapier.ActiveEvents.INTERSECTION_EVENTS)
