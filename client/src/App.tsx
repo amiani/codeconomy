@@ -5,6 +5,7 @@ import { world } from "./world"
 import Editor from './Editor'
 import firebase from 'firebase/app';
 import 'firebase/auth'
+import testScript from '../../scripts/testScript'
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -31,15 +32,7 @@ function App() {
     }
   }, [])
 
-	const [code, setCode] = useState(
-  `const run = (state) => {
-    return {
-      throttle: 100,
-      rotate: 1,
-      fire: true
-    }
-  }`
-  )
+	const [code, setCode] = useState(testScript)
 
   const upload = () => {
     fetch('http://localhost:8000/upload', {

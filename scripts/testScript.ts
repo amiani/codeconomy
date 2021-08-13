@@ -1,9 +1,7 @@
-export default `
-const run = (state) => {
+export default `const run = (state) => {
 	return {
-		throttle: 10,
+		throttle: 50,
 		rotate: 0,
-		fire: true
+		fire: false
 	}
-}
-`
+}`
