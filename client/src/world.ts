@@ -3,10 +3,7 @@ import {
 } from "@javelin/ecs"
 import laserTopic from "./topics/laserTopic"
 
-import clientSystem from './systems/clientSystem'
-import interpolateSystem from "./systems/interpolateSystem"
-import soundSystem from "./systems/soundSystem"
-import spriteSystem from './systems/spriteSystem'
+import { clientSystem, interpolateSystem, soundSystem, spriteSystem } from './systems'
 
 export const world = createWorld({
   topics: [

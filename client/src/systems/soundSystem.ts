@@ -1,9 +1,9 @@
 import { World } from '@javelin/ecs';
 //@ts-ignore
 import * as Pizzicato from 'pizzicato'
-import laserTopic from '../topics/laserTopic';
+import { laserTopic } from '../topics'
 import highZap from '../../../assets/sounds/highzap.wav'
-import useViewport from '../effects/useViewport';
+import { useViewport } from '../effects'
 
 const laserZap = new Pizzicato.Sound({
 	source: 'file',
