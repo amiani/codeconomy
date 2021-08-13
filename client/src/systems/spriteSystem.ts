@@ -25,8 +25,8 @@ const copyInterpolateToSprite = (
 ) => {
   const { start, end } = interpolate
   const t = (performance.now() - 100 - start.time) / (end.time - start.time)
-  sprite.x = lerp(start.x, end.x, t)// * 32
-  sprite.y = -lerp(start.y, end.y, t)// * 32
+  sprite.x = lerp(start.x, end.x, t)
+  sprite.y = -lerp(start.y, end.y, t)
   sprite.rotation = -lerp(start.rotation, end.rotation, t)
 }
 

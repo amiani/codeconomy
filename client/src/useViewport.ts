@@ -1,5 +1,6 @@
 import { createEffect, World } from '@javelin/ecs'
 import { Viewport } from 'pixi-viewport'
+import * as PIXI from 'pixi.js';
 
 import app from './pixiApp'
 
@@ -23,7 +24,30 @@ export default createEffect((world: World) => {
 	viewport.moveCenter(0, 0)
 	viewport.scaled = 32
 
+	viewport.on('moved', () => {
+		if (hasBackground) {
+			background.x = viewport.left
+			background.y = viewport.top
+			background.tilePosition.x = -viewport.left * viewport.scale.x
+			background.tilePosition.y = -viewport.top * viewport.scale.y
+			background.width = viewport.screenWidth * (32 / viewport.scale.x)
+			background.height = viewport.screenHeight * (32 / viewport.scale.y)
+		}
+	})
+
+	let hasBackground = false
+	let background: PIXI.TilingSprite
+
 	return () => {
+		if (!hasBackground && app.loader.resources.goldstartile.texture) {
+			background = new PIXI.TilingSprite(
+				app.loader.resources.goldstartile.texture,
+			)
+			background.scale.x = 1/viewport.scale.x
+			background.scale.y = 1/viewport.scale.y
+			viewport.addChild(background)
+			hasBackground = true
+		}
 		return viewport
 	}
 }, { shared: true })
