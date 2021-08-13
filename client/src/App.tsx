@@ -32,7 +32,11 @@ function App() {
     }
   }, [])
 
-	const [code, setCode] = useState(testScript)
+	const [code, setCode] = useState(localStorage.getItem('code') || testScript)
+  const onCodeChanged = (code: string) => {
+    setCode(code)
+    localStorage.setItem('code', code)
+  }
 
   const upload = () => {
     fetch('http://localhost:8000/upload', {
@@ -50,7 +54,7 @@ function App() {
       <Game />
       <Editor
         code={code}
-        setCode={setCode}
+        setCode={onCodeChanged}
         upload={upload}
       />
     </div>
