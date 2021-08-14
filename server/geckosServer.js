@@ -1,4 +1,4 @@
-import * as admin from 'firebase-admin'
+const admin = require("firebase-admin")
 
 const authenticate = async (token, req, res) => {
   if (token) {
