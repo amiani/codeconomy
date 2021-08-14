@@ -6,6 +6,8 @@ importers:
     specifiers:
       '@a-type/rapier2d-node': ^0.6.0
       '@dimforge/rapier2d': ^0.7.0
+      '@geckos.io/client': ^2.0.0
+      '@geckos.io/server': ^2.0.0
       '@javelin/ecs': workspace:*
       '@javelin/hrtime-loop': workspace:*
       '@javelin/net': workspace:*
@@ -43,6 +45,8 @@ importers:
     dependencies:
       '@a-type/rapier2d-node': 0.6.0
       '@dimforge/rapier2d': 0.7.0
+      '@geckos.io/client': 2.0.0
+      '@geckos.io/server': 2.0.0
       '@javelin/ecs': link:packages/ecs
       '@javelin/hrtime-loop': link:packages/hrtime-loop
       '@javelin/net': link:packages/net
@@ -955,6 +959,28 @@ packages:
 
   /@firebase/webchannel-wrapper/0.5.1:
     resolution: {integrity: sha512-dZMzN0uAjwJXWYYAcnxIwXqRTZw3o14hGe7O6uhwjD1ZQWPVYA5lASgnNskEBra0knVBsOXB4KXg+HnlKewN/A==}
+    dev: false
+
+  /@geckos.io/client/2.0.0:
+    resolution: {integrity: sha512-E0imIRohM/gtLlmExk3MRv8DCTpHuXLGWUftm9aFcWypPdSdJk1J7nAQ4nCsrnghhstEO2n3Bzh6ZNEM4ZX52g==}
+    engines: {node: ^14.15 || >=16}
+    dependencies:
+      '@geckos.io/common': 2.0.0
+    dev: false
+
+  /@geckos.io/common/2.0.0:
+    resolution: {integrity: sha512-/Dougc72fxPKLRd5j3TF8dBlE9U+mvdFGLO7OoEOQyS++hIhUHUcHQqUFqtkK3DMEVBslRta09paZnfSX2sU8Q==}
+    dependencies:
+      '@yandeu/events': 0.0.5
+    dev: false
+
+  /@geckos.io/server/2.0.0:
+    resolution: {integrity: sha512-wbVrVYgioyJfJAYxgo0qu7cWsd7bxJUVvjHNr83TcpHxMwHsmEMP3HawRr3+T83BnF/0Clc8+RXvoTi7vu8qCg==}
+    engines: {node: ^14.15 || >=16}
+    dependencies:
+      '@geckos.io/common': 2.0.0
+      '@yandeu/events': 0.0.5
+      node-datachannel: 0.1.5
     dev: false
 
   /@google-cloud/common/3.7.0:
@@ -2143,6 +2169,10 @@ packages:
       ws: 7.0.1
     transitivePeerDependencies:
       - wrtc
+    dev: false
+
+  /@yandeu/events/0.0.5:
+    resolution: {integrity: sha512-TUkghSGu0ThcEyAP50WHU/vdQkpt9EZyotjZzG8KirR+VI5o7Rp5wabcGru62JNy+awMR8Voy+kFzhNkC/1E6A==}
     dev: false
 
   /abab/2.0.5:
@@ -4447,6 +4477,13 @@ packages:
   /next-tick/1.0.0:
     resolution: {integrity: sha1-yobR/ogoFpsBICCOPchCS524NCw=}
     dev: true
+
+  /node-datachannel/0.1.5:
+    resolution: {integrity: sha512-rramnXjtM5itsmVYYGDO/NxE2ybwRbLIeURCNld9vQ7qU4oxEakiJ2kSvr7IqEWuSOoMo0XJY0PRVVnspUBmrg==}
+    requiresBuild: true
+    dev: false
+    bundledDependencies:
+      - prebuild-install
 
   /node-fetch/2.6.1:
     resolution: {integrity: sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==}
