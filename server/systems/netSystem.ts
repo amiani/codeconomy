@@ -9,14 +9,12 @@ import {
 } from "@javelin/ecs"
 import { Clock } from "@javelin/hrtime-loop"
 import { createMessageProducer, encode } from "@javelin/net"
-import * as admin from 'firebase-admin'
-import http from 'http'
 
 import { Player, SpriteData, Team, Transform } from "../components"
 import { MESSAGE_MAX_BYTE_LENGTH, SEND_RATE } from "../env"
 import createPlayer from "../factories/createPlayer"
 //@ts-ignoredd
-import { importGeckos } from "../geckosServer"
+import { getServer } from "../geckosServer"
 
 const transforms = createQuery(Transform)
 const players = createQuery(Player)
@@ -33,23 +31,6 @@ export const usePlayers = createEffect(world => {
   return () => players
 }, { shared: true })
 
-const authenticate = async (
-  token: string | undefined,
-  req: http.IncomingMessage,
-  res: http.OutgoingMessage
-) => {
-  if (token) {
-    try {
-      const decodedToken = await admin.auth().verifyIdToken(token)
-      const uid = decodedToken.uid
-      return { uid }
-    } catch (error) {
-      console.log(error)
-      return false
-    }
-  }
-  return false
-}
 const useClients = createEffect((world: World<Clock>) => {
   const players = usePlayers()
   const clients = new Map()
@@ -57,13 +38,7 @@ const useClients = createEffect((world: World<Clock>) => {
     clients.get(entity).raw.emit(data)
   const api = { send_u }
 
-  importGeckos.then(({ geckos }: { geckos: any }) => {
-    const io = geckos({
-      authorization: authenticate,
-      cors: { allowAuthorization: true, origin: '*' }
-    })
-    io.listen(8000)
-
+  getServer.then((io: any) => {
     io.onConnection((channel: any) => {
       const { uid } = channel.userData
       const player = createPlayer(world, uid)

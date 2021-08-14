@@ -1,4 +1,3 @@
-import { Server } from "@web-udp/server"
 import * as admin from 'firebase-admin'
 import { scriptTopic } from './topics'
 import Fastify from 'fastify'

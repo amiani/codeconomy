@@ -14,7 +14,6 @@ interface EditorProps {
 }
 
 export default function Editor({ code, setCode, upload }: EditorProps) {
-
 	const [hidden, setHidden] = useState(false)
 
 	return (
