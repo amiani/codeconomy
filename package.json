@@ -7,7 +7,7 @@
     "start:client": "vite --config client/vite.config.ts",
     "build:client": "vite build --config client/vite.config.ts",
     "start:server": "ts-node server/index.ts",
-    "build:server": "tsc --build --outDir serverbuild",
+    "build:server": "tsc --build",
     "test": "jest"
   },
   "dependencies": {
