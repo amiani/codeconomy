@@ -1,3 +1,3 @@
-# codeconomy
+# Codeconomy
 
 A programming game experiment.
