@@ -1,6 +1,5 @@
 import { createEffect, useInterval } from '@javelin/ecs'
 import { createMessageHandler } from '@javelin/net'
-//import { Client } from "@web-udp/client"
 import geckos, { RawMessage } from '@geckos.io/client'
 import firebase from 'firebase'
 import 'firebase/auth'
@@ -15,7 +14,7 @@ export default createEffect(
       if (user) {
         const token: string = await user.getIdToken(true)
         const connection = geckos({
-          url: '127.0.0.1',
+          url: 'http://127.0.0.1',
           port: 8000,
           authorization: token
         })

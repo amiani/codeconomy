@@ -12,7 +12,5 @@ export default function createPlayer(world: World<Clock>, uid: string) {
       uid,
       spawners: [spawner]
     }))
-    //clients.set(entity, connection)
-    //players.set(uid, entity)
 	return player
 }

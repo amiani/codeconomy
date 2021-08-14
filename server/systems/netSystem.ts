@@ -14,8 +14,9 @@ import http from 'http'
 
 import { Player, SpriteData, Team, Transform } from "../components"
 import { MESSAGE_MAX_BYTE_LENGTH, SEND_RATE } from "../env"
-import { geckos, ServerChannel } from "@geckos.io/server"
 import createPlayer from "../factories/createPlayer"
+//@ts-ignoredd
+import { importGeckos } from "../geckosServer"
 
 const transforms = createQuery(Transform)
 const players = createQuery(Player)
@@ -53,22 +54,32 @@ const useClients = createEffect((world: World<Clock>) => {
   const players = usePlayers()
   const clients = new Map()
   const send_u = (entity: Entity, data: ArrayBuffer) =>
-    clients.get(entity).send(data)
+    clients.get(entity).raw.emit(data)
   const api = { send_u }
 
-  const io = geckos({
-    authorization: authenticate,
-    cors: { allowAuthorization: true, origin: '*' }
-  })
+  importGeckos.then(({ geckos }: { geckos: any }) => {
+    const io = geckos({
+      authorization: authenticate,
+      cors: { allowAuthorization: true, origin: '*' }
+    })
+    io.listen(8000)
 
-  io.onConnection((channel: ServerChannel) => {
-    const { uid } = channel.userData
-    const player = createPlayer(world, uid)
+    io.onConnection((channel: any) => {
+      const { uid } = channel.userData
+      const player = createPlayer(world, uid)
+      clients.set(player, channel)
+      players.set(uid, player)
 
-    channel.onDisconnect(() => {
-      world.destroy(player)
-      //world.destroy(spawner)
-      clients.delete(player)
+      channel.onDisconnect(() => {
+        world.destroy(player)
+        const playerComp = world.tryGet(player, Player)
+        if (playerComp) {
+          playerComp.spawners.forEach((spawner) => {
+            world.destroy(spawner)
+          })
+        }
+        clients.delete(player)
+      })
     })
   })
 
