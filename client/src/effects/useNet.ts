@@ -1,24 +1,35 @@
 import { createEffect, useInterval } from '@javelin/ecs'
 import { createMessageHandler } from '@javelin/net'
-import { Client } from "@web-udp/client"
+//import { Client } from "@web-udp/client"
+import geckos, { RawMessage } from '@geckos.io/client'
 import firebase from 'firebase'
 import 'firebase/auth'
 
 export default createEffect(
   world => {
     const state = { bytes: 0 }
-    const client = new Client({
-      url: `${window.location.hostname}:8000`,
-    })
     const handler = createMessageHandler(world)
     const messages = Array<ArrayBuffer>()
 
     firebase.auth().onAuthStateChanged(async user => {
       if (user) {
         const token: string = await user.getIdToken(true)
-        const connection = await client.connect({ metadata: { token } })
-        connection.messages.subscribe((message: ArrayBuffer) => {
-          messages.push(message)
+        const connection = geckos({
+          url: '127.0.0.1',
+          port: 8000,
+          authorization: token
+        })
+
+        connection.onConnect(error => {
+          if (error) {
+            console.error(error.message)
+            return
+          }
+          connection.onRaw((message: RawMessage) => {
+            if (message instanceof ArrayBuffer) {
+              messages.push(message)
+            }
+          })
         })
       }
     })
