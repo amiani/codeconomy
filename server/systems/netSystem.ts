@@ -1,10 +1,8 @@
 import {
-  component,
   createEffect,
   createImmutableRef,
   createQuery,
   Entity,
-  toComponent,
   useInterval,
   useMonitor,
   World
@@ -12,12 +10,12 @@ import {
 import { Clock } from "@javelin/hrtime-loop"
 import { createMessageProducer, encode } from "@javelin/net"
 import * as admin from 'firebase-admin'
-import ivm from 'isolated-vm'
+import http from 'http'
 
-import { Isolate, Player, SpriteData, Team, Transform } from "../components"
-import { createSpawner } from "../factories"
+import { Player, SpriteData, Team, Transform } from "../components"
 import { MESSAGE_MAX_BYTE_LENGTH, SEND_RATE } from "../env"
-import { udp } from "../net"
+import { geckos, ServerChannel } from "@geckos.io/server"
+import createPlayer from "../factories/createPlayer"
 
 const transforms = createQuery(Transform)
 const players = createQuery(Player)
@@ -34,6 +32,23 @@ export const usePlayers = createEffect(world => {
   return () => players
 }, { shared: true })
 
+const authenticate = async (
+  token: string | undefined,
+  req: http.IncomingMessage,
+  res: http.OutgoingMessage
+) => {
+  if (token) {
+    try {
+      const decodedToken = await admin.auth().verifyIdToken(token)
+      const uid = decodedToken.uid
+      return { uid }
+    } catch (error) {
+      console.log(error)
+      return false
+    }
+  }
+  return false
+}
 const useClients = createEffect((world: World<Clock>) => {
   const players = usePlayers()
   const clients = new Map()
@@ -41,30 +56,20 @@ const useClients = createEffect((world: World<Clock>) => {
     clients.get(entity).send(data)
   const api = { send_u }
 
-  udp.connections.subscribe(async connection => {
-    const { token } = connection.metadata
-    try {
-      const decodedToken = await admin.auth().verifyIdToken(token)
-      const uid = decodedToken.uid
-      const isolate = new ivm.Isolate({ memoryLimit: 128 })
-      const entity = world.create(toComponent(isolate, Isolate))
+  const io = geckos({
+    authorization: authenticate,
+    cors: { allowAuthorization: true, origin: '*' }
+  })
 
-      const spawner = createSpawner(world, -100, 0, 0, entity, 10)
-      world.attach(entity, component(Player, {
-        uid,
-        spawners: [spawner]
-      }))
-      clients.set(entity, connection)
-      players.set(uid, entity)
+  io.onConnection((channel: ServerChannel) => {
+    const { uid } = channel.userData
+    const player = createPlayer(world, uid)
 
-      connection.closed.subscribe(() => {
-        world.destroy(entity)
-        world.destroy(spawner)
-        clients.delete(entity)
-      })
-    } catch (e) {
-      console.error(e)
-    }
+    channel.onDisconnect(() => {
+      world.destroy(player)
+      //world.destroy(spawner)
+      clients.delete(player)
+    })
   })
 
   return function useClients() {
