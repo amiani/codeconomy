@@ -13,8 +13,9 @@ import {
 	Transform,
 	Isolate
 } from '../components'
+import { useClients } from "../effects"
 import { scriptTopic } from "../topics"
-import { usePlayers } from "./netSystem"
+//import { usePlayers } from "./netSystem"
 
 const scriptShips = createQuery(Script, Context, Body, Action, Team)
 const ships = createQuery(Ship, Transform, Team, Health)
@@ -47,14 +48,14 @@ interface Action {
 }
 
 export default function scriptSystem(world: World) {
-	const players = usePlayers()
+	const clients = useClients()
 	for (const scriptEvent of scriptTopic) {
-		const e = players.get(scriptEvent.uid)
+		const player = clients.getPlayer(scriptEvent.uid)
 		try {
-			const isolate = world.get(e, Isolate) as ivm.Isolate
+			const isolate = world.get(player, Isolate) as ivm.Isolate
 			const script = isolate.compileScriptSync(scriptEvent.code)
-			world.attach(e, toComponent(script, Script))
-			console.log(`Script arrived for player entity ${e}`)
+			world.attach(player, toComponent(script, Script))
+			console.log(`Script arrived for player entity ${player}`)
 		} catch (e) {
 			console.log(e)
 		}
