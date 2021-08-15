@@ -35,7 +35,6 @@ export default createEffect((world: World<Clock>) => {
           const decodedToken = await admin.auth().verifyIdToken(queryObject.authorization as string)
           const uid = decodedToken.uid
           clients.set(uid, { uid, socket })
-          //registerClient(client)
         }
       }
     } catch (err: any) {
