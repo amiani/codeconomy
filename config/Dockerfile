@@ -17,4 +17,5 @@ RUN pnpm install --production && pnpm rebuild
 RUN chown -R server /home/server
 USER 1000
 
-ENTRYPOINT ["NODE_ENV=production npm", "run", "start:server"]
+ENV NODE_ENV=production
+ENTRYPOINT ["npm", "run", "start:server"]
