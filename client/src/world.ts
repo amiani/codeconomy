@@ -4,10 +4,12 @@ import {
 import laserTopic from "./topics/laserTopic"
 
 import { clientSystem, interpolateSystem, soundSystem, spriteSystem } from './systems'
+import { uploadTopic } from "./topics"
 
 export const world = createWorld({
   topics: [
-    laserTopic
+    laserTopic,
+    uploadTopic
   ]
 })
 

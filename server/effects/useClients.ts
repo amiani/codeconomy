@@ -19,14 +19,6 @@ const authenticate = async (key: string) => {
 	}
 }
 
-const createClient = (uid: string, socket: WebSocket) => {
-	return {
-		uid,
-		socket,
-		channel: null,
-	}
-}
-
 export default createEffect((world: World<Clock>) => {
   const clients = new Map()
 
@@ -46,8 +38,7 @@ export default createEffect((world: World<Clock>) => {
         }
       }
     } catch (err: any) {
-      console.error("Failed to register client.")
-      console.error(err.message)
+      console.error(err)
       socket.close()
     }
   })
@@ -58,6 +49,7 @@ export default createEffect((world: World<Clock>) => {
       const client = clients.get(uid)
       client.channel = channel
       client.player = player
+      registerClient(client)
 
       channel.onDisconnect(() => {
         world.destroy(player)
@@ -83,3 +75,16 @@ export default createEffect((world: World<Clock>) => {
     }
   }
 }, { shared: true })
+
+interface Client {
+  uid: string,
+  socket: WebSocket,
+  channel: any,
+  player: Entity
+}
+
+const registerClient = (client: Client) => {
+  client.socket.on("message", async (data) => {
+    console.log(`got message: ${data}`)
+  })
+}

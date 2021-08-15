@@ -6,6 +6,7 @@ import Editor from './Editor'
 import firebase from 'firebase/app';
 import 'firebase/auth'
 import testScript from '../../scripts/testScript'
+import { uploadTopic } from './topics'
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -37,17 +38,8 @@ function App() {
     setCode(code)
     localStorage.setItem('code', code)
   }
-
-  const upload = () => {
-    fetch('http://localhost:8000/upload', {
-      method: 'POST',
-      headers: {
-        'authorization': `Bearer ${token}`,
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify(code)
-    })
-  }
+  
+  const upload = () => uploadTopic.push({ code })
 
   return (
     <div className="App">
@@ -58,8 +50,8 @@ function App() {
         upload={upload}
       />
     </div>
-    )
-  }
+  )
+}
 
-  ;(window as any).world = world
+;(window as any).world = world
 export default App
