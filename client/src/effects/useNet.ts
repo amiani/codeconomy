@@ -14,7 +14,7 @@ export default createEffect(
       if (user) {
         const token: string = await user.getIdToken(true)
         const connection = geckos({
-          url: 'http://127.0.0.1',
+          url: 'http://34.138.134.210',
           port: 8000,
           authorization: token
         })
@@ -24,6 +24,7 @@ export default createEffect(
             console.error(error.message)
             return
           }
+          console.log('connected')
           connection.onRaw((message: RawMessage) => {
             if (message instanceof ArrayBuffer) {
               messages.push(message)

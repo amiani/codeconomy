@@ -15,7 +15,6 @@
     "@dimforge/rapier2d": "^0.7.0",
     "@geckos.io/client": "^2.0.0",
     "@geckos.io/server": "^2.0.0",
-    "@google-cloud/agones-sdk": "^1.16.0",
     "@javelin/ecs": "workspace:*",
     "@javelin/hrtime-loop": "workspace:*",
     "@javelin/net": "workspace:*",
