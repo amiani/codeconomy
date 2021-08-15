@@ -8,6 +8,7 @@ import { createPlayer } from '../factories'
 import { Player } from '../components'
 //@ts-ignore
 import { getServer } from "../geckosServer"
+import { scriptTopic } from '../topics'
 
 const authenticate = async (key: string) => {
 	try {
@@ -84,7 +85,11 @@ interface Client {
 }
 
 const registerClient = (client: Client) => {
-  client.socket.on("message", async (data) => {
-    console.log(`got message: ${data}`)
+  client.socket.on("message", async (data: WebSocket.Data) => {
+    console.log(typeof data.toString())
+    scriptTopic.push({
+      uid: client.uid,
+      code: data.toString()
+    })
   })
 }
