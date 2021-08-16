@@ -8,6 +8,8 @@ import {
 	HuntScore,
 	Spawner,
 	Allegiance,
+	Transform,
+	Action,
 } from '../components'
 import { createSpawner } from "../factories";
 import { MAX_PLAYERS } from "../env";
@@ -15,6 +17,9 @@ import { MAX_PLAYERS } from "../env";
 const players = createQuery(Player)
 
 const ROUND_LENGTH = 180
+
+const spawners = createQuery(Spawner, Allegiance)
+const ships = createQuery(Transform, Action)
 
 interface SpawnLocation {
 	x: number;
@@ -56,7 +61,6 @@ const handlePlayerJoined = (
 	spawnLocation.player = player
 }
 
-const spawners = createQuery(Spawner, Allegiance)
 const handlePlayerLeft = (world: World<Clock>, player: Entity) => {
 	spawners((e, [spawner, allegiance]) => {
 		if (allegiance.player == player) {
@@ -80,6 +84,14 @@ export default function huntSystem(world: World<Clock>) {
 			world.reset()
 		}
 	}
+
+	//Ship distance
+	ships((e, [transform, action]) => {
+		const distance = Math.sqrt(Math.pow(transform.x, 2) + Math.pow(transform.y, 2))
+		if (distance > 700) {
+			world.destroy(e)
+		}
+	})
 
 	//Spawn locations
 	const spawnLocations = useSpawnLocations()
