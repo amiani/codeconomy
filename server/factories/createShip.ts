@@ -16,7 +16,7 @@ export default function createShip(
 	script: ivm.Script,
 	isolate: ivm.Isolate,
 ) {
-	console.log(`Creating ship at ${x}, ${y}`)
+	//console.log(`Creating ship at ${x}, ${y}`)
 	const e = world.create()
 	const bodyDesc = rapier.RigidBodyDesc.newDynamic()
 		.setTranslation(x, y)
@@ -37,7 +37,7 @@ export default function createShip(
 	
 	const context = createContext(isolate)
 	const res = (<ivm.Script>script).run(context, { copy: true })
-		.then(value => console.log(`SCRIPT RUN`))
+		//.then(value => console.log(`SCRIPT RUN`))
 		.catch(err => console.error(err))
 
 	world.attach(e,

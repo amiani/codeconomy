@@ -6,8 +6,8 @@ import {
 import { Clock } from "@javelin/hrtime-loop"
 import ivm from 'isolated-vm'
 
-import { damageSystem, huntCountSystem, netSystem, physicsSystem, scriptSystem, spawnSystem } from "./systems"
-import { collisionTopic, scriptTopic, shipTopic } from "./topics"
+import { damageSystem, huntSystem, netSystem, physicsSystem, scriptSystem, spawnSystem } from "./systems"
+import { collisionTopic, playerTopic, scriptTopic, shipTopic } from "./topics"
 import { createSpawner } from "./factories"
 import { Isolate, Script } from "./components"
 import testScript from "../scripts/testScript"
@@ -16,7 +16,8 @@ export const world = createWorld<Clock>({
   topics: [
     collisionTopic,
     scriptTopic,
-    shipTopic
+    shipTopic,
+    playerTopic,
   ]
 })
 
@@ -38,5 +39,5 @@ world.addSystem(spawnSystem)
 world.addSystem(scriptSystem)
 world.addSystem(physicsSystem)
 world.addSystem(damageSystem)
-world.addSystem(huntCountSystem)
+world.addSystem(huntSystem)
 world.addSystem(netSystem)

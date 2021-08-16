@@ -43,20 +43,15 @@ export default createEffect((world: World<Clock>) => {
     io.onConnection((channel: any) => {
       const { uid } = channel.userData
       const player = createPlayer(world, uid)
-      playerTopic.push({ type: 'new-player', entity: player })
+      playerTopic.push({ type: 'player-joined', entity: player })
       const client = clients.get(uid)
       client.channel = channel
       client.player = player
       registerClient(client)
 
       channel.onDisconnect(() => {
+        playerTopic.push({ type: 'player-left', entity: player })
         world.destroy(player)
-        const playerComp = world.tryGet(player, Player)
-        if (playerComp) {
-          playerComp.spawners.forEach((spawner) => {
-            world.destroy(spawner)
-          })
-        }
         clients.delete(player)
       })
     })

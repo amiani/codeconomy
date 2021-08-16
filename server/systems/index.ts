@@ -3,7 +3,7 @@ import netSystem from './netSystem'
 import physicsSystem from './physicsSystem'
 import scriptSystem from './scriptSystem'
 import spawnSystem from './spawnSystem'
-import huntCountSystem from './huntCountSystem'
+import huntSystem from './huntSystem'
 
 export {
 	damageSystem,
@@ -11,5 +11,5 @@ export {
 	physicsSystem,
 	scriptSystem,
 	spawnSystem,
-	huntCountSystem
+	huntSystem
 }

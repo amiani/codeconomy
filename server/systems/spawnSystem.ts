@@ -12,12 +12,14 @@ export default function spawnSystem(world: World<Clock>): void {
 	spawnersTransformTeam((e, [spawner, transform, allegiance]) => {
 		spawner.countdown.current -= dt / 1000
 		if (spawner.countdown.current <= 0) {
-			if (world.has(allegiance.player, Script)) {
+			try {
 				const script = world.get(allegiance.player, Script) as ivm.Script
 				const isolate = world.get(allegiance.player, Isolate) as ivm.Isolate
 				const rot = Math.random() * Math.PI * 2
 				createShip(world, transform.x, transform.y, rot, allegiance.player, allegiance.team, script, isolate)
 				spawner.countdown.current = spawner.countdown.max
+			} catch (err) {
+				//console.log(err)
 			}
 		}
 	})

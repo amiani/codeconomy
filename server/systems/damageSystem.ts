@@ -17,7 +17,7 @@ const checkBulletAndDamage = (world: World, entity1: Entity, entity2: Entity) =>
 		combatHistory2.lastHitByPlayer = bulletAllegiance.player
 		world.destroy(entity1)
 	} catch (e) {
-		console.log(e)
+		//console.log(e)
 	}
 }
 
