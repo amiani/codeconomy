@@ -8,17 +8,8 @@ import { createPlayer } from '../factories'
 import { Player } from '../components'
 //@ts-ignore
 import { getServer } from "../geckosServer"
-import { scriptTopic } from '../topics'
-
-const authenticate = async (key: string) => {
-	try {
-		const decodedToken = await admin.auth().verifyIdToken(key)
-		return true
-	} catch (error) {
-		console.error(error)
-		return false
-	}
-}
+import { playerTopic, scriptTopic } from '../topics'
+import { MAX_PLAYERS } from '../env'
 
 export default createEffect((world: World<Clock>) => {
   const clients = new Map()
@@ -28,6 +19,12 @@ export default createEffect((world: World<Clock>) => {
     path: '/connect'
   })
   wss.on("connection", async (socket, req) => {
+    if (clients.size >= MAX_PLAYERS) {
+      //respond that server is full
+      socket.close()
+      return
+    }
+    
     try {
       if (req.url) {
         const queryObject = url.parse(req.url,true).query;
@@ -46,6 +43,7 @@ export default createEffect((world: World<Clock>) => {
     io.onConnection((channel: any) => {
       const { uid } = channel.userData
       const player = createPlayer(world, uid)
+      playerTopic.push({ type: 'new-player', entity: player })
       const client = clients.get(uid)
       client.channel = channel
       client.player = player
