@@ -45,6 +45,7 @@ export default function Editor({ code, setCode, upload }: EditorProps) {
 						preClassName='language-js'
 						highlight={code => highlight(code, languages.js, 'js')}
 						padding={10}
+						tabSize={4}
 						style={{
 							fontFamily: 'Menlo, Monaco, Consolas, "Andale Mono", "Ubuntu Mono", "Courier New", monospace',
 							fontSize: 12,
