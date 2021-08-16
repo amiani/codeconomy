@@ -10,6 +10,7 @@ export default function createPlayer(world: World<Clock>, uid: string) {
     const spawner = createSpawner(world, -100, 0, player, 1, 10)
     world.attach(player, component(Player, {
       uid,
+      name: uid,
       spawners: [spawner]
     }))
 	return player

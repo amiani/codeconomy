@@ -10,6 +10,7 @@ import {
 export const Player = {
   initialized: boolean,
   uid: { ...string, length: 36 },
+  name: { ...string, length: 16 },
   spawners: arrayOf(number)
 }
 
