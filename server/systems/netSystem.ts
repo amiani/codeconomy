@@ -14,13 +14,13 @@ import { useClients } from "../effects"
 const transforms = createQuery(Transform)
 const players = createQuery(Player)
 const transformsSpriteData = createQuery(Transform, SpriteData, Allegiance)
-const huntScores = createQuery(HuntScore)
+const playerScores = createQuery(Player, HuntScore)
 const countdowns = createQuery(Countdown)
 
 function getInitialMessage(world: World) {
   const producer = createMessageProducer()
   transformsSpriteData(producer.attach)
-  huntScores(producer.attach)
+  playerScores(producer.attach)
   countdowns(producer.attach)
   return producer.take()
 }
@@ -37,8 +37,8 @@ export default function netSystem(world: World) {
   useMonitor(transformsSpriteData, producer.attach, producer.destroy)
   transforms(producer.update)
 
-  useMonitor(huntScores, producer.attach, producer.destroy)
-  huntScores(producer.update)
+  useMonitor(playerScores, producer.attach, producer.destroy)
+  playerScores(producer.update)
 
   useMonitor(countdowns, producer.attach, producer.destroy)
   countdowns(producer.update)
