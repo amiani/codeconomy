@@ -103,12 +103,14 @@ export default function huntSystem(world: World<Clock>) {
 
 	for (const shipEvent of shipTopic) {
 		if (shipEvent.type === 'ship-destroyed') {
-			try {
-				const score = world.get(shipEvent.combatHistory.lastHitByPlayer, HuntScore)
-				score && score.points++
-				console.log(`Player score: ${score.points}`)
-			} catch (err) {
-				console.log(err)
+			if (shipEvent.entity !== shipEvent.combatHistory.lastHitByPlayer) {
+				try {
+					const score = world.get(shipEvent.combatHistory.lastHitByPlayer, HuntScore)
+					score && score.points++
+					console.log(`Player score: ${score.points}`)
+				} catch (err) {
+					console.log(err)
+				}
 			}
 		}
 	}
