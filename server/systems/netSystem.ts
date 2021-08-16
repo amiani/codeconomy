@@ -7,17 +7,21 @@ import {
 } from "@javelin/ecs"
 import { createMessageProducer, encode } from "@javelin/net"
 
-import { Player, SpriteData, Allegiance, Transform } from "../components"
+import { Player, SpriteData, Allegiance, Transform, HuntScore, Countdown } from "../components"
 import { MESSAGE_MAX_BYTE_LENGTH, SEND_RATE } from "../env"
 import { useClients } from "../effects"
 
 const transforms = createQuery(Transform)
 const players = createQuery(Player)
 const transformsSpriteData = createQuery(Transform, SpriteData, Allegiance)
+const huntScores = createQuery(HuntScore)
+const countdowns = createQuery(Countdown)
 
 function getInitialMessage(world: World) {
   const producer = createMessageProducer()
   transformsSpriteData(producer.attach)
+  huntScores(producer.attach)
+  countdowns(producer.attach)
   return producer.take()
 }
 
@@ -30,14 +34,14 @@ export default function netSystem(world: World) {
   const clients = useClients()
   const producer = useProducer()
 
-  useMonitor(
-    transformsSpriteData,
-    producer.attach,
-    producer.destroy
-  )
-  transforms((e, [transform]) => {
-    producer.update(e, [transform])
-  })
+  useMonitor(transformsSpriteData, producer.attach, producer.destroy)
+  transforms(producer.update)
+
+  useMonitor(huntScores, producer.attach, producer.destroy)
+  huntScores(producer.update)
+
+  useMonitor(countdowns, producer.attach, producer.destroy)
+  countdowns(producer.update)
 
   if (send) {
     const message = producer.take()
