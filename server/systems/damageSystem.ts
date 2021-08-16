@@ -1,27 +1,21 @@
 import { createQuery, Entity, useMonitor, World } from "@javelin/ecs";
-import { collisionTopic } from "../topics"
-import { Body, Bullet, Health } from "../components"
+import { collisionTopic, shipTopic } from "../topics"
+import { Allegiance, Body, Bullet, CombatHistory, Health } from "../components"
 import { useColliderToEntity, useSimulation } from '../effects'
 const rapier = require('@a-type/rapier2d-node')
 
 const healths = createQuery(Health)
 const bodies = createQuery(Body)
 
-const applyDamage = (world: World, e: Entity, damage: number) => {
-	const health = world.tryGet(e, Health)
-	if (health) {
-		console.log(`${damage} damage done to entity ${e}`)
-		health.current -= damage
-	}
-}
-
 const checkBulletAndDamage = (world: World, entity1: Entity, entity2: Entity) => {
 	try {
-		const bullet = world.tryGet(entity1, Bullet)
-		if (bullet) {
-			applyDamage(world, entity2, bullet.damage)
-			world.destroy(entity1)
-		}
+		const bullet = world.get(entity1, Bullet)
+		const bulletAllegiance = world.get(entity1, Allegiance)
+		const health = world.get(entity2, Health)
+		const combatHistory2 = world.get(entity2, CombatHistory)
+		health.current -= bullet.damage
+		combatHistory2.lastHitByPlayer = bulletAllegiance.player
+		world.destroy(entity1)
 	} catch (e) {
 		console.log(e)
 	}
@@ -35,7 +29,12 @@ export default function damageSystem(world: World) {
 
 	healths((e, [health]) => {
 		if (health.current <= 0) {
-			console.log(`entity ${e} destroyed`)
+			const combatHistory = world.get(e, CombatHistory)
+			shipTopic.push({
+				entity: e,
+				type: 'ship-destroyed',
+				combatHistory: { ...combatHistory }
+			})
 			world.destroy(e)
 		}
 	})

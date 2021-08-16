@@ -7,19 +7,18 @@ import {
 	Script,
 	Context,
 	Action,
-	Ship,
 	Health,
-	Team,
+	Allegiance,
 	Transform,
-	Isolate
+	Isolate,
+	CombatHistory
 } from '../components'
 import { useClients } from "../effects"
 import { scriptTopic } from "../topics"
 //import { usePlayers } from "./netSystem"
 
-const scriptShips = createQuery(Script, Context, Body, Action, Team)
-const ships = createQuery(Ship, Transform, Team, Health)
-const isolates = createQuery(Isolate)
+const scriptShips = createQuery(Script, Context, Body, Action, Allegiance)
+const ships = createQuery(CombatHistory, Transform, Allegiance, Health)
 
 const createState = (
 	body: typeof rapier.RigidBody,
@@ -62,24 +61,24 @@ export default function scriptSystem(world: World) {
 	}
 
 	const shipStates: Array<Map<Entity, ShipState>> = [new Map(), new Map()];
-	ships((e, [ship, transform, team, health]) => {
-		shipStates[team.id].set(e, {
+	ships((e, [combatHistory, transform, allegiance, health]) => {
+		shipStates[allegiance.team].set(e, {
 			position: { x: transform.x, y: transform.y },
 			rotation: transform.rotation,
 			health: health.current,
-			team: team.id,
+			team: allegiance.team,
 		})
 	})
-	scriptShips(async (e, [script, contextComp, bodyComp, action, team]) => {
+	scriptShips(async (e, [script, contextComp, bodyComp, action, allegiance]) => {
 		const body = bodyComp as typeof rapier.Body
 		const context = contextComp as ivm.Context
 		const allies: Array<ShipState> = []
-		for (const [shipEntity, state] of shipStates[team.id].entries()) {
+		for (const [shipEntity, state] of shipStates[allegiance.team].entries()) {
 			if (shipEntity !== e) {
 				allies.push(state)
 			}
 		}
-		const enemies = [...shipStates[1 - team.id].values()]
+		const enemies = [...shipStates[1 - allegiance.team].values()]
 		const state = createState(body, allies, enemies)
 		await context.global.set('state', state, { copy: true })
 		try {

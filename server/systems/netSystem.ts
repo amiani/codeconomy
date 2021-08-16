@@ -7,13 +7,13 @@ import {
 } from "@javelin/ecs"
 import { createMessageProducer, encode } from "@javelin/net"
 
-import { Player, SpriteData, Team, Transform } from "../components"
+import { Player, SpriteData, Allegiance, Transform } from "../components"
 import { MESSAGE_MAX_BYTE_LENGTH, SEND_RATE } from "../env"
 import { useClients } from "../effects"
 
 const transforms = createQuery(Transform)
 const players = createQuery(Player)
-const transformsSpriteData = createQuery(Transform, SpriteData, Team)
+const transformsSpriteData = createQuery(Transform, SpriteData, Allegiance)
 
 function getInitialMessage(world: World) {
   const producer = createMessageProducer()

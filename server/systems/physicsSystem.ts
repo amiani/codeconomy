@@ -11,19 +11,18 @@ const rapier = require('@a-type/rapier2d-node')
 import { useSimulation } from '../effects'
 import {
 	Body,
-	Team,
+	Allegiance,
 	Weapon,
 	Action,
 } from '../components'
 import { createLaser } from '../factories'
 
-const bodiesActionTeamWeapon = createQuery(Body, Action, Team, Weapon)
+const bodiesActionTeamWeapon = createQuery(Body, Action, Allegiance, Weapon)
 
-const bodies = createQuery(Body)
 export default function physicsSystem(world: World) {
 	const sim = useSimulation()
 	const colliderToEntity = useColliderToEntity()
-	bodiesActionTeamWeapon((e, [bodyComp, action, team, weapon]) => {
+	bodiesActionTeamWeapon((e, [bodyComp, action, allegiance, weapon]) => {
 		const body = bodyComp as typeof rapier.Body
 		const shipRotation = body.rotation()
 		const clampedThrottle = Math.max(Math.min(action.throttle, 100), 0)
@@ -39,7 +38,7 @@ export default function physicsSystem(world: World) {
 				x: shipPosition.x + Math.cos(shipRotation) * 1.6,
 				y: shipPosition.y + Math.sin(shipRotation) * 1.6
 			}
-			createLaser(world, laserPosition, shipRotation, team.id)
+			createLaser(world, laserPosition, shipRotation, allegiance.player, allegiance.team)
 			weapon.currentCooldown = weapon.maxCooldown
 		}
 		weapon.currentCooldown -= sim.timestep

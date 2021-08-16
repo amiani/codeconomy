@@ -7,7 +7,7 @@ import createSpawner from "./createSpawner"
 export default function createPlayer(world: World<Clock>, uid: string) {
     const isolate = new ivm.Isolate({ memoryLimit: 128 })
     const player = world.create(toComponent(isolate, Isolate))
-    const spawner = createSpawner(world, -100, 0, 0, player, 10)
+    const spawner = createSpawner(world, -100, 0, player, 1, 10)
     world.attach(player, component(Player, {
       uid,
       spawners: [spawner]

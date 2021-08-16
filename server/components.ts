@@ -48,8 +48,9 @@ export const Isolate = {
   referenceCount: number,
 }
 
-export const Team = {
-  id: number
+export const Allegiance = {
+  player: number,
+  team: number
 }
 
 export const Health = {
@@ -74,7 +75,7 @@ export const Action = {
   fire: boolean
 }
 
-const Timer = {
+export const Countdown = {
   current: number,
   max: number,
 }
@@ -93,19 +94,23 @@ export const Bullet = {
 }
 
 export const Spawner = {
-  timer: Timer,
+  countdown: Countdown,
   owner: number
 }
 
-export const Ship = {
-  dummy: number
+export const CombatHistory = {
+  lastHitByPlayer: number
+}
+
+export const HuntScore = {
+  points: number
 }
 
 registerSchema(Player, 1)
 registerSchema(Transform, 2)
 registerSchema(Body, 3)
 registerSchema(Script, 4)
-registerSchema(Team, 5)
+registerSchema(Allegiance, 5)
 registerSchema(Health, 6)
 registerSchema(Sprite, 7)
 registerSchema(SpriteData, 8)
@@ -114,4 +119,5 @@ registerSchema(Action, 10)
 registerSchema(Weapon, 11)
 registerSchema(Bullet, 12)
 registerSchema(Spawner, 13)
-registerSchema(Ship, 14)
+registerSchema(HuntScore, 15)
+registerSchema(CombatHistory, 16)

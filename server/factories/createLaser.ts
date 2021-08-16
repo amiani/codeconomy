@@ -1,12 +1,13 @@
-import { component, toComponent, World } from "@javelin/ecs"
+import { component, Entity, toComponent, World } from "@javelin/ecs"
 import { useColliderToEntity, useSimulation } from '../effects'
-import { Body, Team, Bullet, SpriteData, Transform } from "../components"
+import { Body, Allegiance, Bullet, SpriteData, Transform } from "../components"
 const rapier = require('@a-type/rapier2d-node')
 
 export default function createLaser(
 	world: World,
 	position: { x: number; y: number },
 	rotation: number,
+	player: Entity,
 	team: number
 ) {
 	const e = world.create()
@@ -32,7 +33,7 @@ export default function createLaser(
 	world.attach(e,
 		toComponent(body, Body),
 		component(Transform, position),
-		component(Team, { id: team }),
+		component(Allegiance, { player, team }),
 		component(Bullet, { velocity, lifetime: 1, damage: 1 }),
 		component(SpriteData, { name: 'smallbluelaser' })
 	)
