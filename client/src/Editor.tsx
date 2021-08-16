@@ -18,19 +18,25 @@ export default function Editor({ code, setCode, upload }: EditorProps) {
 
 	return (
 		<div
-			className="editor"
 			style={{ 
 				position: 'absolute',
 				top: 0,
 				left: 0,
+				paddingBottom: 5
 			}}
 		>
+			<div className='toolbar' style={{ display: 'flex' }}>
+				<button onClick={e => setHidden(!hidden)}>{hidden ? 'Show' : 'Hide'}</button>
+				{!hidden && <button onClick={upload}>Upload</button>}
+				<button onClick={e => Pizzicato.context.resume()}>Unmute</button>
+				<button onClick={e => {}}>Reset</button>
+			</div>
 			{!hidden &&
 				<div
 					style={{
 						overflow: 'auto',
 						flex: 1,
-						maxHeight: '90vh',
+						maxHeight: '95vh',
 						maxWidth: '50vw',
 					}}
 				>
@@ -40,18 +46,14 @@ export default function Editor({ code, setCode, upload }: EditorProps) {
 						highlight={code => highlight(code, languages.js, 'js')}
 						padding={10}
 						style={{
-							fontFamily: '"Fira code", "Fira Mono", Consolas, Menlo, monospace',
 							fontSize: 12,
+							fontFamily: 'Menlo, Monaco, Consolas, "Andale Mono", "Ubuntu Mono", "Courier New", monospace',
 							background: 'white',
 							whiteSpace: 'pre',
 						}}
 					/>
 				</div>
 			}
-			<button onClick={e => setHidden(!hidden)}>{hidden ? 'Show' : 'Hide'}</button>
-			{!hidden && <button onClick={upload}>Upload</button>}
-			<button onClick={e => Pizzicato.context.resume()}>Unmute</button>
-			<button onClick={e => {}}>Reset</button>
 		</div>
 	)
 }
