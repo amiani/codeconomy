@@ -27,7 +27,6 @@ export default function Editor({ code, setCode, upload }: EditorProps) {
 				<button onClick={e => setHidden(!hidden)}>{hidden ? 'Show' : 'Hide'}</button>
 				{!hidden && <button onClick={upload}>Upload</button>}
 				<button onClick={e => Pizzicato.context.resume()}>Unmute</button>
-				<button onClick={e => {}}>Reset</button>
 			</div>
 			{!hidden &&
 				<div
