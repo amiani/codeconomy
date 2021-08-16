@@ -3,9 +3,7 @@ import SimpleEditor from 'react-simple-code-editor'
 //@ts-ignore
 import * as Pizzicato from 'pizzicato'
 import { highlight, languages } from 'prismjs'
-import 'prismjs/themes/prism.css'
-import 'prismjs/components/prism-clike';
-import 'prismjs/components/prism-javascript';
+import './prism-vsc-dark-plus.css'
 
 interface EditorProps {
 	code: string,
@@ -33,6 +31,7 @@ export default function Editor({ code, setCode, upload }: EditorProps) {
 			</div>
 			{!hidden &&
 				<div
+					className='editor-container'
 					style={{
 						overflow: 'auto',
 						flex: 1,
@@ -43,13 +42,12 @@ export default function Editor({ code, setCode, upload }: EditorProps) {
 					<SimpleEditor
 						value={code}
 						onValueChange={setCode}
+						preClassName='language-js'
 						highlight={code => highlight(code, languages.js, 'js')}
 						padding={10}
 						style={{
-							fontSize: 12,
 							fontFamily: 'Menlo, Monaco, Consolas, "Andale Mono", "Ubuntu Mono", "Courier New", monospace',
-							background: 'white',
-							whiteSpace: 'pre',
+							fontSize: 12,
 						}}
 					/>
 				</div>

@@ -285,3 +285,7 @@ pre[class*="language-"] > code[class*="language-"] {
 	line-height: inherit;
 	white-space: pre;
 }
+
+.editor-container {
+	background: #1e1e1e;
+}
