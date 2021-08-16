@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import "./App.css"
 import Game from './Game'
-import { world } from "./world"
+import { world } from "../world"
 import Editor from './Editor'
 import firebase from 'firebase/app';
 import 'firebase/auth'
-import testScript from '../../scripts/testScript'
-import { uploadTopic } from './topics'
+import testScript from '../../../scripts/testScript'
+import { uploadTopic } from '../topics'
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -20,7 +20,7 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 
-function App() {
+function App(props: any) {
   const [token, setToken] = useState('')
   useEffect(() => {
     firebase.auth().signInAnonymously()
