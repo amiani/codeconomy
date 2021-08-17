@@ -3,17 +3,15 @@ import React, { useState}  from 'react'
 import * as Pizzicato from 'pizzicato'
 import Button from './Button'
 import Editor from './Editor'
-import FeedbackForm, { Feedback } from './Feedback'
 
 interface OverlayProps {
 	code: string,
 	setCode: (code: string) => void,
-	upload: () => void
+	upload: () => void,
 }
 
 export default function Overlay({ code, setCode, upload }: OverlayProps) {
 	const [hidden, setHidden] = useState(false)
-	const [showFeedback, setShowFeedback] = useState(false)
 
 	return (
 		<div
@@ -29,15 +27,9 @@ export default function Overlay({ code, setCode, upload }: OverlayProps) {
 				<Button onClick={e => setHidden(!hidden)}>{hidden ? 'Show' : 'Hide'}</Button>
 				<Button onClick={upload}>Upload</Button>
 				<Button onClick={e => Pizzicato.context.resume()}>Unmute</Button>
-				<Button onClick={e => setShowFeedback(!showFeedback)}>{showFeedback ? 'Code' : 'Feedback'}</Button>
+				<Button onClick={ev => window.open('mailto:amianijohns@gmail.com')}>Feedback</Button>
 			</div>
-			{!hidden && (showFeedback
-				? <FeedbackForm onSubmit={ev => submitFeedback(ev.currentTarget)} />
-				: <Editor code={code} setCode={setCode} />
-			)}
+			{!hidden && <Editor code={code} setCode={setCode} />}
 		</div>
 	)
-}
-
-function submitFeedback(feedback: Feedback) {
 }

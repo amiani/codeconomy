@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react'
 import "./App.css"
 import Game from './Game'
 import { world } from "../world"
-import Editor from './Overlay'
 import firebase from 'firebase/app';
 import 'firebase/auth'
 import testScript from '../../../scripts/testScript'
 import { uploadTopic } from '../topics'
+import Overlay from './Overlay'
+import { Feedback } from './Feedback';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -44,7 +45,7 @@ function App(props: any) {
   return (
     <div className="App">
       <Game />
-      <Editor
+      <Overlay
         code={code}
         setCode={onCodeChanged}
         upload={upload}
