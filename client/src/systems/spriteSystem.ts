@@ -72,6 +72,6 @@ export default function spriteSystem(world: World) {
   )
 
   interpolatedSprites((e, [transform, interpolate, sprite]) => {
-    copyInterpolateToSprite(interpolate, sprite)
+    copyInterpolateToSprite(interpolate, sprite);
   })
 }

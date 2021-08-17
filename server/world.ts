@@ -30,7 +30,7 @@ world.addSystem(function spawn(world) {
       toComponent(script, Script),
       toComponent(isolate, Isolate)
     )
-    createSpawner(world, 0, 0, owner, 0, 2)
+    createSpawner(world, 0, 0, 0, owner, 0, 2, "spawn2")
 
   }
 })

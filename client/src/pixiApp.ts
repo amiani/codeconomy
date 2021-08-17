@@ -3,6 +3,7 @@ import ship from '../../assets/images/ship1.png'
 import smallbluelaser from '../../assets/images/smallbluelaser.png'
 import goldstartile from '../../assets/images/goldstartile.jpg'
 import spawn2 from '../../assets/images/spawn2.png'
+import capital1 from '../../assets/images/capital1.png'
 import { world } from './world';
 
 const runJavelin = () => {
@@ -27,8 +28,9 @@ const app = new PIXI.Application({
 app.loader
     .add('ship', ship)
     .add('smallbluelaser', smallbluelaser)
-	.add('goldstartile', goldstartile)
-	.add('spawn2', spawn2)
+    .add('goldstartile', goldstartile)
+    .add('spawn2', spawn2)
+    .add("capital1", capital1)
     .load()
 	.onComplete.add(runJavelin)
 

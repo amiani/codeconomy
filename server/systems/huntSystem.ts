@@ -57,7 +57,7 @@ const handlePlayerJoined = (
 	spawnLocation: SpawnLocation
 ) => {
 	const { x, y } = spawnLocation
-	const spawner = createSpawner(world, x, y, player, team,10)
+	const spawner = createSpawner(world, x, y, Math.PI/2, player, team,10, "capital1")
 	spawnLocation.player = player
 }
 
