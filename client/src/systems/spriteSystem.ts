@@ -6,6 +6,7 @@ import {
   World
 } from '@javelin/ecs'
 import * as PIXI from 'pixi.js'
+import { GlowFilter } from '@pixi/filter-glow'
 
 import { Interpolate, Sprite, SpriteData, Allegiance, Transform } from '../../../server/components'
 import app from '../pixiApp'
@@ -47,11 +48,18 @@ export default function spriteSystem(world: World) {
         sprite.x = transform.x * 32
         sprite.y = -transform.y * 32
         sprite.rotation = -transform.rotation
+        let color
         if (allegiance.team == 0) {
-          sprite.tint = 0xff9999
+          color = 0xff9999
         } else {
-          sprite.tint = 0x99ff99
+          color = 0x99ff99
         }
+        sprite.filters = [new GlowFilter({
+          color,
+          distance: 15,
+          innerStrength: 1,
+          outerStrength: 1
+        })]
         world.attachImmediate(e, [toComponent(sprite, Sprite)])
       }
     },
