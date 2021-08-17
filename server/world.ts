@@ -11,6 +11,8 @@ import { collisionTopic, playerTopic, scriptTopic, shipTopic } from "./topics"
 import { createSpawner } from "./factories"
 import { Isolate, Script } from "./components"
 import testScript from "../scripts/testScript"
+import ffaSystem from "./systems/ffaSystem"
+import { useTeams } from "./effects"
 
 export const world = createWorld<Clock>({
   topics: [
@@ -23,6 +25,7 @@ export const world = createWorld<Clock>({
 
 
 world.addSystem(function spawn(world) {
+  const teams = useTeams()
   if (useInit()) {
     const isolate = new ivm.Isolate({ memoryLimit: 128 })
     const script = isolate.compileScriptSync(testScript)
@@ -30,7 +33,8 @@ world.addSystem(function spawn(world) {
       toComponent(script, Script),
       toComponent(isolate, Isolate)
     )
-    createSpawner(world, 0, 0, 0, owner, 0, 2, "spawn2")
+    const team = teams.assign(owner)
+    createSpawner(world, 0, 0, 0, owner, team, 2, "spawn2")
 
   }
 })
@@ -39,5 +43,6 @@ world.addSystem(spawnSystem)
 world.addSystem(scriptSystem)
 world.addSystem(physicsSystem)
 world.addSystem(damageSystem)
+world.addSystem(ffaSystem)
 world.addSystem(huntSystem)
 world.addSystem(netSystem)

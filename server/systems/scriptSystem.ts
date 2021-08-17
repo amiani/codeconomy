@@ -14,6 +14,7 @@ import {
 	CombatHistory
 } from '../components'
 import { useClients } from "../effects"
+import { MAX_PLAYERS } from "../env"
 import { scriptTopic } from "../topics"
 //import { usePlayers } from "./netSystem"
 
@@ -60,7 +61,8 @@ export default function scriptSystem(world: World) {
 		}
 	}
 
-	const shipStates: Array<Map<Entity, ShipState>> = [new Map(), new Map()];
+	//Maybe use number of connected players instead of MAX_PLAYERS
+	const shipStates = Array<Map<Entity, ShipState>>(MAX_PLAYERS).fill(new Map<Entity, ShipState>())
 	ships((e, [combatHistory, transform, allegiance, health]) => {
 		shipStates[allegiance.team].set(e, {
 			position: { x: transform.x, y: transform.y },
@@ -79,6 +81,7 @@ export default function scriptSystem(world: World) {
 			}
 		}
 		const enemies = [...shipStates[1 - allegiance.team].values()]
+		console.log(enemies.length)
 		const state = createState(body, allies, enemies)
 		await context.global.set('state', state, { copy: true })
 		try {

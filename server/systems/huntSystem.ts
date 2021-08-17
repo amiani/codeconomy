@@ -98,9 +98,15 @@ export default function huntSystem(world: World<Clock>) {
 	for (const playerEvent of playerTopic) {
 		switch (playerEvent.type) {
 			case 'player-joined':
-				const spawnLocation = spawnLocations.next()
-				if (spawnLocation) {
-					handlePlayerJoined(world, playerEvent.entity, 1, spawnLocation)
+				try {
+					const spawnLocation = spawnLocations.next()
+					const team = world.get(playerEvent.entity, Allegiance).team
+					if (spawnLocation) {
+						handlePlayerJoined(world, playerEvent.entity, team, spawnLocation)
+					}
+				} catch (err) {
+					console.error(`Error handling player join in huntSystem`)
+					console.log(err)
 				}
 				break
 			case 'player-left':
