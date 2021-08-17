@@ -8,6 +8,7 @@ import testScript from '../../../scripts/testScript'
 import { uploadTopic } from '../topics'
 import Overlay from './Overlay'
 import { Feedback } from './Feedback';
+import Scoreboard from './Scoreboard';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -20,6 +21,8 @@ const firebaseConfig = {
   measurementId: "G-1Q85KBS613"
 };
 firebase.initializeApp(firebaseConfig);
+
+const scores = [{ name: 'amiani', points: 50000 }]
 
 function App(props: any) {
   const [token, setToken] = useState('')
@@ -50,8 +53,16 @@ function App(props: any) {
         setCode={onCodeChanged}
         upload={upload}
       />
+      <Scoreboard timer={180} scores={scores} style={scoreboardStyle} />
     </div>
   )
+}
+
+const scoreboardStyle: React.CSSProperties = {
+  position: 'absolute',
+  right: '0',
+  top: '0',
+  zIndex: 1000
 }
 
 ;(window as any).world = world

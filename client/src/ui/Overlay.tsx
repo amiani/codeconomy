@@ -27,7 +27,7 @@ export default function Overlay({ code, setCode, upload }: OverlayProps) {
 				<Button onClick={e => setHidden(!hidden)}>{hidden ? 'Show' : 'Hide'}</Button>
 				<Button onClick={upload}>Upload</Button>
 				<Button onClick={e => Pizzicato.context.resume()}>Unmute</Button>
-				<Button onClick={ev => window.open('mailto:amianijohns@gmail.com')}>Feedback</Button>
+				<Button onClick={e => window.open('mailto:amianijohns@gmail.com')}>Feedback</Button>
 			</div>
 			{!hidden && <Editor code={code} setCode={setCode} />}
 		</div>
