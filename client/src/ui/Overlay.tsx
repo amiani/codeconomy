@@ -21,7 +21,8 @@ export default function Overlay({ code, setCode, upload }: OverlayProps) {
 				position: 'absolute',
 				top: 0,
 				left: 0,
-				paddingBottom: 5
+				paddingBottom: 5,
+				minWidth: '30vw'
 			}}
 		>
 			<div className='toolbar' style={{ display: 'flex' }}>
