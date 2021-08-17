@@ -56,7 +56,7 @@ export default function spriteSystem(world: World) {
         }
         sprite.filters = [new GlowFilter({
           color,
-          distance: 15,
+          distance: 10,
           innerStrength: 1,
           outerStrength: 1
         })]
