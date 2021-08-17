@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import "./App.css"
 import Game from './Game'
 import { world } from "../world"
-import Editor from './Editor'
+import Editor from './Overlay'
 import firebase from 'firebase/app';
 import 'firebase/auth'
 import testScript from '../../../scripts/testScript'
