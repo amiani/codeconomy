@@ -78,7 +78,7 @@ interface Client {
 
 const registerClient = (client: Client) => {
   client.socket.on("message", async (data: WebSocket.Data) => {
-    console.log(typeof data.toString())
+    //console.log(typeof data.toString())
     scriptTopic.push({
       uid: client.uid,
       code: data.toString()

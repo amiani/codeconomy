@@ -23,7 +23,6 @@ export const world = createWorld<Clock>({
   ]
 })
 
-
 world.addSystem(function spawn(world) {
   const teams = useTeams()
   if (useInit()) {

@@ -62,7 +62,10 @@ export default function scriptSystem(world: World) {
 	}
 
 	//Maybe use number of connected players instead of MAX_PLAYERS
-	const shipStates = Array<Map<Entity, ShipState>>(MAX_PLAYERS).fill(new Map<Entity, ShipState>())
+	const shipStates = Array<Map<Entity, ShipState>>(MAX_PLAYERS)
+	for (let i = 0; i < MAX_PLAYERS; i++) {
+		shipStates[i] = new Map()
+	}
 	ships((e, [combatHistory, transform, allegiance, health]) => {
 		shipStates[allegiance.team].set(e, {
 			position: { x: transform.x, y: transform.y },
@@ -80,8 +83,12 @@ export default function scriptSystem(world: World) {
 				allies.push(state)
 			}
 		}
-		const enemies = [...shipStates[1 - allegiance.team].values()]
-		console.log(enemies.length)
+		const enemies = []
+		for (let i = 0, n = shipStates.length; i < n; ++i) {
+			if (i !== allegiance.team) {
+				enemies.push(...shipStates[i].values())
+			}
+		}
 		const state = createState(body, allies, enemies)
 		await context.global.set('state', state, { copy: true })
 		try {
