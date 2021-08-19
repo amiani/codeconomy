@@ -48,7 +48,7 @@ export default function createShip(
 		toComponent(context, Context),
 		component(Weapon, { damage: 1, maxCooldown: 0.1, currentCooldown: 0 }),
 		component(Allegiance, { player, team }),
-		component(SpriteData, { name: "ship" }),
+		component(SpriteData, { name: "condor" }),
 		component(Action),
 		component(Health, { current: 10, max: 10 })
 	)
