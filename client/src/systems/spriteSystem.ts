@@ -31,6 +31,8 @@ const copyInterpolateToSprite = (
   sprite.rotation = -lerp(start.rotation, end.rotation, t)
 }
 
+const teamColors = [0x436BD9, 0xDA2929, 0xEBE831, 0x91EB31, 0xEB31E5, 0x9220D9, 0x9220D9, 0x9220D9, 0x9220D9]
+
 export default function spriteSystem(world: World) {
   const viewport = useViewport()
   useMonitor(
@@ -48,14 +50,8 @@ export default function spriteSystem(world: World) {
         sprite.x = transform.x * 32
         sprite.y = -transform.y * 32
         sprite.rotation = -transform.rotation
-        let color
-        if (allegiance.team == 0) {
-          color = 0xff9999
-        } else {
-          color = 0x99ff99
-        }
         sprite.filters = [new GlowFilter({
-          color,
+          color: teamColors[allegiance.team],
           distance: 10,
           innerStrength: 1,
           outerStrength: 1
