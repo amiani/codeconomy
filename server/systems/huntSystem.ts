@@ -1,7 +1,8 @@
-import { component, createEffect, createQuery, Entity, useInit, useMonitor, World } from "@javelin/ecs";
+import { component, createEffect, createQuery, Entity, toComponent, useInit, useMonitor, World } from "@javelin/ecs";
 import { Clock } from "@javelin/hrtime-loop";
-import { playerTopic, shipTopic } from "../topics";
+import ivm from 'isolated-vm'
 
+import { playerTopic, shipTopic } from "../topics";
 import {
 	Countdown,
 	Player,
@@ -10,9 +11,13 @@ import {
 	Allegiance,
 	Transform,
 	Action,
+	Script,
+	Isolate,
 } from '../components'
 import { createSpawner } from "../factories";
 import { MAX_PLAYERS } from "../env";
+import { useTeams } from "../effects";
+import testScript from "../../scripts/testScript";
 
 const players = createQuery(Player)
 
@@ -76,6 +81,16 @@ export default function huntSystem(world: World<Clock>) {
 	if (useInit()) {
 		roundTimer = component(Countdown, { current: ROUND_LENGTH, max: ROUND_LENGTH })
 		world.create(roundTimer)
+
+		const isolate = new ivm.Isolate({ memoryLimit: 128 })
+		const script = isolate.compileScriptSync(testScript)
+		const owner = world.create(
+			toComponent(script, Script),
+			toComponent(isolate, Isolate)
+		)
+		const teams = useTeams()
+		const team = teams.assign(owner)
+		createSpawner(world, 0, 0, 0, owner, team, 2, "spawn2")
 	}
 	if (roundTimer) {
 		const dt = world.latestTickData.dt
