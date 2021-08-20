@@ -94,7 +94,8 @@ export default function huntSystem(world: World<Clock>) {
 			const script = isolate.compileScriptSync(testScript)
 			const owner = world.create(
 				toComponent(script, Script),
-				toComponent(isolate, Isolate)
+				toComponent(isolate, Isolate),
+				component(Score)
 			)
 			const teams = useTeams()
 			const team = teams.assign(owner)
