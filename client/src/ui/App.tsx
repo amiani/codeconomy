@@ -31,11 +31,6 @@ interface AppProps {
 function App({ states, actions }: AppProps) {
   useEffect(() => {
     firebase.auth().signInAnonymously()
-    firebase.auth().onAuthStateChanged(async user => {
-      if (user) {
-        actions.setToken(await user.getIdToken())
-      }
-    })
     return () => {}
   }, [])
 
