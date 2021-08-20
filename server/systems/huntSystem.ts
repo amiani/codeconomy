@@ -74,8 +74,8 @@ const handlePlayerLeft = (world: World<Clock>, player: Entity) => {
 	})
 }
 
-const RUN_TIME = 180
-const END_TIME = 20
+const RUN_TIME = 10
+const END_TIME = 10
 const phaseTimer = component(Countdown, { current: RUN_TIME, max: RUN_TIME })
 
 export default function huntSystem(world: World<Clock>) {
@@ -131,10 +131,9 @@ export default function huntSystem(world: World<Clock>) {
 			break
 
 		case GamePhase.end:
-			console.log('end phase')
 			if (phaseTimer.current <= 0) {
 				scores((e, [score]) => score.points = 0)
-				ships((e, [t, a]) => world.destroyImmediate(e))
+				ships((e, [t, a]) => world.destroy(e))
 				phaseTimer.current = RUN_TIME
 				changePhase(GamePhase.run)
 			}
