@@ -8,7 +8,7 @@ interface Client {
   channel: ClientChannel,
 }
 
-const HOSTNAME = '127.0.0.1'
+const HOSTNAME = '35.237.245.203'
 
 export default createEffect(world => {
     let client: Client
@@ -20,8 +20,9 @@ export default createEffect(world => {
 			const socket = new WebSocket(`ws://${HOSTNAME}:8001/connect?authorization=${token}`)
 			socket.binaryType = 'arraybuffer'
 			socket.onopen = (ev: Event) => {
+				const url = `http://${HOSTNAME}`
 				const channel = geckos({
-					url: `http://${HOSTNAME}`,
+					url: url,
 					port: 8000,
 					authorization: token
 				})

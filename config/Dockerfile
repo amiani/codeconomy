@@ -13,9 +13,19 @@ WORKDIR /home/server
 
 COPY .. codeconomy
 WORKDIR /home/server/codeconomy
-RUN pnpm install --production && pnpm rebuild
+COPY ../secrets/codeconomy0-firebase-adminkey.json .
+RUN pnpm install --production
+#RUN pnpm install --production && pnpm rebuild
 RUN chown -R server /home/server
 USER 1000
 
+RUN export GOOGLE_APPLICATION_CREDENTIALS=codeconomy0-firebase-adminkey.json
+
+#Websocket
+EXPOSE 8001
+#Geckos
+EXPOSE 8000
+EXPOSE 7000-8000/udp
+
 ENV NODE_ENV=production
-ENTRYPOINT ["npm", "run", "start:server"]
+ENTRYPOINT ["npm", "run", "start:server:prod"]

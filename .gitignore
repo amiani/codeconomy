@@ -4,3 +4,4 @@ packages
 export_secret.sh
 client/dist/
 .firebase/
+secrets/

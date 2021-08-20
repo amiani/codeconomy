@@ -74,8 +74,8 @@ const handlePlayerLeft = (world: World<Clock>, player: Entity) => {
 	})
 }
 
-const RUN_TIME = 10
-const END_TIME = 10
+const RUN_TIME = 180
+const END_TIME = 20
 const phaseTimer = component(Countdown, { current: RUN_TIME, max: RUN_TIME })
 
 export default function huntSystem(world: World<Clock>) {

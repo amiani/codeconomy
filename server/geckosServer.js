@@ -14,14 +14,15 @@ const authenticate = async (token, req, res) => {
   return false
 }
 
-const getServer = import("@geckos.io/server").then(({ geckos }) => {
+const getServer = import("@geckos.io/server").then(({ geckos, iceServers }) => {
 	const io = geckos({
 		authorization: authenticate,
 		cors: { allowAuthorization: true, origin: '*' },
 		portRange: {
 			min: 7000,
 			max: 8000
-		}
+		},
+    iceServers
 	})
 	io.listen(8000)
 	return io

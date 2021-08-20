@@ -1,6 +1,6 @@
 #Variables
 
-REPOSITORY = gcr.io/codeconomy-images
+REPOSITORY = gcr.io/codeconomy0
 
 # Directory that this Makefile is in.
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
