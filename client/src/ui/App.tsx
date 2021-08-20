@@ -9,7 +9,7 @@ import { uploadTopic } from '../topics'
 import Overlay from './Overlay'
 import { Feedback } from './Feedback';
 import Scoreboard from './Scoreboard';
-import * as store from './store'
+import * as store from './state/store'
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -60,7 +60,7 @@ function App({ states, actions }: AppProps) {
         actions={actions}
         upload={upload}
       />
-      <Scoreboard timer={180} scores={scores} style={scoreboardStyle} />
+      <Scoreboard gameState={state.game} style={scoreboardStyle} />
     </div>
   )
 }

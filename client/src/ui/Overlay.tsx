@@ -3,7 +3,7 @@ import React, { useState}  from 'react'
 import * as Pizzicato from 'pizzicato'
 import Button from './Button'
 import Editor from './Editor'
-import { actions, states } from './store'
+import { actions } from './state'
 
 interface OverlayProps {
 	state: any,

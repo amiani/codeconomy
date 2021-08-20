@@ -1,17 +1,13 @@
 import React, { CSSProperties } from 'react'
-
-interface Score {
-	name: string;
-	points: number;
-}
+import { GameState } from './state'
 
 interface ScoreboardProps {
-	timer: number;
-	scores: Array<Score>;
+	gameState: GameState,
 	style: CSSProperties;
 }
 
-export default function Scoreboard({ timer, scores, style }: ScoreboardProps) {
+export default function Scoreboard({ gameState, style }: ScoreboardProps) {
+	const { scores, timer } = gameState
 	const minutes = Math.floor(timer / 60);
 	const seconds = timer % 60;
 

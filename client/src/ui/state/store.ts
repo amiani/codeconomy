@@ -1,16 +1,29 @@
 import merge from 'mergerino'
 import flyd from 'flyd'
 
-const store = {
-	initial: {
-		user: {
-			token: '',
-		},
-		editor: {
-			code: ''
-		},
-		scores: {},
+import { GameState, Score } from './GameState'
+
+export interface AppState {
+	user: any,
+	editor: any,
+	game: GameState,
+}
+
+const initial: AppState = {
+	user: {
+		token: '',
 	},
+	editor: {
+		code: '',
+	},
+	game: {
+		scores: [],
+		timer: 180,
+	}
+}
+
+const store = {
+	initial,
 
 	Actions: (update: flyd.Stream<any>) => ({
 		setCode: (code: string) => {
@@ -18,6 +31,7 @@ const store = {
 			localStorage.setItem('code', code)
 		},
 		setToken: (token: string) => update({ user: { token } }),
+		setScores: (scores: Array<Score>) => update({ game: { scores } }),
 	}),
 
 	Effects: (update: flyd.Stream<any>, actions: any) => [
