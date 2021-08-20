@@ -10,6 +10,7 @@ import { createMessageProducer, encode } from "@javelin/net"
 import { Player, SpriteData, Allegiance, Transform, HuntScore, Countdown } from "../components"
 import { MESSAGE_MAX_BYTE_LENGTH, SEND_RATE } from "../env"
 import { useClients } from "../effects"
+import { Clock } from "@javelin/hrtime-loop"
 
 const transforms = createQuery(Transform)
 const players = createQuery(Player)
@@ -29,7 +30,7 @@ const useProducer = createImmutableRef(() =>
   createMessageProducer({ maxByteLength: MESSAGE_MAX_BYTE_LENGTH }),
 )
 
-export default function netSystem(world: World) {
+export default function netSystem(world: World<Clock>) {
   const send = useInterval((1 / SEND_RATE) * 1000)
   const clients = useClients()
   const producer = useProducer()
