@@ -1,4 +1,4 @@
-import { useInterval, useRef, World } from '@javelin/ecs'
+import { useInterval, World } from '@javelin/ecs'
 import { useClient, useNet } from '../effects'
 import { uploadTopic } from '../topics'
 import { actions } from '../ui/state'

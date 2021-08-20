@@ -1,4 +1,3 @@
-import { RawMessage } from '@geckos.io/client'
 import { createEffect, useInterval } from '@javelin/ecs'
 import { createMessageHandler } from '@javelin/net'
 import useClient from './useClient'
