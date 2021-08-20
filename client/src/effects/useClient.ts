@@ -8,7 +8,8 @@ interface Client {
   channel: ClientChannel,
 }
 
-const HOSTNAME = '35.185.102.25'
+//const HOSTNAME = '127.0.0.1'
+const HOSTNAME = 'outer.space.buns.run'
 
 export default createEffect(world => {
     let client: Client

@@ -7,7 +7,7 @@ RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
 #install pnpm
 RUN curl -f https://get.pnpm.io/v6.js | node - add --global pnpm
 #install tools for isolated-vm
-RUN apt-get install -y python g++ build-essential
+RUN apt-get install -y python g++ build-essential git
 
 WORKDIR /home/server
 

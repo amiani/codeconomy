@@ -1,16 +1,19 @@
 import {
+  component,
   createImmutableRef,
   createQuery,
+  useInit,
   useInterval,
   useMonitor,
   World
 } from "@javelin/ecs"
 import { createMessageProducer, encode } from "@javelin/net"
 
-import { Player, SpriteData, Allegiance, Transform, HuntScore, Countdown } from "../components"
+import { Player, SpriteData, Allegiance, Transform, HuntScore, Countdown, GameData } from "../components"
 import { MESSAGE_MAX_BYTE_LENGTH, SEND_RATE } from "../env"
 import { useClients } from "../effects"
 import { Clock } from "@javelin/hrtime-loop"
+import { getEffectiveTypeParameterDeclarations } from "typescript"
 
 const transforms = createQuery(Transform)
 const players = createQuery(Player)
@@ -23,17 +26,33 @@ function getInitialMessage(world: World) {
   transformsSpriteData(producer.attach)
   playerScores(producer.attach)
   countdowns(producer.attach)
+  gameDatas(producer.attach)
   return producer.take()
 }
 
 const useProducer = createImmutableRef(() =>
   createMessageProducer({ maxByteLength: MESSAGE_MAX_BYTE_LENGTH }),
 )
+const gameDatas = createQuery(GameData)
+
+let gameDataEntity
+let gameData: any
 
 export default function netSystem(world: World<Clock>) {
   const send = useInterval((1 / SEND_RATE) * 1000)
   const clients = useClients()
   const producer = useProducer()
+
+  if (useInit()) {
+    gameData = component(GameData, { tick: world.latestTick })
+    gameDataEntity = world.create(gameData)
+  }
+
+  if (gameData) {
+    gameData.tick = world.latestTick
+  }
+
+  gameDatas(producer.update)
 
   useMonitor(transformsSpriteData, producer.attach, producer.destroy)
   transforms(producer.update)

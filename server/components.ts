@@ -107,6 +107,10 @@ export const HuntScore = {
   points: number
 }
 
+export const GameData = {
+  tick: number
+}
+
 registerSchema(Player, 1)
 registerSchema(Transform, 2)
 registerSchema(Body, 3)
@@ -122,3 +126,4 @@ registerSchema(Bullet, 12)
 registerSchema(Spawner, 13)
 registerSchema(HuntScore, 15)
 registerSchema(CombatHistory, 16)
+registerSchema(GameData, 17)

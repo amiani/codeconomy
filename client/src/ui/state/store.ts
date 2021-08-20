@@ -23,7 +23,8 @@ const initial: AppState = {
 		timer: 180,
 	},
 	debug: {
-		downloadRate: 0
+		downloadRate: 0,
+		tick: 0,
 	}
 }
 
@@ -38,6 +39,7 @@ const store = {
 		setToken: (token: string) => update({ user: { token } }),
 		setScores: (scores: Array<Score>) => update({ game: { scores } }),
 		setRate: (downloadRate: number) => update({ debug: { downloadRate } }),
+		setTick: (tick: number) => update({ debug: { tick } }),
 	}),
 
 	Effects: (update: flyd.Stream<any>, actions: any) => [
