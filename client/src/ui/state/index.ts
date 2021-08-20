@@ -1,5 +1,6 @@
 import { states, actions } from './store'
 import { GameState, Score } from './GameState'
+import { DebugState } from './DebugState'
 
 export {
 	states,
@@ -9,4 +10,5 @@ export {
 export type {
 	GameState,
 	Score,
+	DebugState
 }

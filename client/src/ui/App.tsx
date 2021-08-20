@@ -10,6 +10,7 @@ import Overlay from './Overlay'
 import { Feedback } from './Feedback';
 import Scoreboard from './Scoreboard';
 import * as store from './state'
+import DebugPanel from './DebugPanel';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -54,6 +55,7 @@ function App({ states, actions }: AppProps) {
         upload={upload}
       />
       <Scoreboard gameState={state.game} style={scoreboardStyle} />
+      <DebugPanel debugState={state.debug} style={debugPanelStyle} />
     </div>
   )
 }
@@ -62,6 +64,13 @@ const scoreboardStyle: React.CSSProperties = {
   position: 'absolute',
   right: '0',
   top: '0',
+  zIndex: 1000
+}
+
+const debugPanelStyle: React.CSSProperties = {
+  position: 'absolute',
+  right: '0',
+  bottom: '0',
   zIndex: 1000
 }
 

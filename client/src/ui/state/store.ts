@@ -2,11 +2,13 @@ import merge from 'mergerino'
 import flyd from 'flyd'
 
 import { GameState, Score } from './GameState'
+import { DebugState } from './DebugState'
 
 export interface AppState {
 	user: any,
 	editor: any,
 	game: GameState,
+	debug: DebugState,
 }
 
 const initial: AppState = {
@@ -19,6 +21,9 @@ const initial: AppState = {
 	game: {
 		scores: [],
 		timer: 180,
+	},
+	debug: {
+		downloadRate: 0
 	}
 }
 
@@ -32,6 +37,7 @@ const store = {
 		},
 		setToken: (token: string) => update({ user: { token } }),
 		setScores: (scores: Array<Score>) => update({ game: { scores } }),
+		setRate: (downloadRate: number) => update({ debug: { downloadRate } }),
 	}),
 
 	Effects: (update: flyd.Stream<any>, actions: any) => [
