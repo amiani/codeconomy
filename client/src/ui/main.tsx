@@ -3,10 +3,11 @@ import ReactDOM from "react-dom"
 
 import "./index.css"
 import App from "./App"
+import { states, actions } from './store'
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <App states={states} actions={actions} />
   </React.StrictMode>,
   document.getElementById("root"),
 )

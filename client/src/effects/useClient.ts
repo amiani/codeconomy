@@ -8,7 +8,7 @@ interface Client {
   channel: ClientChannel,
 }
 
-const HOSTNAME = '35.237.245.203'
+const HOSTNAME = '127.0.0.1'
 
 export default createEffect(world => {
     let client: Client

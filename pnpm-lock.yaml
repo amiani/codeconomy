@@ -14,6 +14,7 @@ importers:
       '@javelin/pack': workspace:*
       '@pixi/filter-glow': ^4.1.3
       '@types/jest': ^26.0.24
+      '@types/mergerino': ^0.4.0
       '@types/node': ^16.4.9
       '@types/prismjs': ^1.16.6
       '@types/react': ^17.0.0
@@ -22,8 +23,10 @@ importers:
       '@vitejs/plugin-react-refresh': ^1.3.1
       firebase: ^8.9.0
       firebase-admin: ^9.11.0
+      flyd: ^0.2.8
       isolated-vm: ^4.3.3
       jest: ^27.0.6
+      mergerino: ^0.4.0
       pixi-viewport: ^4.32.0
       pixi.js: ^6.1.0
       pizzicato: ^0.6.4
@@ -49,7 +52,9 @@ importers:
       '@pixi/filter-glow': 4.1.3
       firebase: 8.9.0
       firebase-admin: 9.11.0
+      flyd: 0.2.8
       isolated-vm: 4.3.3
+      mergerino: 0.4.0
       pixi-viewport: 4.32.0
       pixi.js: 6.1.0
       pizzicato: 0.6.4
@@ -63,6 +68,7 @@ importers:
       ws: 8.1.0
     devDependencies:
       '@types/jest': 26.0.24
+      '@types/mergerino': 0.4.0
       '@types/node': 16.4.9
       '@types/prismjs': 1.16.6
       '@types/react': 17.0.14
@@ -2028,6 +2034,10 @@ packages:
     resolution: {integrity: sha512-5tXH6Bx/kNGd3MgffdmP4dy2Z+G4eaXw0SE81Tq3BNadtnMR5/ySMzX4SLEzHJzSmPNn4HIdpQsBvXMUykr58w==}
     dev: false
 
+  /@types/mergerino/0.4.0:
+    resolution: {integrity: sha512-f5v19VVvlk1uBNel8Cf6n0V2Y+xqhiVS38lA0fz5OurUbyoVggQLiMVW3BGNwT8ZGMzfIva2s71RE4NAcQ80Bg==}
+    dev: true
+
   /@types/mime/1.3.2:
     resolution: {integrity: sha512-YATxVxgRqNH6nHEIsvg6k2Boc1JHI9ZbH5iWFFv/MTkchz3b1ieGDa5T0a9RznNdI0KhVbdbWSN+KWWrQZRxTw==}
     dev: false
@@ -3027,6 +3037,12 @@ packages:
       dialog-polyfill: 0.4.10
       firebase: 8.9.0
       material-design-lite: 1.3.0
+    dev: false
+
+  /flyd/0.2.8:
+    resolution: {integrity: sha512-PVr++d+cOkf//kVIm66aTgmmrHNAhqNH9TIZQzunrVL9GaW7pMFTuLcaGkTV9z4bkvVWPB1VGuxjGFFfQUZNwA==}
+    dependencies:
+      ramda: 0.25.0
     dev: false
 
   /form-data/3.0.1:
@@ -4199,6 +4215,10 @@ packages:
     resolution: {integrity: sha512-abv/qOcuPfk3URPfDzmZU1LKmuw8kT+0nIHvKrKgFrwifol/doWcdA4ZqsWQ8ENrFKkd67Mfpo/LovbIUsbt3w==}
     dev: true
 
+  /mergerino/0.4.0:
+    resolution: {integrity: sha512-dvyWWLp9GN7OZoAoqn1u2ewCDV06oggVi6AwFsgHxUV8jNnaTOMEyux3fZ7Njm7Hg/ypK2+M0p6liCIEWcJnbg==}
+    dev: false
+
   /micromatch/4.0.4:
     resolution: {integrity: sha512-pRmzw/XUcwXGpD9aI9q/0XOwLNygjETJ8y0ao0wdqprrzDa4YnxLcz7fQRZr8voh8V10kGhABbNcHVk5wHgWwg==}
     engines: {node: '>=8.6'}
@@ -4663,6 +4683,10 @@ packages:
     resolution: {integrity: sha1-sgmEkgO7Jd+CDadW50cAWHhSFiA=}
     engines: {node: '>=0.4.x'}
     deprecated: The querystring API is considered Legacy. new code should use the URLSearchParams API instead.
+    dev: false
+
+  /ramda/0.25.0:
+    resolution: {integrity: sha512-GXpfrYVPwx3K7RQ6aYT8KPS8XViSXUVJT1ONhoKPE9VAleW42YE+U+8VEyGWt41EnEQW7gwecYJriTI0pKoecQ==}
     dev: false
 
   /rc/1.2.8:

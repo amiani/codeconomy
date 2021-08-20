@@ -9,6 +9,7 @@ import { uploadTopic } from '../topics'
 import Overlay from './Overlay'
 import { Feedback } from './Feedback';
 import Scoreboard from './Scoreboard';
+import * as store from './store'
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -24,33 +25,39 @@ firebase.initializeApp(firebaseConfig);
 
 const scores = [{ name: 'amiani', points: 50000 }]
 
-function App(props: any) {
-  const [token, setToken] = useState('')
+interface AppProps {
+  states: typeof store.states,
+  actions: typeof store.actions,
+}
+
+function App({ states, actions }: AppProps) {
   useEffect(() => {
     firebase.auth().signInAnonymously()
     firebase.auth().onAuthStateChanged(async user => {
       if (user) {
-        setToken(await user.getIdToken())
+        actions.setToken(await user.getIdToken())
       }
     })
-    return () => {
-    }
+    return () => {}
   }, [])
 
-	const [code, setCode] = useState(localStorage.getItem('code') || testScript)
-  const onCodeChanged = (code: string) => {
-    setCode(code)
-    localStorage.setItem('code', code)
+  const [init, setInit] = useState(false)
+  const [state, setState] = useState(states())
+
+  if (!init) {
+    setInit(true)
+    actions.setCode(localStorage.getItem('code') || testScript)
+    states.map(setState)
   }
   
-  const upload = () => uploadTopic.push({ code })
+  const upload = () => uploadTopic.push({ code: state.editor.code })
 
   return (
     <div className="App">
       <Game />
       <Overlay
-        code={code}
-        setCode={onCodeChanged}
+        state={state}
+        actions={actions}
         upload={upload}
       />
       <Scoreboard timer={180} scores={scores} style={scoreboardStyle} />

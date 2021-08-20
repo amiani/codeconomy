@@ -3,14 +3,15 @@ import React, { useState}  from 'react'
 import * as Pizzicato from 'pizzicato'
 import Button from './Button'
 import Editor from './Editor'
+import { actions, states } from './store'
 
 interface OverlayProps {
-	code: string,
-	setCode: (code: string) => void,
+	state: any,
+	actions: typeof actions,
 	upload: () => void,
 }
 
-export default function Overlay({ code, setCode, upload }: OverlayProps) {
+export default function Overlay({ state, actions, upload }: OverlayProps) {
 	const [hidden, setHidden] = useState(false)
 
 	return (
@@ -29,7 +30,7 @@ export default function Overlay({ code, setCode, upload }: OverlayProps) {
 				<Button onClick={e => Pizzicato.context.resume()}>Unmute</Button>
 				<Button onClick={e => window.open('mailto:amianijohns@gmail.com')}>Feedback</Button>
 			</div>
-			{!hidden && <Editor code={code} setCode={setCode} />}
+			{!hidden && <Editor code={state.editor.code} setCode={actions.setCode} />}
 		</div>
 	)
 }
