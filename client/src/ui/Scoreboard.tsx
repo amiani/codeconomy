@@ -68,7 +68,7 @@ const scoreStyle: CSSProperties = {
 }
 
 const nameStyle: CSSProperties = {
-	fontSize: '1.5em',
+	fontSize: '1em',
 	fontWeight: 'bold',
 	marginRight: '0.5em',
 }

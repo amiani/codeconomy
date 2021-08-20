@@ -9,7 +9,7 @@ import { uploadTopic } from '../topics'
 import Overlay from './Overlay'
 import { Feedback } from './Feedback';
 import Scoreboard from './Scoreboard';
-import * as store from './state/store'
+import * as store from './state'
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
