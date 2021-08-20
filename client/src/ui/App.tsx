@@ -23,8 +23,6 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 
-const scores = [{ name: 'amiani', points: 50000 }]
-
 interface AppProps {
   states: typeof store.states,
   actions: typeof store.actions,
