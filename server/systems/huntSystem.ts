@@ -2,11 +2,11 @@ import { component, createEffect, createQuery, Entity, toComponent, useInit, use
 import { Clock } from "@javelin/hrtime-loop";
 import ivm from 'isolated-vm'
 
-import { playerTopic, shipTopic } from "../topics";
+import { phaseTopic, playerTopic, shipTopic } from "../topics";
 import {
 	Countdown,
 	Player,
-	HuntScore,
+	HuntScore as Score,
 	Spawner,
 	Allegiance,
 	Transform,
@@ -16,15 +16,14 @@ import {
 } from '../components'
 import { createSpawner } from "../factories";
 import { MAX_PLAYERS } from "../env";
-import { useTeams } from "../effects";
+import { usePhase, useTeams } from "../effects";
 import testScript from "../../scripts/testScript";
+import { GamePhase } from "../effects/usePhase";
 
 const players = createQuery(Player)
-
-const ROUND_LENGTH = 180
-
 const spawners = createQuery(Spawner, Allegiance)
 const ships = createQuery(Transform, Action)
+const scores = createQuery(Score)
 
 interface SpawnLocation {
 	x: number;
@@ -75,38 +74,73 @@ const handlePlayerLeft = (world: World<Clock>, player: Entity) => {
 	})
 }
 
+const RUN_TIME = 180
+const END_TIME = 20
+const phaseTimer = component(Countdown, { current: RUN_TIME, max: RUN_TIME })
+
 export default function huntSystem(world: World<Clock>) {
-	//Round timer
-	let roundTimer
-	if (useInit()) {
-		roundTimer = component(Countdown, { current: ROUND_LENGTH, max: ROUND_LENGTH })
-		world.create(roundTimer)
+	const { phase, changePhase } = usePhase()
+	const dt = world.latestTickData.dt
+	phaseTimer.current -= dt / 1000
 
-		const isolate = new ivm.Isolate({ memoryLimit: 128 })
-		const script = isolate.compileScriptSync(testScript)
-		const owner = world.create(
-			toComponent(script, Script),
-			toComponent(isolate, Isolate)
-		)
-		const teams = useTeams()
-		const team = teams.assign(owner)
-		createSpawner(world, 0, 0, 0, owner, team, 2, "spawn2")
-	}
-	if (roundTimer) {
-		const dt = world.latestTickData.dt
-		roundTimer.current -= dt
-		if (roundTimer.current <= 0) {
-			world.reset()
-		}
-	}
+	//Score
+	useMonitor(players,(e, [p]) => world.attach(e, component(Score)))
 
-	//Ship distance
-	ships((e, [transform, action]) => {
-		const distance = Math.sqrt(Math.pow(transform.x, 2) + Math.pow(transform.y, 2))
-		if (distance > 700) {
-			world.destroy(e)
-		}
-	})
+	switch (phase) {
+		//Runs once only at game start
+		case GamePhase.setup:
+			world.create(phaseTimer)
+			const isolate = new ivm.Isolate({ memoryLimit: 128 })
+			const script = isolate.compileScriptSync(testScript)
+			const owner = world.create(
+				toComponent(script, Script),
+				toComponent(isolate, Isolate)
+			)
+			const teams = useTeams()
+			const team = teams.assign(owner)
+			createSpawner(world, 0, 0, 0, owner, team, 2, "spawn2")
+			changePhase(GamePhase.run)
+			break
+
+		case GamePhase.run:
+			if (phaseTimer.current <= 0) {
+				phaseTimer.current = END_TIME
+				changePhase(GamePhase.end)
+			}
+
+			ships((e, [transform, action]) => {
+				const distance = Math.sqrt(Math.pow(transform.x, 2) + Math.pow(transform.y, 2))
+				if (distance > 700) {
+					world.destroy(e)
+				}
+			})
+			
+			for (const shipEvent of shipTopic) {
+				if (shipEvent.type === 'ship-destroyed') {
+					if (shipEvent.entity !== shipEvent.combatHistory.lastHitByPlayer) {
+						try {
+							const score = world.get(shipEvent.combatHistory.lastHitByPlayer, Score)
+							score && score.points++
+							console.log(`Player score: ${score.points}`)
+						} catch (err) {
+							console.log(err)
+						}
+					}
+				}
+			}
+			break
+
+		case GamePhase.end:
+			console.log('end phase')
+			if (phaseTimer.current <= 0) {
+				scores((e, [score]) => score.points = 0)
+				ships((e, [t, a]) => world.destroyImmediate(e))
+				phaseTimer.current = RUN_TIME
+				changePhase(GamePhase.run)
+			}
+			break
+
+	}
 
 	//Spawn locations
 	const spawnLocations = useSpawnLocations()
@@ -128,23 +162,6 @@ export default function huntSystem(world: World<Clock>) {
 				handlePlayerLeft(world, playerEvent.entity)
 				spawnLocations.remove(playerEvent.entity)
 				break
-		}
-	}
-
-	//Score
-	useMonitor(players,(e, [p]) => world.attach(e, component(HuntScore)))
-
-	for (const shipEvent of shipTopic) {
-		if (shipEvent.type === 'ship-destroyed') {
-			if (shipEvent.entity !== shipEvent.combatHistory.lastHitByPlayer) {
-				try {
-					const score = world.get(shipEvent.combatHistory.lastHitByPlayer, HuntScore)
-					score && score.points++
-					console.log(`Player score: ${score.points}`)
-				} catch (err) {
-					console.log(err)
-				}
-			}
 		}
 	}
 }

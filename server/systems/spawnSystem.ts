@@ -3,12 +3,22 @@ import { Clock } from '@javelin/hrtime-loop'
 import ivm from 'isolated-vm'
 
 import { Isolate, Script, Spawner, Allegiance, Transform } from '../components'
+import { GamePhase } from '../effects/usePhase'
 import { createShip } from '../factories'
+import { phaseTopic } from '../topics'
 
 const spawnersTransformTeam = createQuery(Spawner, Transform, Allegiance)
+const spawners = createQuery(Spawner)
 
 export default function spawnSystem(world: World<Clock>): void {
 	const { dt } = world.latestTickData
+	for (const phaseEvent of phaseTopic) {
+		if (phaseEvent.phase === GamePhase.run) {
+			spawners((e, [spawner]) =>
+				spawner.countdown.current = spawner.countdown.max)
+		}
+	}
+
 	spawnersTransformTeam((e, [spawner, transform, allegiance]) => {
 		spawner.countdown.current -= dt / 1000
 		if (spawner.countdown.current <= 0) {
