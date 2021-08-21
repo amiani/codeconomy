@@ -18,8 +18,8 @@ export default function huntScoreDisplaySystem(world: World) {
 				points: score.points })
 		})
 		actions.setScores(scores)
+
 		countdowns((e, [countdown]) => {
-			console.log('setting time')
 			actions.setTime(countdown.current)
 		})
 	}

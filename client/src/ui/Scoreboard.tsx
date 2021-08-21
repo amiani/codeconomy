@@ -9,7 +9,7 @@ interface ScoreboardProps {
 export default function Scoreboard({ gameState, style }: ScoreboardProps) {
 	const { scores, timer } = gameState
 	const minutes = Math.floor(timer / 60);
-	const seconds = timer % 60;
+	const seconds = Math.round(timer % 60);
 
 	return (
 		<div className="scoreboard-container" style={style}>
@@ -40,7 +40,8 @@ const scoreboardStyle: CSSProperties = {
 	flexDirection: 'column',
 	alignItems: 'center',
 	background: '#000',
-	opacity: '60%'
+	opacity: '60%',
+	minWidth: '115px'
 }
 
 const timerStyle: CSSProperties = {
