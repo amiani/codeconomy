@@ -8,8 +8,7 @@ interface Client {
   channel: ClientChannel,
 }
 
-//const HOSTNAME = '127.0.0.1'
-const HOSTNAME = 'outer.space.buns.run'
+const HOSTNAME = import.meta.env.PROD ? 'outer.space.buns.run' : '127.0.0.1'
 
 export default createEffect(world => {
     let client: Client
@@ -18,11 +17,13 @@ export default createEffect(world => {
     firebase.auth().onAuthStateChanged(async user => {
 		if (user) {
 			const token: string = await user.getIdToken(true)
-			const socket = new WebSocket(`wss://${HOSTNAME}:8001/connect?authorization=${token}`)
+			const ws = import.meta.env.PROD ? `wss` : `ws`
+			const socket = new WebSocket(`${ws}://${HOSTNAME}:8001/connect?authorization=${token}`)
 			socket.binaryType = 'arraybuffer'
 			socket.onopen = (ev: Event) => {
+				const http = import.meta.env.PROD ? `https` : `http`
 				const channel = geckos({
-					url: `https://${HOSTNAME}`,
+					url: `${http}://${HOSTNAME}`,
 					port: 8001,
 					authorization: token
 				})

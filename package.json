@@ -5,9 +5,10 @@
   "scripts": {
     "start": "run-p start:*",
     "start:client": "vite --config client/vite.config.ts",
+    "start:client:remote": "vite --mode production --config client/vite.config.ts",
     "build:client": "vite build --config client/vite.config.ts",
     "start:server": "ts-node server/index.ts",
-    "start:server:prod": "ts-node --transpile-only server/index.ts",
+    "start:server:prod": "NODE_ENV=production ts-node --transpile-only server/index.ts",
     "build:server": "tsc --build",
     "test": "jest"
   },

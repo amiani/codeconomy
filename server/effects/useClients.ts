@@ -21,8 +21,7 @@ export default createEffect((world: World<Clock>) => {
   })
   wss.on("connection", async (socket, req) => {
     if (clients.size >= MAX_PLAYERS) {
-      //respond that server is full
-      socket.close()
+      socket.close(503, "Server is full")
       return
     }
     
