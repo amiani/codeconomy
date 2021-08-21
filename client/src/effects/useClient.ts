@@ -24,7 +24,7 @@ export default createEffect(world => {
 			socket.onopen = (ev: Event) => {
 				const channel = geckos({
 					url: `https://${HOSTNAME}`,
-					port: 8080,
+					port: 8001,
 					authorization: token
 				})
 
