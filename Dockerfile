@@ -11,7 +11,7 @@ RUN apt-get install -y python g++ build-essential git
 
 WORKDIR /home/server
 
-COPY /workspace codeconomy/
+COPY . codeconomy/
 WORKDIR /home/server/codeconomy
 #COPY ./secrets/codeconomy0-firebase-adminkey.json .
 RUN pnpm install --production
