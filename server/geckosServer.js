@@ -1,5 +1,4 @@
 const admin = require("firebase-admin")
-const http = require("http")
 
 const authenticate = async (token, req, res) => {
   if (token) {
@@ -16,10 +15,6 @@ const authenticate = async (token, req, res) => {
 }
 
 const getServer = import("@geckos.io/server").then(({ geckos, iceServers }) => {
-  const server = http.createServer((req, res) => {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.end('ok');
-  })
 	const io = geckos({
 		authorization: authenticate,
 		cors: { allowAuthorization: true, origin: '*' },
@@ -29,8 +24,7 @@ const getServer = import("@geckos.io/server").then(({ geckos, iceServers }) => {
 		},
     iceServers
 	})
-  io.addServer(server)
-	server.listen(8080)
+	io.listen(8080)
 	return io
 })
 
