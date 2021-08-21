@@ -39,12 +39,13 @@ const scoreboardStyle: CSSProperties = {
 	display: 'flex',
 	flexDirection: 'column',
 	alignItems: 'center',
-	background: '#fff',
-	opacity: '50%'
+	background: '#000',
+	opacity: '60%'
 }
 
 const timerStyle: CSSProperties = {
 	fontSize: '3em',
+	color: 'white'
 }
 
 const minutesStyle: CSSProperties = {
@@ -65,6 +66,7 @@ const scoreStyle: CSSProperties = {
 	flexDirection: 'row',
 	justifyContent: 'space-around',
 	alignItems: 'center',
+	color: 'white'
 }
 
 const nameStyle: CSSProperties = {

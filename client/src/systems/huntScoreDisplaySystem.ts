@@ -1,11 +1,11 @@
 import { createQuery, useInterval, World } from "@javelin/ecs";
+
 import { Allegiance, Countdown, HuntScore } from "../../../server/components";
 import { actions, Score } from "../ui/state";
 import { teamColors, teamNames } from '../ui/colors'
 
 const teamScores = createQuery(HuntScore, Allegiance)
 const countdowns = createQuery(Countdown)
-
 
 export default function huntScoreDisplaySystem(world: World) {
 	const update = useInterval(1000)
@@ -14,7 +14,7 @@ export default function huntScoreDisplaySystem(world: World) {
 		teamScores((e, [score, allegiance]) => {
 			scores.push({
 				name: teamNames[allegiance.team],
-				color: String(teamColors[allegiance.team]),
+				color: '#' + teamColors[allegiance.team].toString(16),
 				points: score.points })
 		})
 		actions.setScores(scores)
