@@ -19,7 +19,7 @@ RUN pnpm install --production
 RUN chown -R server /home/server
 USER 1000
 
-RUN export GOOGLE_APPLICATION_CREDENTIALS=codeconomy0-firebase-adminkey.json
+#RUN export GOOGLE_APPLICATION_CREDENTIALS=codeconomy0-firebase-adminkey.json
 
 #Websocket
 EXPOSE 8001
