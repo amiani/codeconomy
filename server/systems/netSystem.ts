@@ -52,6 +52,7 @@ export default function netSystem(world: World<Clock>) {
   }
 
   gameDatas(producer.update)
+  countdowns(producer.update)
 
   useMonitor(transformsSpriteData, producer.attach, producer.destroy)
   transforms(producer.update)
@@ -60,7 +61,6 @@ export default function netSystem(world: World<Clock>) {
   teamScores(producer.update)
 
   useMonitor(countdowns, producer.attach, producer.destroy)
-  countdowns(producer.update)
 
   if (send) {
     const message = producer.take()

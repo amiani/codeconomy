@@ -77,7 +77,6 @@ const handlePlayerLeft = (world: World<Clock>, player: Entity) => {
 const RUN_TIME = 180
 const END_TIME = 20
 const phaseTimer = component(Countdown, { current: RUN_TIME, max: RUN_TIME })
-let phaseEntity: any
 
 export default function huntSystem(world: World<Clock>) {
 	const { phase, changePhase } = usePhase()
@@ -90,7 +89,7 @@ export default function huntSystem(world: World<Clock>) {
 	switch (phase) {
 		//Runs once only at game start
 		case GamePhase.setup:
-			phaseEntity = world.create(phaseTimer)
+			world.create(phaseTimer)
 			const isolate = new ivm.Isolate({ memoryLimit: 128 })
 			const script = isolate.compileScriptSync(testScript)
 			const owner = world.create(
@@ -109,12 +108,6 @@ export default function huntSystem(world: World<Clock>) {
 			if (phaseTimer.current <= 0) {
 				phaseTimer.current = END_TIME
 				changePhase(GamePhase.end)
-			}
-			try {
-				const p = world.get(phaseEntity, Countdown)
-				console.log(p.current)
-			} catch (err) {
-				console.log(err)
 			}
 
 			ships((e, [transform, action]) => {
