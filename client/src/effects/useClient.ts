@@ -24,7 +24,7 @@ export default createEffect(world => {
 				const url = `http://${HOSTNAME}`
 				const channel = geckos({
 					url: url,
-					port: 8000,
+					port: 8080,
 					authorization: token
 				})
 
