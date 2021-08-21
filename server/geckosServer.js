@@ -1,4 +1,5 @@
 const admin = require("firebase-admin")
+const { server } = require('./server')
 
 const authenticate = async (token, req, res) => {
   if (token) {
@@ -24,7 +25,8 @@ const getServer = import("@geckos.io/server").then(({ geckos, iceServers }) => {
 		},
     iceServers
 	})
-	io.listen(8080)
+  io.addServer(server)
+	//io.listen(8080)
 	return io
 })
 

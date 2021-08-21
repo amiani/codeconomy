@@ -19,12 +19,11 @@ export default createEffect(world => {
     firebase.auth().onAuthStateChanged(async user => {
 		if (user) {
 			const token: string = await user.getIdToken(true)
-			const socket = new WebSocket(`ws://${HOSTNAME}:8001/connect?authorization=${token}`)
+			const socket = new WebSocket(`wss://${HOSTNAME}:8001/connect?authorization=${token}`)
 			socket.binaryType = 'arraybuffer'
 			socket.onopen = (ev: Event) => {
-				const url = `http://${HOSTNAME}`
 				const channel = geckos({
-					url: url,
+					url: `https://${HOSTNAME}`,
 					port: 8080,
 					authorization: token
 				})

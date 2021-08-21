@@ -3,8 +3,8 @@ import url from 'url'
 import { createEffect, Entity, World } from '@javelin/ecs'
 import { Clock } from '@javelin/hrtime-loop'
 import * as admin from 'firebase-admin'
-import https from 'https'
-import fs from 'fs'
+//@ts-ignore
+import { server } from '../server'
 
 import { createPlayer } from '../factories'
 //@ts-ignore
@@ -15,15 +15,10 @@ import { MAX_PLAYERS } from '../env'
 export default createEffect((world: World<Clock>) => {
   const clients = new Map()
 
-  const server = https.createServer({
-    cert: fs.readFileSync('/etc/letsencrypt/live/outer.space.buns.run/fullchain.pem'),
-    key: fs.readFileSync('/etc/letsencrypt/live/outer.space.buns.run/privkey.pem'),
-  });
   const wss = new WebSocket.Server({
     server,
     path: '/connect'
   })
-  server.listen(8001)
   wss.on("connection", async (socket, req) => {
     if (clients.size >= MAX_PLAYERS) {
       //respond that server is full
