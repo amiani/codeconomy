@@ -40,6 +40,7 @@ const store = {
 		setScores: (scores: Array<Score>) => update({ game: { scores } }),
 		setRate: (downloadRate: number) => update({ debug: { downloadRate } }),
 		setTick: (tick: number) => update({ debug: { tick } }),
+		setTime: (time: number) => update({ game: { timer: time } }),
 	}),
 
 	Effects: (update: flyd.Stream<any>, actions: any) => [

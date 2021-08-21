@@ -13,7 +13,6 @@ import { Player, SpriteData, Allegiance, Transform, HuntScore, Countdown, GameDa
 import { MESSAGE_MAX_BYTE_LENGTH, SEND_RATE } from "../env"
 import { useClients } from "../effects"
 import { Clock } from "@javelin/hrtime-loop"
-import { getEffectiveTypeParameterDeclarations } from "typescript"
 
 const transforms = createQuery(Transform)
 const players = createQuery(Player)
@@ -25,7 +24,10 @@ function getInitialMessage(world: World) {
   const producer = createMessageProducer()
   transformsSpriteData(producer.attach)
   playerScores(producer.attach)
-  countdowns(producer.attach)
+  countdowns((e, [c]) => {
+    console.log('sending countdown')
+    producer.attach
+  })
   gameDatas(producer.attach)
   return producer.take()
 }

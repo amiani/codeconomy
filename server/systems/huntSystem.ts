@@ -100,6 +100,7 @@ export default function huntSystem(world: World<Clock>) {
 			const teams = useTeams()
 			const team = teams.assign(owner)
 			createSpawner(world, 0, 0, 0, owner, team, 2, "spawn2")
+			phaseTimer.current = RUN_TIME
 			changePhase(GamePhase.run)
 			break
 
