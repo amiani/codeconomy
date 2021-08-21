@@ -29,7 +29,7 @@ const angleBetween = (a, b) => Math.atan2(cross(a, b), dot(a, b))
 
 const kp = 50
 const kv = -10
-const turnTo = (position, rotation, angularVelocity, targetPosition) => {
+const turnTo = ({ position, rotation, angularVelocity }, targetPosition) => {
 	const unit = { x: Math.cos(rotation), y: Math.sin(rotation) }
 	const targetLocal = { x: targetPosition.x - position.x, y: targetPosition.y - position.y }
 	const error = angleBetween(unit, targetLocal)
@@ -38,24 +38,17 @@ const turnTo = (position, rotation, angularVelocity, targetPosition) => {
 
 
 let target
-const run = (state) => {
-	const { position, rotation, angularVelocity, enemies } = state
+const run = ({ self, allies, enemies }) => {
 	const action = createAction()
 	if (target) {
 		target = getClosest(target.position, enemies)
 	} else {
-		target = getClosest(position, enemies)
+		target = getClosest(self.position, enemies)
 	}
 	if (target) {
-		action.rotate = turnTo(position, rotation, angularVelocity, target.position)
+		action.rotate = turnTo(self, target.position)
 	}
 	action.fire = true
 
 	return action
-}
-
-module.exports = {
-	createVec,
-	angleBetween,
-	turnTo
 }

@@ -26,10 +26,12 @@ const createState = (
 	allies: Array<ShipState>,
 	enemies: Array<ShipState>,
 ) => ({
-	position: body.translation(),
-	velocity: body.linvel(),
-	rotation: body.rotation(),
-	angularVelocity: body.angvel(),
+	self: {
+		position: body.translation(),
+		velocity: body.linvel(),
+		rotation: body.rotation(),
+		angularVelocity: body.angvel(),
+	},
 	allies,
 	enemies,
 })
@@ -77,7 +79,7 @@ export default function scriptSystem(world: World) {
 	scriptShips(async (e, [script, contextComp, bodyComp, action, allegiance]) => {
 		const body = bodyComp as typeof rapier.Body
 		const context = contextComp as ivm.Context
-		const allies: Array<ShipState> = []
+		const allies = Array<ShipState>()
 		for (const [shipEntity, state] of shipStates[allegiance.team].entries()) {
 			if (shipEntity !== e) {
 				allies.push(state)
