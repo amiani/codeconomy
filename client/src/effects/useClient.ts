@@ -10,6 +10,7 @@ interface Client {
 
 //const HOSTNAME = '127.0.0.1'
 const HOSTNAME = 'outer.space.buns.run'
+//const HOSTNAME = '34.138.46.44'
 
 export default createEffect(world => {
     let client: Client
