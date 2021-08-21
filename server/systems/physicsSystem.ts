@@ -1,9 +1,6 @@
 import {
 	World,
 	createQuery,
-	toComponent,
-	component,
-	useMonitor,
 } from '@javelin/ecs'
 import { useColliderToEntity } from '../effects'
 const rapier = require('@a-type/rapier2d-node')

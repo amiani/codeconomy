@@ -17,17 +17,14 @@ import { Clock } from "@javelin/hrtime-loop"
 const transforms = createQuery(Transform)
 const players = createQuery(Player)
 const transformsSpriteData = createQuery(Transform, SpriteData, Allegiance)
-const playerScores = createQuery(Player, HuntScore)
+const teamScores = createQuery(Allegiance, HuntScore)
 const countdowns = createQuery(Countdown)
 
 function getInitialMessage(world: World) {
   const producer = createMessageProducer()
   transformsSpriteData(producer.attach)
-  playerScores(producer.attach)
-  countdowns((e, [c]) => {
-    console.log('sending countdown')
-    producer.attach
-  })
+  teamScores(producer.attach)
+  countdowns(producer.attach)
   gameDatas(producer.attach)
   return producer.take()
 }
@@ -59,8 +56,8 @@ export default function netSystem(world: World<Clock>) {
   useMonitor(transformsSpriteData, producer.attach, producer.destroy)
   transforms(producer.update)
 
-  useMonitor(playerScores, producer.attach, producer.destroy)
-  playerScores(producer.update)
+  useMonitor(teamScores, producer.attach, producer.destroy)
+  teamScores(producer.update)
 
   useMonitor(countdowns, producer.attach, producer.destroy)
   countdowns(producer.update)

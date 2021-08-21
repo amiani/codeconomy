@@ -11,6 +11,7 @@ import { GlowFilter } from '@pixi/filter-glow'
 import { Interpolate, Sprite, SpriteData, Allegiance, Transform } from '../../../server/components'
 import app from '../pixiApp'
 import { useViewport } from '../effects'
+import { teamColors } from '../ui/colors'
 
 const interpolatedSprites = createQuery(Transform, Interpolate, Sprite)
 const transformSprites = createQuery(Transform, Sprite)
@@ -31,7 +32,6 @@ const copyInterpolateToSprite = (
   sprite.rotation = -lerp(start.rotation, end.rotation, t)
 }
 
-const teamColors = [0x436BD9, 0xDA2929, 0xEBE831, 0x91EB31, 0xEB31E5, 0x9220D9, 0x9220D9, 0x9220D9, 0x9220D9]
 
 export default function spriteSystem(world: World) {
   const viewport = useViewport()

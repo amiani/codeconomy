@@ -24,7 +24,7 @@ export default function Scoreboard({ gameState, style }: ScoreboardProps) {
 						.sort((a, b) => b.points - a.points)
 						.map((score, i) => (
 							<li key={i} className="score" style={scoreStyle}>
-								<div style={nameStyle}>{score.name}</div>
+								<div style={{ ...nameStyle, color: score.color }}>{score.name}</div>
 								<div style={pointsStyle}>{score.points}</div>
 							</li>
 						)
