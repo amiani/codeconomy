@@ -24,7 +24,7 @@ const getServer = import("@geckos.io/server").then(({ geckos, iceServers }) => {
 		},
     iceServers
 	})
-	io.listen(8000)
+	io.listen(8080)
 	return io
 })
 

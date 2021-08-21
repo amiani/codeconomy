@@ -13,7 +13,6 @@ WORKDIR /home/server
 
 COPY . codeconomy/
 WORKDIR /home/server/codeconomy
-#
 #COPY ./secrets/codeconomy0-firebase-adminkey.json .
 RUN pnpm install --production --unsafe-perm
 RUN chown -R server /home/server
@@ -24,7 +23,7 @@ USER 1000
 #Websocket
 EXPOSE 8001
 #Geckos
-EXPOSE 8000
+EXPOSE 8080
 EXPOSE 7000-8000/udp
 
 ENV NODE_ENV=production
