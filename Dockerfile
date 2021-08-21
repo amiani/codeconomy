@@ -13,6 +13,7 @@ WORKDIR /home/server
 
 COPY . codeconomy/
 WORKDIR /home/server/codeconomy
+#
 #COPY ./secrets/codeconomy0-firebase-adminkey.json .
 RUN pnpm install --production --unsafe-perm
 RUN chown -R server /home/server
