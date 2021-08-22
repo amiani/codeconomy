@@ -1,10 +1,10 @@
 import { component, Entity, toComponent, World } from "@javelin/ecs"
-import { useColliderToEntity, useSimulation } from '../effects'
 import ivm from 'isolated-vm'
+const rapier = require("@a-type/rapier2d-node")
+
+import { useColliderToEntity, useSimulation } from '../effects'
 import { Action, Body, CombatHistory, Context, Health, Script, SpriteData, Allegiance, Transform, Weapon, Log } from "../components"
 import createContext from "../createContext"
-
-const rapier = require("@a-type/rapier2d-node")
 
 export default function createShip(
 	world: World,

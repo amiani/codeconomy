@@ -9,7 +9,7 @@ export default function logSystem(world: World) {
 
 	logs((e, [log]) => {
 		if (net.updated.has(e) && log.logs.length) {
-			console.log(log.logs)
+			console.log(log.logs[log.logs.length - 1])
 		}
 	})
 }
