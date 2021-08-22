@@ -61,7 +61,7 @@ export default createEffect((world: World<Clock>) => {
 
       channel.onDisconnect(() => {
         playerTopic.push({ type: 'player-left', entity: player })
-        world.destroy(player)
+        world.destroyImmediate(player)
         clients.delete(player)
       })
     })
