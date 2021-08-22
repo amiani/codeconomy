@@ -5,7 +5,6 @@ import { uploadTopic } from '../topics'
 import { actions, states } from '../ui/state'
 
 const gameDatas = createQuery(GameData)
-const countdowns = createQuery(Countdown)
 
 export default function clientSystem(world: World) {
 	const net = useNet()
