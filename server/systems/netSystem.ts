@@ -21,7 +21,7 @@ const transformsSpriteData = createQuery(Transform, SpriteData, Allegiance)
 const teamScores = createQuery(Allegiance, HuntScore)
 const countdowns = createQuery(Countdown)
 
-function getInitialMessage(world: World) {
+function getInitialMessage() {
   const producer = createMessageProducer()
   transformsSpriteData(producer.attach)
   teamScores(producer.attach)
@@ -56,13 +56,11 @@ export default function netSystem(world: World<Clock>) {
 
   gameDatas(updateProducer.update)
   countdowns(updateProducer.update)
-
-  useMonitor(transformsSpriteData, attachProducer.attach, attachProducer.destroy)
   transforms(updateProducer.update)
-
-  useMonitor(teamScores, attachProducer.attach, attachProducer.destroy)
   teamScores(updateProducer.update)
 
+  useMonitor(transformsSpriteData, attachProducer.attach, attachProducer.destroy)
+  useMonitor(teamScores, attachProducer.attach, attachProducer.destroy)
   useMonitor(countdowns, attachProducer.attach, attachProducer.destroy)
 
   //TODO: only send logs to player who created them
@@ -88,10 +86,10 @@ export default function netSystem(world: World<Clock>) {
           clients.sendUnreliable(player.uid, encode(updateMessage))
         }
       } else {
-        const initPacket = getInitialMessage(world)
+        const initMessage = getInitialMessage()
         player.initialized = true
-        if (initPacket) {
-          clients.sendReliable(player.uid, encode(initPacket))
+        if (initMessage) {
+          clients.sendReliable(player.uid, encode(initMessage))
         }
       }
     })
