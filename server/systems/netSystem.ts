@@ -16,7 +16,7 @@ import { Clock } from "@javelin/hrtime-loop"
 
 const transforms = createQuery(Transform)
 const players = createQuery(Player)
-const logs = createQuery(Log)
+const logs = createQuery(Log, Allegiance)
 const transformsSpriteData = createQuery(Transform, SpriteData, Allegiance)
 const teamScores = createQuery(Allegiance, HuntScore)
 const countdowns = createQuery(Countdown)
@@ -31,9 +31,10 @@ function getInitialMessage(world: World) {
   return producer.take()
 }
 
-const useProducer = createImmutableRef(() =>
-  createMessageProducer({ maxByteLength: MESSAGE_MAX_BYTE_LENGTH }),
-)
+const useProducers = createImmutableRef(() => ({
+  updateProducer: createMessageProducer({ maxByteLength: MESSAGE_MAX_BYTE_LENGTH }),
+  attachProducer: createMessageProducer({ maxByteLength: MESSAGE_MAX_BYTE_LENGTH }),
+}))
 const gameDatas = createQuery(GameData)
 
 let gameDataEntity
@@ -42,7 +43,7 @@ let gameData: any
 export default function netSystem(world: World<Clock>) {
   const send = useInterval((1 / SEND_RATE) * 1000)
   const clients = useClients()
-  const producer = useProducer()
+  const { updateProducer, attachProducer } = useProducers()
 
   if (useInit()) {
     gameData = component(GameData, { tick: world.latestTick })
@@ -53,32 +54,36 @@ export default function netSystem(world: World<Clock>) {
     gameData.tick = world.latestTick
   }
 
-  gameDatas(producer.update)
-  countdowns(producer.update)
+  gameDatas(updateProducer.update)
+  countdowns(updateProducer.update)
 
-  useMonitor(transformsSpriteData, producer.attach, producer.destroy)
-  transforms(producer.update)
+  useMonitor(transformsSpriteData, attachProducer.attach, attachProducer.destroy)
+  transforms(updateProducer.update)
 
-  useMonitor(teamScores, producer.attach, producer.destroy)
-  teamScores(producer.update)
+  useMonitor(teamScores, attachProducer.attach, attachProducer.destroy)
+  teamScores(updateProducer.update)
 
-  useMonitor(countdowns, producer.attach, producer.destroy)
+  useMonitor(countdowns, attachProducer.attach, attachProducer.destroy)
 
   //TODO: only send logs to player who created them
-  logs(producer.update)
+  logs(updateProducer.update)
 
   if (send) {
-    const message = producer.take()
+    const attachMessage = attachProducer.take()
+    const updateMessage = updateProducer.take()
     players((e, [player]) => {
-      let packet
       if (player.initialized) {
-        packet = message
+        const attachPacket = attachMessage
+        const updatePacket = updateMessage
+        if (updatePacket) {
+          clients.sendUnreliable(player.uid, encode(updatePacket))
+        }
       } else {
-        packet = getInitialMessage(world)
+        const initPacket = getInitialMessage(world)
         player.initialized = true
-      }
-      if (packet) {
-        clients.sendUpdate(player.uid, encode(packet))
+        if (initPacket) {
+          clients.sendReliable(player.uid, encode(initPacket))
+        }
       }
     })
   }
