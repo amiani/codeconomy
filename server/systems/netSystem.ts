@@ -81,10 +81,11 @@ export default function netSystem(world: World<Clock>) {
     const updateMessage = updateProducer.take()
     players((e, [player]) => {
       if (player.initialized) {
-        const attachPacket = attachMessage
-        const updatePacket = updateMessage
-        if (updatePacket) {
-          clients.sendUnreliable(player.uid, encode(updatePacket))
+        if (attachMessage) {
+          clients.sendReliable(player.uid, encode(attachMessage))
+        }
+        if (updateMessage) {
+          clients.sendUnreliable(player.uid, encode(updateMessage))
         }
       } else {
         const initPacket = getInitialMessage(world)
