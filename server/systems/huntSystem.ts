@@ -34,7 +34,7 @@ interface SpawnLocation {
 }
 
 const useSpawnLocations = createEffect(world => {
-	const distance = 100
+	const distance = 200
 	const spawnLocations = Array<SpawnLocation>()
 	for (let i = 0; i != MAX_PLAYERS; ++i) {
 		const angle = 2*Math.PI * (((3 * i) % 10) / 10)
@@ -63,7 +63,7 @@ const handlePlayerJoined = (
 	spawnLocation: SpawnLocation
 ) => {
 	const { x, y } = spawnLocation
-	const rotation = Math.atan2(y, x)
+	const rotation = Math.random() * Math.PI * 2
 	const spawner = createSpawner(world, x, y, rotation, player, team,10, "capital1")
 	spawnLocation.player = player
 }
