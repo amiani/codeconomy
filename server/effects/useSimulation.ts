@@ -5,7 +5,6 @@ import useColliderToEntity from "./useColliderToEntity"
 import { collisionTopic } from "../topics"
 
 const transformsBody = createQuery(Transform, Body)
-const bulletsBody = createQuery(Bullet, Body)
 
 const copyBodyToTransform = (
 	body: typeof rapier.Body,
@@ -22,32 +21,21 @@ export default createEffect((world: World) => {
 	const eventQueue = new rapier.EventQueue(true)
 
 	return () => {
-		//console.log('useSimulation')
+		sim.step(eventQueue)
 
-		bulletsBody((e, [bullet, bodyComp]) => {
-			if (bullet.lifetime >= 0) {
-				const body = bodyComp as typeof rapier.Body
-				body.setLinvel(bullet.velocity, true)
-			} else {
-				world.destroy(e)
-			}
-			bullet.lifetime -= sim.timestep
-		})
 		transformsBody((e, [transform, body]) => {
 			copyBodyToTransform(body, transform)
 		})
 
-
-		sim.step(eventQueue)
-		const colliderToEntity = useColliderToEntity()
+		const colliders = useColliderToEntity()
 		eventQueue.drainIntersectionEvents((
 			handle1: typeof rapier.CollisionHandle,
 			handle2: typeof rapier.CollisionHandle,
 			started: boolean,
 		) => {
 			if (started) {
-				const entity1 = colliderToEntity.get(handle1)
-				const entity2 = colliderToEntity.get(handle2)
+				const entity1 = colliders.get(handle1)
+				const entity2 = colliders.get(handle2)
 				if (entity1 !== undefined && entity2 !== undefined) {
 					collisionTopic.push({ type: "collision", entity1, entity2 })
 				}

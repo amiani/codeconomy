@@ -1,30 +1,31 @@
 import { createQuery, Entity, useMonitor, World } from "@javelin/ecs";
 import { collisionTopic, shipTopic } from "../topics"
 import { Allegiance, Body, Bullet, CombatHistory, Health } from "../components"
-import { useColliderToEntity, useSimulation } from '../effects'
 const rapier = require('@a-type/rapier2d-node')
 
 const healths = createQuery(Health)
-const bodies = createQuery(Body)
 
-const checkBulletAndDamage = (world: World, entity1: Entity, entity2: Entity) => {
+const handleBulletCollision = (world: World, bulletEntity: Entity, hitEntity: Entity) => {
 	try {
-		const bullet = world.get(entity1, Bullet)
-		const bulletAllegiance = world.get(entity1, Allegiance)
-		const health = world.get(entity2, Health)
-		const combatHistory2 = world.get(entity2, CombatHistory)
-		health.current -= bullet.damage
-		combatHistory2.lastHitByPlayer = bulletAllegiance.player
-		world.destroy(entity1)
+		const bullet = world.get(bulletEntity, Bullet)
+		const bulletAllegiance = world.get(bulletEntity, Allegiance)
+		const hitHealth = world.get(hitEntity, Health)
+		const hitCombatHistory = world.get(hitEntity, CombatHistory)
+		hitHealth.current -= bullet.damage
+		hitCombatHistory.lastHitByPlayer = bulletAllegiance.player
+		world.destroy(bulletEntity)
 	} catch (e) {
 		//console.log(e)
 	}
 }
 
 export default function damageSystem(world: World) {
-	for (const collision of collisionTopic) {
-		checkBulletAndDamage(world, collision.entity1, collision.entity2)
-		checkBulletAndDamage(world, collision.entity2, collision.entity1)
+	for (const event of collisionTopic) {
+		switch (event.type) {
+			case 'bullet':
+				handleBulletCollision(world, event.entity1, event.entity2)
+				break
+		}
 	}
 
 	healths((e, [health]) => {
@@ -38,25 +39,4 @@ export default function damageSystem(world: World) {
 			world.destroy(e)
 		}
 	})
-	const sim = useSimulation()
-	const entities = useColliderToEntity()
-	useMonitor(
-		bodies,
-		() => {},
-		(e, [body]: [typeof rapier.Body]) => {
-			//console.log(`${e}: ${body.handle} Removing collider mapping`)
-			const handle = body.collider(0)
-			entities.delete(handle)
-		}
-	)
-	useMonitor(
-		bodies,
-		(e, [body]) => {
-			//console.log(`${e}: ${body.handle} has been added`)
-		},
-		(e, [body]) => {
-			//console.log(`Removing body for ${e}: ${body.handle}`)
-			sim.removeRigidBody(body)
-		}
-	)
 }

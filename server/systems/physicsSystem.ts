@@ -1,11 +1,11 @@
 import {
 	World,
 	createQuery,
+	useMonitor,
 } from '@javelin/ecs'
-import { useColliderToEntity } from '../effects'
 const rapier = require('@a-type/rapier2d-node')
 
-import { useSimulation } from '../effects'
+import { useColliderToEntity, useSimulation } from '../effects'
 import {
 	Body,
 	Allegiance,
@@ -14,12 +14,12 @@ import {
 } from '../components'
 import { createLaser } from '../factories'
 
-const bodiesActionTeamWeapon = createQuery(Body, Action, Allegiance, Weapon)
+const ships = createQuery(Body, Action, Allegiance, Weapon)
+const bodies = createQuery(Body)
 
 export default function physicsSystem(world: World) {
 	const sim = useSimulation()
-	const colliderToEntity = useColliderToEntity()
-	bodiesActionTeamWeapon((e, [bodyComp, action, allegiance, weapon]) => {
+	ships((e, [bodyComp, action, allegiance, weapon]) => {
 		const body = bodyComp as typeof rapier.Body
 		const shipRotation = body.rotation()
 		const clampedThrottle = Math.max(Math.min(action.throttle, 100), 0)
@@ -41,4 +41,25 @@ export default function physicsSystem(world: World) {
 		weapon.currentCooldown -= sim.timestep
 		action = { throttle: 0, rotate: 0, fire: false }
 	})
+
+	const colliders = useColliderToEntity()
+	useMonitor(
+		bodies,
+		() => {},
+		(e, [body]: [typeof rapier.Body]) => {
+			//console.log(`${e}: ${body.handle} Removing collider mapping`)
+			const handle = body.collider(0)
+			colliders.delete(handle)
+		}
+	)
+	useMonitor(
+		bodies,
+		(e, [body]) => {
+			//console.log(`${e}: ${body.handle} has been added`)
+		},
+		(e, [body]) => {
+			//console.log(`Removing body for ${e}: ${body.handle}`)
+			sim.removeRigidBody(body)
+		}
+	)
 }
