@@ -26,6 +26,7 @@ export default createEffect((world: World<Clock>) => {
       return
     }
     
+
     try {
       if (req.url) {
         const queryObject = url.parse(req.url,true).query;
@@ -35,10 +36,11 @@ export default createEffect((world: World<Clock>) => {
           const socketProducer = createMessageProducer({
             maxByteLength: MESSAGE_MAX_BYTE_LENGTH
           })
-          clients.set(uid, {
+          clients.set(uid,{
             uid,
             socket,
             socketProducer,
+            initialized: false
           })
         }
       }
@@ -57,20 +59,34 @@ export default createEffect((world: World<Clock>) => {
         maxByteLength: MESSAGE_MAX_BYTE_LENGTH
       })
       client.player = player
+      client.initialized = true
       registerClient(client)
 
       channel.onDisconnect(() => {
+        //console.log('disconnect')
         playerTopic.push({ type: 'player-left', entity: player })
-        world.destroyImmediate(player)
+        world.destroy(player)
         clients.delete(player)
       })
     })
   })
 
-  const sendUnreliable = (uid: string, data: ArrayBuffer) =>
-    clients.get(uid).channel.raw.emit(data)
-  const sendReliable = (uid: string, data: ArrayBuffer, cb?: (err?: Error) => void) =>
-    clients.get(uid).socket.send(data, cb)
+  const sendUnreliable = (uid: string, data: ArrayBuffer) => {
+    const client = clients.get(uid)
+    if (client && client.initialized) {
+      client.channel.raw.emit(data)
+    }
+  }
+  const sendReliable = (
+    uid: string,
+    data: ArrayBuffer,
+    cb?: (err?: Error) => void
+  ) => {
+    const client = clients.get(uid)
+    if (client && client.initialized) {
+      clients.get(uid).socket.send(data, cb)
+    }
+  }
   const getPlayer = (uid: string) => clients.get(uid).player
 
   return function useClients() {
@@ -89,6 +105,7 @@ interface Client {
   channel: any;
   channelProducer: MessageProducer;
   player: Entity;
+  initialized: boolean;
 }
 
 const registerClient = (client: Client) => {

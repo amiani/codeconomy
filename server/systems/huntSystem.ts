@@ -132,7 +132,6 @@ export default function huntSystem(world: World<Clock>) {
 						try {
 							const score = world.get(shipEvent.combatHistory.lastHitByPlayer, Score)
 							score && score.points++
-							console.log(`Player score: ${score.points}`)
 						} catch (err) {
 							console.log(err)
 						}
