@@ -44,7 +44,6 @@ const run = ({ self, allies, enemies }) => {
 		target = getClosest(target.position, enemies)
 	} else {
 		target = getClosest(self.position, enemies)
-		log(`switching target`)
 	}
 	if (target) {
 		action.rotate = turnTo(self, target.position)
