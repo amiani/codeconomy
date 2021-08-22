@@ -77,7 +77,7 @@ const handlePlayerLeft = (world: World<Clock>, player: Entity) => {
 	})
 }
 
-const NUM_BOTS = 2
+const NUM_BOTS = 8
 const RUN_TIME = 180
 const END_TIME = 20
 const phaseTimer = component(Countdown, { current: RUN_TIME, max: RUN_TIME })
