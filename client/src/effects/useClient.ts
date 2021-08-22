@@ -43,6 +43,11 @@ export default createEffect(world => {
 					console.log('connected')
 				})
 			}
+			socket.onmessage = ({ data }: MessageEvent) => {
+				if (data instanceof ArrayBuffer) {
+					messages.push(data)
+				}
+			}
 		}
     })
 

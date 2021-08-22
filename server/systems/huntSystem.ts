@@ -34,7 +34,7 @@ interface SpawnLocation {
 }
 
 const useSpawnLocations = createEffect(world => {
-	const distance = 100
+	const distance = 200
 	const spawnLocations = Array<SpawnLocation>()
 	for (let i = 0; i != MAX_PLAYERS; ++i) {
 		const angle = 2*Math.PI * (((3 * i) % 10) / 10)
@@ -63,7 +63,8 @@ const handlePlayerJoined = (
 	spawnLocation: SpawnLocation
 ) => {
 	const { x, y } = spawnLocation
-	const spawner = createSpawner(world, x, y, Math.PI/2, player, team,10, "capital1")
+	const rotation = Math.random() * Math.PI * 2
+	const spawner = createSpawner(world, x, y, rotation, player, team,10, "capital1")
 	spawnLocation.player = player
 }
 
@@ -76,7 +77,7 @@ const handlePlayerLeft = (world: World<Clock>, player: Entity) => {
 	})
 }
 
-const NUM_BOTS = 2
+const NUM_BOTS = 8
 const RUN_TIME = 180
 const END_TIME = 20
 const phaseTimer = component(Countdown, { current: RUN_TIME, max: RUN_TIME })

@@ -10,7 +10,8 @@ import { createPlayer } from '../factories'
 //@ts-ignore
 import { getServer } from "../geckosServer"
 import { playerTopic, scriptTopic } from '../topics'
-import { MAX_PLAYERS } from '../env'
+import { MAX_PLAYERS, MESSAGE_MAX_BYTE_LENGTH } from '../env'
+import { createMessageProducer, MessageProducer } from '@javelin/net'
 
 export default createEffect((world: World<Clock>) => {
   const clients = new Map()
@@ -19,7 +20,7 @@ export default createEffect((world: World<Clock>) => {
     server,
     path: '/connect'
   })
-  wss.on("connection", async (socket, req) => {
+  wss.on("connection", async (socket: WebSocket, req) => {
     if (clients.size >= MAX_PLAYERS) {
       socket.close(503, "Server is full")
       return
@@ -31,7 +32,14 @@ export default createEffect((world: World<Clock>) => {
         if (queryObject.authorization) {
           const decodedToken = await admin.auth().verifyIdToken(queryObject.authorization as string)
           const uid = decodedToken.uid
-          clients.set(uid, { uid, socket })
+          const socketProducer = createMessageProducer({
+            maxByteLength: MESSAGE_MAX_BYTE_LENGTH
+          })
+          clients.set(uid, {
+            uid,
+            socket,
+            socketProducer,
+          })
         }
       }
     } catch (err: any) {
@@ -45,34 +53,42 @@ export default createEffect((world: World<Clock>) => {
       const player = createPlayer(world, uid)
       const client = clients.get(uid)
       client.channel = channel
+      client.channelProducer = createMessageProducer({
+        maxByteLength: MESSAGE_MAX_BYTE_LENGTH
+      })
       client.player = player
       registerClient(client)
 
       channel.onDisconnect(() => {
         playerTopic.push({ type: 'player-left', entity: player })
-        world.destroy(player)
+        world.destroyImmediate(player)
         clients.delete(player)
       })
     })
   })
 
-  const sendUpdate = (uid: string, data: ArrayBuffer) =>
+  const sendUnreliable = (uid: string, data: ArrayBuffer) =>
     clients.get(uid).channel.raw.emit(data)
+  const sendReliable = (uid: string, data: ArrayBuffer, cb?: (err?: Error) => void) =>
+    clients.get(uid).socket.send(data, cb)
   const getPlayer = (uid: string) => clients.get(uid).player
 
   return function useClients() {
     return {
-      sendUpdate,
+      sendUnreliable,
+      sendReliable,
       getPlayer
     }
   }
 }, { shared: true })
 
 interface Client {
-  uid: string,
-  socket: WebSocket,
-  channel: any,
-  player: Entity
+  uid: string;
+  socket: WebSocket;
+  socketProducer: MessageProducer;
+  channel: any;
+  channelProducer: MessageProducer;
+  player: Entity;
 }
 
 const registerClient = (client: Client) => {
