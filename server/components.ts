@@ -111,6 +111,10 @@ export const GameData = {
   tick: number
 }
 
+export const Log = {
+  logs: arrayOf({ ...string, length: 128 })
+}
+
 registerSchema(Player, 1)
 registerSchema(Transform, 2)
 registerSchema(Body, 3)
@@ -127,3 +131,4 @@ registerSchema(Spawner, 13)
 registerSchema(HuntScore, 15)
 registerSchema(CombatHistory, 16)
 registerSchema(GameData, 17)
+registerSchema(Log, 18)

@@ -1,7 +1,7 @@
 import { component, Entity, toComponent, World } from "@javelin/ecs"
 import { useColliderToEntity, useSimulation } from '../effects'
 import ivm from 'isolated-vm'
-import { Action, Body, CombatHistory, Context, Health, Script, SpriteData, Allegiance, Transform, Weapon } from "../components"
+import { Action, Body, CombatHistory, Context, Health, Script, SpriteData, Allegiance, Transform, Weapon, Log } from "../components"
 import createContext from "../createContext"
 
 const rapier = require("@a-type/rapier2d-node")
@@ -35,7 +35,8 @@ export default function createShip(
 	const colliderToEntity = useColliderToEntity()
 	colliderToEntity.set(collider.handle, e)
 	
-	const context = createContext(isolate)
+	const log = component(Log)
+	const context = createContext(isolate, log)
 	const res = (<ivm.Script>script).run(context, { copy: true })
 		//.then(value => console.log(`SCRIPT RUN`))
 		.catch(err => console.error(err))
@@ -50,6 +51,7 @@ export default function createShip(
 		component(Allegiance, { player, team }),
 		component(SpriteData, { name: "condor" }),
 		component(Action),
-		component(Health, { current: 10, max: 10 })
+		component(Health, { current: 10, max: 10 }),
+		log,
 	)
 }

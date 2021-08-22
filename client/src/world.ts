@@ -6,6 +6,7 @@ import laserTopic from "./topics/laserTopic"
 import { clientSystem, interpolateSystem, soundSystem, spriteSystem } from './systems'
 import { uploadTopic } from "./topics"
 import huntScoreDisplaySystem from "./systems/huntScoreDisplaySystem"
+import logSystem from "./systems/logSystem"
 
 export const world = createWorld({
   topics: [
@@ -19,3 +20,4 @@ world.addSystem(interpolateSystem)
 world.addSystem(spriteSystem)
 world.addSystem(soundSystem)
 world.addSystem(huntScoreDisplaySystem)
+world.addSystem(logSystem)
