@@ -66,7 +66,15 @@ export default function netSystem(world: World<Clock>) {
   useMonitor(countdowns, attachProducer.attach, attachProducer.destroy)
 
   //TODO: only send logs to player who created them
-  logs(updateProducer.update)
+  /*
+  logs((e, [log, allegiance]) => {
+    try {
+      const player = world.get(allegiance.player, Player)
+      clients.getPlayer(player.uid)
+    } catch (err) {
+    }
+  })
+  */
 
   if (send) {
     const attachMessage = attachProducer.take()
