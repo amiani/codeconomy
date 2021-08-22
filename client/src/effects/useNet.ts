@@ -14,7 +14,6 @@ export default createEffect(world => {
       handler.push(message)
     }
 
-
     let nextUpdate = 100
 
     return () => {

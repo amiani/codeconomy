@@ -2,7 +2,7 @@ import { component, createEffect, createQuery, Entity, toComponent, useInit, use
 import { Clock } from "@javelin/hrtime-loop";
 import ivm from 'isolated-vm'
 
-import { phaseTopic, playerTopic, shipTopic } from "../topics";
+import { playerTopic, shipTopic } from "../topics";
 import {
 	Countdown,
 	Player,
@@ -13,14 +13,16 @@ import {
 	Action,
 	Script,
 	Isolate,
+	Bot,
 } from '../components'
-import { createSpawner } from "../factories";
+import { createBot, createPlayer, createSpawner } from "../factories";
 import { MAX_PLAYERS } from "../env";
 import { usePhase, useTeams } from "../effects";
 import testScript from "../../scripts/testScript";
 import { GamePhase } from "../effects/usePhase";
 
 const players = createQuery(Player)
+const bots = createQuery(Bot)
 const spawners = createQuery(Spawner, Allegiance)
 const ships = createQuery(Transform, Action)
 const scores = createQuery(Score)
@@ -74,6 +76,7 @@ const handlePlayerLeft = (world: World<Clock>, player: Entity) => {
 	})
 }
 
+const NUM_BOTS = 2
 const RUN_TIME = 180
 const END_TIME = 20
 const phaseTimer = component(Countdown, { current: RUN_TIME, max: RUN_TIME })
@@ -85,6 +88,7 @@ export default function huntSystem(world: World<Clock>) {
 
 	//Score
 	useMonitor(players,(e, [p]) => world.attach(e, component(Score)))
+	useMonitor(bots,(e, [b]) => world.attach(e, component(Score)))
 
 	switch (phase) {
 		//Runs once only at game start
@@ -100,6 +104,10 @@ export default function huntSystem(world: World<Clock>) {
 			const teams = useTeams()
 			const team = teams.assign(owner)
 			createSpawner(world, 0, 0, 0, owner, team, 2, "spawn2")
+
+			for (let i = 0; i < NUM_BOTS; ++i) {
+				createBot(world, "bot" + i)
+			}
 			phaseTimer.current = RUN_TIME
 			changePhase(GamePhase.run)
 			break

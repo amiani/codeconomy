@@ -16,10 +16,10 @@ import { Clock } from "@javelin/hrtime-loop"
 
 const transforms = createQuery(Transform)
 const players = createQuery(Player)
+const logs = createQuery(Log)
 const transformsSpriteData = createQuery(Transform, SpriteData, Allegiance)
 const teamScores = createQuery(Allegiance, HuntScore)
 const countdowns = createQuery(Countdown)
-const logs = createQuery(Log)
 
 function getInitialMessage(world: World) {
   const producer = createMessageProducer()
@@ -65,7 +65,6 @@ export default function netSystem(world: World<Clock>) {
   useMonitor(countdowns, producer.attach, producer.destroy)
 
   //TODO: only send logs to player who created them
-  useMonitor(logs, producer.attach, producer.destroy)
   logs(producer.update)
 
   if (send) {

@@ -115,6 +115,10 @@ export const Log = {
   logs: arrayOf({ ...string, length: 128 })
 }
 
+export const Bot = {
+  name: { ...string, length: 5 },
+}
+
 registerSchema(Player, 1)
 registerSchema(Transform, 2)
 registerSchema(Body, 3)
@@ -132,3 +136,4 @@ registerSchema(HuntScore, 15)
 registerSchema(CombatHistory, 16)
 registerSchema(GameData, 17)
 registerSchema(Log, 18)
+registerSchema(Bot, 19)

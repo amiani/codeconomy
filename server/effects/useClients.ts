@@ -43,7 +43,6 @@ export default createEffect((world: World<Clock>) => {
     io.onConnection((channel: any) => {
       const { uid } = channel.userData
       const player = createPlayer(world, uid)
-      playerTopic.push({ type: 'player-joined', entity: player })
       const client = clients.get(uid)
       client.channel = channel
       client.player = player

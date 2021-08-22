@@ -51,6 +51,7 @@ interface Action {
 
 export default function scriptSystem(world: World) {
 	const clients = useClients()
+
 	for (const scriptEvent of scriptTopic) {
 		const player = clients.getPlayer(scriptEvent.uid)
 		try {
