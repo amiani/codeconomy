@@ -20,6 +20,7 @@ const logs = createQuery(Log, Allegiance)
 const transformsSpriteData = createQuery(Transform, SpriteData, Allegiance)
 const teamScores = createQuery(Allegiance, HuntScore)
 const countdowns = createQuery(Countdown)
+const gameDatas = createQuery(GameData)
 
 function getInitialMessage() {
   const producer = createMessageProducer()
@@ -35,7 +36,6 @@ const useProducers = createImmutableRef(() => ({
   updateProducer: createMessageProducer({ maxByteLength: MESSAGE_MAX_BYTE_LENGTH }),
   attachProducer: createMessageProducer({ maxByteLength: MESSAGE_MAX_BYTE_LENGTH }),
 }))
-const gameDatas = createQuery(GameData)
 
 let gameDataEntity
 let gameData: any
@@ -87,9 +87,14 @@ export default function netSystem(world: World<Clock>) {
         }
       } else {
         const initMessage = getInitialMessage()
-        player.initialized = true
         if (initMessage) {
-          clients.sendReliable(player.uid, encode(initMessage))
+          clients.sendReliable(player.uid, encode(initMessage), (err) => {
+            if (err) {
+              console.error(err)
+            } else {
+              player.initialized = true
+            }
+          })
         }
       }
     })

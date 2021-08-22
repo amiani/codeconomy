@@ -32,10 +32,13 @@ export default createEffect((world: World<Clock>) => {
         if (queryObject.authorization) {
           const decodedToken = await admin.auth().verifyIdToken(queryObject.authorization as string)
           const uid = decodedToken.uid
+          const socketProducer = createMessageProducer({
+            maxByteLength: MESSAGE_MAX_BYTE_LENGTH
+          })
           clients.set(uid, {
             uid,
             socket,
-            socketProducer: createMessageProducer({ maxByteLength: MESSAGE_MAX_BYTE_LENGTH }),
+            socketProducer,
           })
         }
       }
@@ -50,7 +53,9 @@ export default createEffect((world: World<Clock>) => {
       const player = createPlayer(world, uid)
       const client = clients.get(uid)
       client.channel = channel
-      client.channelProducer = createMessageProducer({ maxByteLength: MESSAGE_MAX_BYTE_LENGTH })
+      client.channelProducer = createMessageProducer({
+        maxByteLength: MESSAGE_MAX_BYTE_LENGTH
+      })
       client.player = player
       registerClient(client)
 
@@ -64,8 +69,8 @@ export default createEffect((world: World<Clock>) => {
 
   const sendUnreliable = (uid: string, data: ArrayBuffer) =>
     clients.get(uid).channel.raw.emit(data)
-  const sendReliable = (uid: string, data: ArrayBuffer) =>
-    clients.get(uid).socket.send(data)
+  const sendReliable = (uid: string, data: ArrayBuffer, cb?: (err?: Error) => void) =>
+    clients.get(uid).socket.send(data, cb)
   const getPlayer = (uid: string) => clients.get(uid).player
 
   return function useClients() {
