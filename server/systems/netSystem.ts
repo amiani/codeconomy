@@ -72,13 +72,12 @@ export default function netSystem(world: World<Clock>) {
 
   gameDatas(updateProducer.update)
   countdowns(updateProducer.update)
-  transforms(updateProducer.update)
+  teamScores(updateProducer.update)
   for (const [entities, [tforms]] of transforms) {
     for (let i = 0, len = entities.length; i < len; ++i) {
       updateProducer.update(entities[i], [tforms[i]])
     }
   }
-  teamScores(updateProducer.update)
   for (const [entities, [logs, allegiances]] of logsAllegiance) {
     for (let i = 0, len = entities.length; i < len; ++i) {
       if (logs[i].logs.length > 0) {
