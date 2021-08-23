@@ -64,51 +64,53 @@ export default function scriptSystem(world: World) {
 		}
 	}
 
-	//Maybe use number of connected players instead of MAX_PLAYERS
-	const shipStates = Array<Map<Entity, ShipState>>(MAX_PLAYERS)
-	for (let i = 0; i < MAX_PLAYERS; i++) {
-		shipStates[i] = new Map()
-	}
-	ships((e, [combatHistory, transform, allegiance, health]) => {
-		shipStates[allegiance.team].set(e, {
-			position: { x: transform.x, y: transform.y },
-			rotation: transform.rotation,
-			health: health.current,
-			team: allegiance.team,
+	if (world.latestTick % 10 == 0) {
+		//Maybe use number of connected players instead of MAX_PLAYERS
+		const shipStates = Array<Map<Entity, ShipState>>(MAX_PLAYERS)
+		for (let i = 0; i < MAX_PLAYERS; i++) {
+			shipStates[i] = new Map()
+		}
+		ships((e, [combatHistory, transform, allegiance, health]) => {
+			shipStates[allegiance.team].set(e, {
+				position: { x: transform.x, y: transform.y },
+				rotation: transform.rotation,
+				health: health.current,
+				team: allegiance.team,
+			})
 		})
-	})
-	scriptShips(async (e, [script, contextComp, bodyComp, action, allegiance]) => {
-		const body = bodyComp as typeof rapier.Body
-		const context = contextComp as ivm.Context
-		const allies = Array<ShipState>()
-		for (const [shipEntity, state] of shipStates[allegiance.team].entries()) {
-			if (shipEntity !== e) {
-				allies.push(state)
+		scriptShips(async (e, [script, contextComp, bodyComp, action, allegiance]) => {
+			const body = bodyComp as typeof rapier.Body
+			const context = contextComp as ivm.Context
+			const allies = Array<ShipState>()
+			for (const [shipEntity, state] of shipStates[allegiance.team].entries()) {
+				if (shipEntity !== e) {
+					allies.push(state)
+				}
 			}
-		}
-		const enemies = []
-		for (let i = 0, n = shipStates.length; i < n; ++i) {
-			if (i !== allegiance.team) {
-				enemies.push(...shipStates[i].values())
+			const enemies = []
+			for (let i = 0, n = shipStates.length; i < n; ++i) {
+				if (i !== allegiance.team) {
+					enemies.push(...shipStates[i].values())
+				}
 			}
-		}
-		const state = createState(body, allies, enemies)
-		await context.global.set('state', state, { copy: true })
-		try {
-			const nextAction: Action = await context.eval(`run(state)`, { copy: true })
-			if (nextAction) {
-				action.throttle = nextAction.throttle ? nextAction.throttle : 0
-				action.rotate = nextAction.rotate ? nextAction.rotate : 0
-				action.fire = nextAction.fire ? nextAction.fire : false
+			const state = createState(body, allies, enemies)
+			await context.global.set('state', state, { copy: true })
+			try {
+				const nextAction: Action = await context.eval(`run(state)`, { copy: true })
+				if (nextAction) {
+					action.throttle = nextAction.throttle ? nextAction.throttle : 0
+					action.rotate = nextAction.rotate ? nextAction.rotate : 0
+					action.fire = nextAction.fire ? nextAction.fire : false
+				}
+			} catch (error) {
+				console.log(`${e} threw ${error}`)
 			}
-		} catch (error) {
-			console.log(`${e} threw ${error}`)
-		}
-	})
+		})
 
-	/*
-	isolates((e, [isolateComp]) => {
-		//do something with cputime
-	})
-	*/
+		/*
+		isolates((e, [isolateComp]) => {
+			//do something with cputime
+		})
+		*/
+	}
 }
