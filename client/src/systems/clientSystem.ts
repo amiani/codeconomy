@@ -1,10 +1,11 @@
 import { createQuery, useInterval, World } from '@javelin/ecs'
-import { GameData } from '../../../server/components'
+import { Countdown, GameData } from '../../../server/components'
 import { useClient, useNet } from '../effects'
 import { uploadTopic } from '../topics'
 import { actions, states } from '../ui/state'
 
 const gameDatas = createQuery(GameData)
+const countdowns = createQuery(Countdown)
 
 export default function clientSystem(world: World) {
 	const net = useNet()
