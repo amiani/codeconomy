@@ -1,6 +1,6 @@
 import { createEffect } from "@javelin/ecs";
 import geckos, { ClientChannel, RawMessage } from '@geckos.io/client'
-import firebase from 'firebase'
+import firebase from 'firebase/app'
 import 'firebase/auth'
 
 interface Client {
