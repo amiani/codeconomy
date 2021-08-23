@@ -16,7 +16,8 @@ import { Clock } from "@javelin/hrtime-loop"
 
 const transforms = createQuery(Transform)
 const players = createQuery(Player)
-const logs = createQuery(Log, Allegiance)
+const logsAllegiance = createQuery(Log, Allegiance)
+const logs = createQuery(Log)
 const transformsSpriteData = createQuery(Transform, SpriteData, Allegiance)
 const teamScores = createQuery(Allegiance, HuntScore)
 const countdowns = createQuery(Countdown)
@@ -28,7 +29,7 @@ function getInitialMessage() {
   teamScores(producer.attach)
   countdowns(producer.attach)
   gameDatas(producer.attach)
-  logs(producer.attach)
+  //logs(producer.attach)
   return producer.take()
 }
 
@@ -62,17 +63,28 @@ export default function netSystem(world: World<Clock>) {
   useMonitor(transformsSpriteData, attachProducer.attach, attachProducer.destroy)
   useMonitor(teamScores, attachProducer.attach, attachProducer.destroy)
   useMonitor(countdowns, attachProducer.attach, attachProducer.destroy)
+  useMonitor(
+    logsAllegiance,
+    (e, [log, allegiance]) => {
+      try {
+        const player = world.get(allegiance.player, Player)
+        const attachProducer = clients.getAttachProducer(player.uid)
+        attachProducer.attach(e, [log])
+      } catch (err) {
+      }
+    }
+  )
 
-  //TODO: only send logs to player who created them
-  /*
-  logs((e, [log, allegiance]) => {
-    try {
-      const player = world.get(allegiance.player, Player)
-      clients.getPlayer(player.uid)
-    } catch (err) {
+  logsAllegiance((e, [log, allegiance]) => {
+    if (log.logs.length > 0) {
+      try {
+        const player = world.get(allegiance.player, Player)
+        const updateProducer = clients.getUpdateProducer(player.uid)
+        updateProducer.update(e, [log])
+      } catch (err) {
+      }
     }
   })
-  */
 
   if (send) {
     const attachMessage = attachProducer.take()

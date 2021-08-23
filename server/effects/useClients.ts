@@ -11,7 +11,7 @@ import { createPlayer } from '../factories'
 import { getServer } from "../geckosServer"
 import { playerTopic, scriptTopic } from '../topics'
 import { MAX_PLAYERS, MESSAGE_MAX_BYTE_LENGTH } from '../env'
-import { createMessageProducer, MessageProducer } from '@javelin/net'
+import { createMessageProducer, encode, MessageProducer } from '@javelin/net'
 
 export default createEffect((world: World<Clock>) => {
   const clients = new Map()
@@ -76,6 +76,10 @@ export default createEffect((world: World<Clock>) => {
     if (client && client.initialized) {
       client.channel.raw.emit(data)
     }
+    const privateMessage = client.channelProducer.take()
+    if (privateMessage) {
+      client.channel.raw.emit(encode(privateMessage))
+    }
   }
   const sendReliable = (
     uid: string,
@@ -86,14 +90,22 @@ export default createEffect((world: World<Clock>) => {
     if (client && client.initialized) {
       clients.get(uid).socket.send(data, cb)
     }
+    const privateMessage = client.socketProducer.take()
+    if (privateMessage) {
+      client.socket.send(encode(privateMessage))
+    }
   }
   const getPlayer = (uid: string) => clients.get(uid).player
+  const getAttachProducer = (uid: string) => clients.get(uid).socketProducer
+  const getUpdateProducer = (uid: string) => clients.get(uid).channelProducer
 
   return function useClients() {
     return {
       sendUnreliable,
       sendReliable,
-      getPlayer
+      getPlayer,
+      getAttachProducer,
+      getUpdateProducer,
     }
   }
 }, { shared: true })
