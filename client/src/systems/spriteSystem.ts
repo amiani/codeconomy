@@ -8,16 +8,15 @@ import {
 import * as PIXI from 'pixi.js'
 import { GlowFilter } from '@pixi/filter-glow'
 
-import { Interpolate, Sprite, SpriteData, Allegiance, Transform } from '../../../server/components'
+import { Interpolate, Sprite, SpriteData, Allegiance, Transform, Bullet } from '../../../server/components'
 import app from '../pixiApp'
 import { useViewport } from '../effects'
 import { teamColors } from '../ui/colors'
 
-const interpolatedSprites = createQuery(Transform, Interpolate, Sprite)
-const transformSprites = createQuery(Transform, Sprite)
+const interpolatedSprites = createQuery(Transform, Interpolate, Sprite).not(Bullet)
 const sprites = createQuery(Sprite)
-const spriteDatas = createQuery(SpriteData)
 const transformSpriteDatas = createQuery(Transform, SpriteData, Allegiance)
+const bulletQuery = createQuery(Bullet, Sprite)
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t
 
@@ -47,8 +46,8 @@ export default function spriteSystem(world: World) {
         sprite.anchor.y = 0.5
         sprite.pivot.x = 0.5
         sprite.pivot.y = 0.5
-        sprite.x = transform.x * 32
-        sprite.y = -transform.y * 32
+        sprite.x = transform.x
+        sprite.y = -transform.y
         sprite.rotation = -transform.rotation
         sprite.filters = [new GlowFilter({
           color: teamColors[allegiance.team],
@@ -70,4 +69,13 @@ export default function spriteSystem(world: World) {
   interpolatedSprites((e, [transform, interpolate, sprite]) => {
     copyInterpolateToSprite(interpolate, sprite);
   })
+
+  for (const [entities, [bullets, sprites]] of bulletQuery) {
+    for (let i = 0, n = entities.length; i < n; ++i) {
+      const sprite = sprites[i]
+      const bullet = bullets[i]
+      sprite.x += bullet.velocity.x * (1 / 60)
+      sprite.y += -bullet.velocity.y * (1 / 60)
+    }
+  }
 }

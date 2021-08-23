@@ -11,26 +11,29 @@ import {
 } from "@javelin/ecs"
 import { createMessageProducer, encode } from "@javelin/net"
 
-import { Player, SpriteData, Allegiance, Transform, HuntScore, Countdown, GameData, Log } from "../components"
+import { Player, SpriteData, Allegiance, Transform, HuntScore, Countdown, GameData, Log, CombatHistory, Bullet } from "../components"
 import { MESSAGE_MAX_BYTE_LENGTH, SEND_RATE } from "../env"
 import { useClients } from "../effects"
 import { Clock } from "@javelin/hrtime-loop"
 
-const transforms = createQuery(Transform)
-const players = createQuery(Player)
-const logsAllegiance = createQuery(Log, Allegiance)
-const transformsSpriteData = createQuery(Transform, SpriteData, Allegiance)
-const teamScores = createQuery(Allegiance, HuntScore)
-const countdowns = createQuery(Countdown)
-const gameDatas = createQuery(GameData)
+const transformQuery = createQuery(Transform)
+const playerQuery = createQuery(Player)
+const logQuery = createQuery(Log, Allegiance)
+const visibleQuery = createQuery(Transform, SpriteData, Allegiance)
+const scoreQuery = createQuery(Allegiance, HuntScore)
+const countdownQuery = createQuery(Countdown)
+const gamedataQuery = createQuery(GameData)
+const shipQuery = createQuery(Transform, CombatHistory).select(Transform)
+const bulletQuery = createQuery(Bullet)
 
 function getInitialMessage(e: Entity, player: ComponentOf<typeof Player>) {
   const producer = createMessageProducer()
   producer.attach(e, [player])
-  transformsSpriteData(producer.attach)
-  teamScores(producer.attach)
-  countdowns(producer.attach)
-  gameDatas(producer.attach)
+  visibleQuery(producer.attach)
+  scoreQuery(producer.attach)
+  countdownQuery(producer.attach)
+  gamedataQuery(producer.attach)
+  bulletQuery(producer.attach)
   return producer.take()
 }
 
@@ -55,11 +58,12 @@ export default function netSystem(world: World<Clock>) {
     gameData.tick = world.latestTick
   }
 
-  useMonitor(transformsSpriteData, attachProducer.attach, attachProducer.destroy)
-  useMonitor(teamScores, attachProducer.attach, attachProducer.destroy)
-  useMonitor(countdowns, attachProducer.attach, attachProducer.destroy)
+  useMonitor(visibleQuery, attachProducer.attach, attachProducer.destroy)
+  useMonitor(scoreQuery, attachProducer.attach, attachProducer.destroy)
+  useMonitor(countdownQuery, attachProducer.attach, attachProducer.destroy)
+  useMonitor(bulletQuery, attachProducer.attach)
   useMonitor(
-    logsAllegiance,
+    logQuery,
     (e, [log, allegiance]) => {
       try {
         const player = world.get(allegiance.player, Player)
@@ -70,16 +74,18 @@ export default function netSystem(world: World<Clock>) {
     }
   )
 
-  gameDatas(updateProducer.update)
-  countdowns(updateProducer.update)
-  teamScores(updateProducer.update)
-  for (const [entities, [tforms]] of transforms) {
-    for (let i = 0, len = entities.length; i < len; ++i) {
-      updateProducer.update(entities[i], [tforms[i]])
+  gamedataQuery(updateProducer.update)
+  countdownQuery(updateProducer.update)
+  scoreQuery(updateProducer.update)
+  //ships
+  for (const [entities, [transforms]] of transformQuery) {
+    for (let i = 0, n = entities.length; i < n; ++i) {
+      updateProducer.update(entities[i], [transforms[i]])
     }
   }
-  for (const [entities, [logs, allegiances]] of logsAllegiance) {
-    for (let i = 0, len = entities.length; i < len; ++i) {
+  //logs
+  for (const [entities, [logs, allegiances]] of logQuery) {
+    for (let i = 0, n = entities.length; i < n; ++i) {
       if (logs[i].logs.length > 0) {
         try {
           const player = world.get(allegiances[i].player, Player)
@@ -94,7 +100,7 @@ export default function netSystem(world: World<Clock>) {
   if (send) {
     const attachMessage = attachProducer.take()
     const updateMessage = updateProducer.take()
-    players((e, [player]) => {
+    playerQuery((e, [player]) => {
       if (player.initialized) {
         if (attachMessage) {
           clients.sendReliable(player.uid, encode(attachMessage))

@@ -4,7 +4,7 @@ import { laserTopic } from "../topics"
 import { useNet } from "../effects"
 
 const transforms = createQuery(Transform)
-const interpolates = createQuery(Transform, Interpolate)
+const interpolatesQuery = createQuery(Transform, Interpolate)
 
 export default function interpolateSystem(world: World) {
   const { updated } = useNet()
@@ -17,10 +17,12 @@ export default function interpolateSystem(world: World) {
     laserTopic.push({ position: { x, y } })
   })
 
-  interpolates((e, [transform, interpolate]) => {
-    if (updated.has(e)) {
-      interpolate.start = interpolate.end
-      interpolate.end = { ...transform, time: performance.now() }
+  for (const [entities, [transforms, interpolates]] of interpolatesQuery) {
+    for (let i = 0, n = entities.length; i < n; ++i) {
+      if (updated.has(entities[i])) {
+        interpolates[i].start = interpolates[i].end
+        interpolates[i].end = { ...transforms[i], time: performance.now() }
+      }
     }
-  })
+  }
 }
