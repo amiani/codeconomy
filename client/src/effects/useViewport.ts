@@ -23,7 +23,10 @@ export default createEffect((world: World) => {
 		interaction: app.renderer.plugins.interaction // the interaction module is important for wheel to work properly when renderer.view is placed or scaled
 	}))
 
-	window.addEventListener('fullscreenchange', () => viewport.resize(window.innerWidth, window.innerHeight))
+	window.addEventListener('resize', () => {
+		viewport.resize(window.innerWidth, window.innerHeight)
+		updateBackground(background, viewport)
+	})
 
 	// activate plugins
 	viewport
