@@ -23,6 +23,9 @@ export default createEffect((world: World) => {
 		interaction: app.renderer.plugins.interaction // the interaction module is important for wheel to work properly when renderer.view is placed or scaled
 	}))
 
+	//TODO: resize viewport on window resize
+	//window.addEventListener('resize', () => viewport.resize(window.innerWidth, window.innerHeight))
+
 	// activate plugins
 	viewport
 		.drag()

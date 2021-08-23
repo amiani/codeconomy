@@ -1,7 +1,9 @@
 import {
   component,
+  ComponentOf,
   createImmutableRef,
   createQuery,
+  Entity,
   useInit,
   useInterval,
   useMonitor,
@@ -17,19 +19,18 @@ import { Clock } from "@javelin/hrtime-loop"
 const transforms = createQuery(Transform)
 const players = createQuery(Player)
 const logsAllegiance = createQuery(Log, Allegiance)
-const logs = createQuery(Log)
 const transformsSpriteData = createQuery(Transform, SpriteData, Allegiance)
 const teamScores = createQuery(Allegiance, HuntScore)
 const countdowns = createQuery(Countdown)
 const gameDatas = createQuery(GameData)
 
-function getInitialMessage() {
+function getInitialMessage(e: Entity, player: ComponentOf<typeof Player>) {
   const producer = createMessageProducer()
+  producer.attach(e, [player])
   transformsSpriteData(producer.attach)
   teamScores(producer.attach)
   countdowns(producer.attach)
   gameDatas(producer.attach)
-  //logs(producer.attach)
   return producer.take()
 }
 
@@ -38,7 +39,6 @@ const useProducers = createImmutableRef(() => ({
   attachProducer: createMessageProducer({ maxByteLength: MESSAGE_MAX_BYTE_LENGTH }),
 }))
 
-let gameDataEntity
 let gameData: any
 
 export default function netSystem(world: World<Clock>) {
@@ -48,7 +48,7 @@ export default function netSystem(world: World<Clock>) {
 
   if (useInit()) {
     gameData = component(GameData, { tick: world.latestTick })
-    gameDataEntity = world.create(gameData)
+    world.create(gameData)
   }
 
   if (gameData) {
@@ -98,7 +98,7 @@ export default function netSystem(world: World<Clock>) {
           clients.sendUnreliable(player.uid, encode(updateMessage))
         }
       } else {
-        const initMessage = getInitialMessage()
+        const initMessage = getInitialMessage(e, player)
         if (initMessage) {
           clients.sendReliable(player.uid, encode(initMessage), (err) => {
             if (err) {

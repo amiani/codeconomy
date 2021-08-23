@@ -25,6 +25,7 @@ const app = new PIXI.Application({
 	width: window.innerWidth,
 	height: window.innerHeight,
 	antialias: true,
+  resizeTo: window
 })
 
 app.loader
