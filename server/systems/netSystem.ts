@@ -55,11 +55,6 @@ export default function netSystem(world: World<Clock>) {
     gameData.tick = world.latestTick
   }
 
-  gameDatas(updateProducer.update)
-  countdowns(updateProducer.update)
-  transforms(updateProducer.update)
-  teamScores(updateProducer.update)
-
   useMonitor(transformsSpriteData, attachProducer.attach, attachProducer.destroy)
   useMonitor(teamScores, attachProducer.attach, attachProducer.destroy)
   useMonitor(countdowns, attachProducer.attach, attachProducer.destroy)
@@ -75,16 +70,27 @@ export default function netSystem(world: World<Clock>) {
     }
   )
 
-  logsAllegiance((e, [log, allegiance]) => {
-    if (log.logs.length > 0) {
-      try {
-        const player = world.get(allegiance.player, Player)
-        const updateProducer = clients.getUpdateProducer(player.uid)
-        updateProducer.update(e, [log])
-      } catch (err) {
+  gameDatas(updateProducer.update)
+  countdowns(updateProducer.update)
+  transforms(updateProducer.update)
+  for (const [entities, [tforms]] of transforms) {
+    for (let i = 0, len = entities.length; i < len; ++i) {
+      updateProducer.update(entities[i], [tforms[i]])
+    }
+  }
+  teamScores(updateProducer.update)
+  for (const [entities, [logs, allegiances]] of logsAllegiance) {
+    for (let i = 0, len = entities.length; i < len; ++i) {
+      if (logs[i].logs.length > 0) {
+        try {
+          const player = world.get(allegiances[i].player, Player)
+          const updateProducer = clients.getUpdateProducer(player.uid)
+          updateProducer.update(entities[i], [logs[i]])
+        } catch (err) {
+        }
       }
     }
-  })
+  }
 
   if (send) {
     const attachMessage = attachProducer.take()

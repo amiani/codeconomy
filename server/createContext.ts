@@ -4,9 +4,11 @@ import { Log } from './components'
 
 export default function createContext(
 	isolate: ivm.Isolate,
-	log: ComponentOf<typeof Log>
+	log?: ComponentOf<typeof Log>
 ): ivm.Context {
 	const context = isolate.createContextSync()
-	context.global.setSync('log', (...args: any[]) => log.logs.push(...args))
+	if (log) {
+		context.global.setSync('log', (...args: any[]) => log.logs.push(...args))
+	}
 	return context
 }

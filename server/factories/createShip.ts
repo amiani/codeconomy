@@ -15,6 +15,7 @@ export default function createShip(
 	team: number,
 	script: ivm.Script,
 	isolate: ivm.Isolate,
+	withLog: boolean,
 ) {
 	//console.log(`Creating ship at ${x}, ${y}`)
 	const e = world.create()
@@ -35,8 +36,14 @@ export default function createShip(
 	const colliderToEntity = useColliderToEntity()
 	colliderToEntity.set(collider.handle, e)
 	
-	const log = component(Log)
-	const context = createContext(isolate, log)
+	let context
+	if (withLog) {
+		const log = component(Log)
+		world.attach(e, log)
+		context = createContext(isolate, log)
+	} else {
+		context = createContext(isolate)
+	}
 	const res = (<ivm.Script>script).run(context, { copy: true })
 		//.then(value => console.log(`SCRIPT RUN`))
 		.catch(err => console.error(err))
@@ -52,6 +59,5 @@ export default function createShip(
 		component(SpriteData, { name: "condor" }),
 		component(Action),
 		component(Health, { current: 10, max: 10 }),
-		log,
 	)
 }
