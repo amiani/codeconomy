@@ -12,7 +12,7 @@ export default function interpolateSystem(world: World) {
   useMonitor(transforms, (e, [{ x, y, rotation }]) => {
     world.attach(e, component(Interpolate, {
       start: { x, y, rotation, time: performance.now() },
-      end: { x, y, rotation, time: performance.now() },
+      end: { x, y, rotation, time: performance.now() + 1000 },
     }))
     laserTopic.push({ position: { x, y } })
   })

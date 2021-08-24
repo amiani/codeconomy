@@ -77,8 +77,8 @@ export default function netSystem(world: World<Clock>) {
   gamedataQuery(updateProducer.update)
   countdownQuery(updateProducer.update)
   scoreQuery(updateProducer.update)
-  //transforms
-  for (const [entities, [transforms]] of transformQuery) {
+  //ships
+  for (const [entities, [transforms]] of shipQuery) {
     for (let i = 0, n = entities.length; i < n; ++i) {
       updateProducer.update(entities[i], [transforms[i]])
     }
