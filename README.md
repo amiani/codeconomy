@@ -1,3 +1,3 @@
-# Codeconomy
+# Space Code
 
-A programming game experiment.
+A programming game in space.

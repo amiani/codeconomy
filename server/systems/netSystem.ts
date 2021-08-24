@@ -16,7 +16,6 @@ import { MESSAGE_MAX_BYTE_LENGTH, SEND_RATE } from "../env"
 import { useClients } from "../effects"
 import { Clock } from "@javelin/hrtime-loop"
 
-const transformQuery = createQuery(Transform)
 const playerQuery = createQuery(Player)
 const logQuery = createQuery(Log, Allegiance)
 const visibleQuery = createQuery(Transform, SpriteData, Allegiance)
