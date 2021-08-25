@@ -11,7 +11,7 @@ import {
 	Allegiance,
 	Transform,
 	Action,
-	Script,
+	Module,
 	Isolate,
 	Bot,
 } from '../components'
@@ -96,9 +96,9 @@ export default function huntSystem(world: World<Clock>) {
 		case GamePhase.setup:
 			world.create(phaseTimer)
 			const isolate = new ivm.Isolate({ memoryLimit: 128 })
-			const script = isolate.compileScriptSync(testScript)
+			const module = isolate.compileModuleSync(testScript)
 			const owner = world.create(
-				toComponent(script, Script),
+				toComponent(module, Module),
 				toComponent(isolate, Isolate),
 				component(HuntScore)
 			)

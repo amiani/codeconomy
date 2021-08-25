@@ -38,7 +38,7 @@ export const Body = {
   handle: number
 }
 
-export const Script = {}
+export const Module = {}
 
 export const Context = {}
 
@@ -116,7 +116,7 @@ export const Bot = {
 registerSchema(Player, 1)
 registerSchema(Transform, 2)
 registerSchema(Body, 3)
-registerSchema(Script, 4)
+registerSchema(Module, 4)
 registerSchema(Allegiance, 5)
 registerSchema(Health, 6)
 registerSchema(Sprite, 7)

@@ -3,7 +3,7 @@ import ivm from 'isolated-vm'
 const rapier = require("@a-type/rapier2d-node")
 
 import { useColliderToEntity, useSimulation } from '../effects'
-import { Action, Body, CombatHistory, Context, Health, Script, SpriteData, Allegiance, Transform, Weapon, Log } from "../components"
+import { Action, Body, CombatHistory, Context, Health, Module, SpriteData, Allegiance, Transform, Weapon, Log } from "../components"
 import createContext from "../createContext"
 
 export default function createShip(
@@ -13,7 +13,7 @@ export default function createShip(
 	rotation: number,
 	player: Entity,
 	team: number,
-	script: ivm.Script,
+	module: ivm.Module,
 	isolate: ivm.Isolate,
 	withLog: boolean,
 ) {
@@ -44,15 +44,17 @@ export default function createShip(
 	} else {
 		context = createContext(isolate)
 	}
-	const res = (<ivm.Script>script).run(context, { copy: true })
-		//.then(value => console.log(`SCRIPT RUN`))
-		.catch(err => console.error(err))
+	const res = module.instantiate(context, (specifier, referrer) => {
+		//TODO: return actual dependencies
+		return module
+	})
+	module.evaluateSync()
 
 	world.attach(e,
 		component(CombatHistory, { lastHitByPlayer: -1 }),
 		component(Transform, { x, y, rotation }),
 		toComponent(body, Body),
-		toComponent(script, Script),
+		toComponent(module, Module),
 		toComponent(context, Context),
 		component(Weapon, { damage: 1, maxCooldown: 0.1, currentCooldown: 0 }),
 		component(Allegiance, { player, team }),

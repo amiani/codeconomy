@@ -4,8 +4,7 @@ const rapier = require('@a-type/rapier2d-node')
 
 import {
 	Body,
-	Script,
-	Context,
+	Module,
 	Action,
 	Health,
 	Allegiance,
@@ -16,25 +15,26 @@ import {
 import { useClients } from "../effects"
 import { MAX_PLAYERS } from "../env"
 import { scriptTopic } from "../topics"
-//import { usePlayers } from "./netSystem"
 
-const scriptShips = createQuery(Script, Context, Body, Action, Allegiance)
-const ships = createQuery(CombatHistory, Transform, Allegiance, Health)
+const moduleShipQuery = createQuery(Module, Body, Action, Allegiance)
+const shipQuery = createQuery(CombatHistory, Transform, Allegiance, Health)
 
-const createState = (
+function createState(
 	body: typeof rapier.RigidBody,
 	allies: Array<ShipState>,
 	enemies: Array<ShipState>,
-) => ({
-	self: {
-		position: body.translation(),
-		velocity: body.linvel(),
-		rotation: body.rotation(),
-		angularVelocity: body.angvel(),
-	},
-	allies,
-	enemies,
-})
+) {
+	return {
+		self: {
+			position: body.translation(),
+			velocity: body.linvel(),
+			rotation: body.rotation(),
+			angularVelocity: body.angvel(),
+		},
+		allies,
+		enemies,
+	}
+}
 
 interface ShipState {
 	position: { x: number, y: number },
@@ -49,16 +49,16 @@ interface Action {
 	fire: boolean,
 }
 
-export default function scriptSystem(world: World) {
+export default function moduleSystem(world: World) {
 	const clients = useClients()
 
 	for (const scriptEvent of scriptTopic) {
 		const player = clients.getPlayer(scriptEvent.uid)
 		try {
 			const isolate = world.get(player, Isolate) as ivm.Isolate
-			const script = isolate.compileScriptSync(scriptEvent.code)
-			world.attach(player, toComponent(script, Script))
-			console.log(`Script arrived for player entity ${player}`)
+			const module = isolate.compileModuleSync(scriptEvent.code)
+			world.attach(player, toComponent(module, Module))
+			console.log(`Module arrived for player entity ${player}`)
 		} catch (e) {
 			console.log(e)
 		}
@@ -70,7 +70,7 @@ export default function scriptSystem(world: World) {
 		for (let i = 0; i < MAX_PLAYERS; i++) {
 			shipStates[i] = new Map()
 		}
-		ships((e, [combatHistory, transform, allegiance, health]) => {
+		shipQuery((e, [combatHistory, transform, allegiance, health]) => {
 			shipStates[allegiance.team].set(e, {
 				position: { x: transform.x, y: transform.y },
 				rotation: transform.rotation,
@@ -78,9 +78,9 @@ export default function scriptSystem(world: World) {
 				team: allegiance.team,
 			})
 		})
-		scriptShips(async (e, [script, contextComp, bodyComp, action, allegiance]) => {
+		moduleShipQuery(async (e, [moduleComp, bodyComp, action, allegiance]) => {
 			const body = bodyComp as typeof rapier.Body
-			const context = contextComp as ivm.Context
+			const module = moduleComp as ivm.Module
 			const allies = Array<ShipState>()
 			for (const [shipEntity, state] of shipStates[allegiance.team].entries()) {
 				if (shipEntity !== e) {
@@ -94,9 +94,9 @@ export default function scriptSystem(world: World) {
 				}
 			}
 			const state = createState(body, allies, enemies)
-			await context.global.set('state', state, { copy: true })
 			try {
-				const nextAction: Action = await context.eval(`run(state)`, { copy: true })
+				const main = await module.namespace.get('default')
+				const nextAction = await main(state)
 				if (nextAction) {
 					action.throttle = nextAction.throttle ? nextAction.throttle : 0
 					action.rotate = nextAction.rotate ? nextAction.rotate : 0

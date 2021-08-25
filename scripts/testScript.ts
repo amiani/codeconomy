@@ -1,4 +1,4 @@
-export default `const run = (state) => {
+export default `export default function(state) {
   return {
     throttle: 50,
     rotate: 0,
