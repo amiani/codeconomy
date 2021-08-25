@@ -9,7 +9,7 @@ import {
 } from "@javelin/ecs"
 import { createMessageProducer, encode, MessageProducer } from "@javelin/net"
 
-import { Player, SpriteData, Allegiance, Transform, HuntScore, Countdown, Log, CombatHistory, Bullet } from "../components"
+import { Player, SpriteData, Allegiance, Transform, HuntScore, Countdown, Log, CombatHistory, Bullet, Spawner } from "../components"
 import { MESSAGE_MAX_BYTE_LENGTH, SEND_RATE } from "../env"
 import { useClients } from "../effects"
 import { Clock } from "@javelin/hrtime-loop"
@@ -22,11 +22,13 @@ const scoreQuery = createQuery(Allegiance, HuntScore)
 const countdownQuery = createQuery(Countdown)
 const shipQuery = createQuery(Transform, CombatHistory).select(Transform)
 const bulletQuery = createQuery(Bullet)
+const spawnerQuery = createQuery(Spawner)
 
 function getInitialMessage(
   producer: MessageProducer,
   playerEntity: Entity,
 ) {
+  playerQuery(producer.attach)
   visibleQuery(producer.attach)
   scoreQuery(producer.attach)
   countdownQuery(producer.attach)
@@ -36,6 +38,7 @@ function getInitialMessage(
       producer.attach(e, [log])
     }
   })
+  spawnerQuery(producer.attach)
   return producer.take()
 }
 
@@ -53,6 +56,7 @@ export default function netSystem(world: World<Clock>) {
   useMonitor(scoreQuery, attachProducer.attach, attachProducer.destroy)
   useMonitor(countdownQuery, attachProducer.attach, attachProducer.destroy)
   useMonitor(bulletQuery, attachProducer.attach)
+  useMonitor(spawnerQuery, attachProducer.attach)
   useMonitor(
     logQuery,
     (e, [log, allegiance]) => {

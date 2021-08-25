@@ -4,7 +4,7 @@ import * as PIXI from 'pixi.js';
 
 import app from '../pixiApp'
 
-const updateBackground = (background: PIXI.TilingSprite, viewport: Viewport) => {
+function updateBackground(background: PIXI.TilingSprite, viewport: Viewport) {
 	background.x = viewport.left
 	background.y = viewport.top
 	background.tilePosition.x = -viewport.left * viewport.scale.x

@@ -6,7 +6,7 @@ import { playerTopic, shipTopic } from "../topics";
 import {
 	Countdown,
 	Player,
-	HuntScore as Score,
+	HuntScore,
 	Spawner,
 	Allegiance,
 	Transform,
@@ -15,7 +15,7 @@ import {
 	Isolate,
 	Bot,
 } from '../components'
-import { createBot, createPlayer, createSpawner } from "../factories";
+import { createBot, createSpawner } from "../factories";
 import { MAX_PLAYERS } from "../env";
 import { usePhase, useTeams } from "../effects";
 import testScript from "../../scripts/testScript";
@@ -25,7 +25,7 @@ const players = createQuery(Player)
 const bots = createQuery(Bot)
 const spawners = createQuery(Spawner, Allegiance)
 const ships = createQuery(Transform, Action)
-const scores = createQuery(Score)
+const scores = createQuery(HuntScore)
 
 interface SpawnLocation {
 	x: number;
@@ -64,7 +64,7 @@ const handlePlayerJoined = (
 ) => {
 	const { x, y } = spawnLocation
 	const rotation = Math.random() * Math.PI * 2
-	const spawner = createSpawner(world, x, y, rotation, player, team,10, "capital1")
+	const spawner = createSpawner(world, x, y, rotation, player, team, 10, "capital1")
 	spawnLocation.player = player
 }
 
@@ -88,8 +88,8 @@ export default function huntSystem(world: World<Clock>) {
 	phaseTimer.current -= dt / 1000
 
 	//Score
-	useMonitor(players,(e, [p]) => world.attach(e, component(Score)))
-	useMonitor(bots,(e, [b]) => world.attach(e, component(Score)))
+	useMonitor(players,(e, [p]) => world.attach(e, component(HuntScore)))
+	useMonitor(bots,(e, [b]) => world.attach(e, component(HuntScore)))
 
 	switch (phase) {
 		//Runs once only at game start
@@ -100,7 +100,7 @@ export default function huntSystem(world: World<Clock>) {
 			const owner = world.create(
 				toComponent(script, Script),
 				toComponent(isolate, Isolate),
-				component(Score)
+				component(HuntScore)
 			)
 			const teams = useTeams()
 			const team = teams.assign(owner)
@@ -130,7 +130,7 @@ export default function huntSystem(world: World<Clock>) {
 				if (shipEvent.type === 'ship-destroyed') {
 					if (shipEvent.entity !== shipEvent.combatHistory.lastHitByPlayer) {
 						try {
-							const score = world.get(shipEvent.combatHistory.lastHitByPlayer, Score)
+							const score = world.get(shipEvent.combatHistory.lastHitByPlayer, HuntScore)
 							score && score.points++
 						} catch (err) {
 							console.log(err)

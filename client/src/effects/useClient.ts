@@ -1,4 +1,4 @@
-import { createEffect } from "@javelin/ecs";
+import { createEffect, Entity } from "@javelin/ecs";
 import geckos, { ClientChannel, RawMessage } from '@geckos.io/client'
 import firebase from 'firebase/app'
 import 'firebase/auth'
@@ -13,6 +13,8 @@ interface Client {
 const HOSTNAME = import.meta.env.PROD ? 'outer.space.buns.run' : '127.0.0.1'
 
 export default createEffect(world => {
+	let uid: string
+	let playerEntity: Entity
     let client: Client
 
 	const attachPackets = Array<Packet>()
@@ -21,6 +23,7 @@ export default createEffect(world => {
 
     firebase.auth().onAuthStateChanged(async user => {
 		if (user) {
+			uid = user.uid
 			const token: string = await user.getIdToken(true)
 			const ws = import.meta.env.PROD ? `wss` : `ws`
 			const socket = new WebSocket(`${ws}://${HOSTNAME}:8001/connect?authorization=${token}`)
@@ -63,11 +66,15 @@ export default createEffect(world => {
     })
 	
 	const getInitPacket = () => initPacket
+	const setPlayerEntity = (entity: Entity) => playerEntity = entity
 
 	return () => ({
+		playerEntity,
+		uid,
 		client,
 		attachPackets,
 		updatePackets,
+		setPlayerEntity,
 		getInitPacket,
 	})
 }, { shared: true })

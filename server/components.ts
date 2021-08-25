@@ -94,7 +94,7 @@ export const Bullet = {
 
 export const Spawner = {
   countdown: Countdown,
-  owner: number
+  owner: number,
 }
 
 export const CombatHistory = {

@@ -3,7 +3,7 @@ import {
 } from "@javelin/ecs"
 import laserTopic from "./topics/laserTopic"
 
-import { clientSystem, interpolateSystem, soundSystem, spriteSystem } from './systems'
+import { cameraSystem, clientSystem, interpolateSystem, soundSystem, spriteSystem } from './systems'
 import { uploadTopic } from "./topics"
 import huntScoreDisplaySystem from "./systems/huntScoreDisplaySystem"
 import logSystem from "./systems/logSystem"
@@ -21,3 +21,4 @@ world.addSystem(spriteSystem)
 world.addSystem(soundSystem)
 world.addSystem(huntScoreDisplaySystem)
 world.addSystem(logSystem)
+world.addSystem(cameraSystem)

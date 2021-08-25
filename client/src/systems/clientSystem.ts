@@ -1,14 +1,15 @@
-import { createQuery, useInterval, World } from '@javelin/ecs'
-import { Countdown } from '../../../server/components'
+import { createQuery, useInterval, useMonitor, World } from '@javelin/ecs'
+import { Countdown, Player } from '../../../server/components'
 import { useClient, useNet } from '../effects'
 import { uploadTopic } from '../topics'
 import { actions, states } from '../ui/state'
 
-const countdowns = createQuery(Countdown)
+const playerQuery = createQuery(Player)
+const countdownQuery = createQuery(Countdown)
 
 export default function clientSystem(world: World) {
 	const net = useNet()
-	const { client } = useClient()
+	const { client, uid, setPlayerEntity } = useClient()
 
 	for (const uploadEvent of uploadTopic) {
 		client.socket.send(uploadEvent.code)
@@ -19,4 +20,13 @@ export default function clientSystem(world: World) {
 		actions.setRate(net.bytes / 1000)
 		net.bytes = 0
 	}
+
+	useMonitor(
+		playerQuery,
+		(e, [player]) => {
+			if (player.uid === uid) {
+				setPlayerEntity(e)
+			}
+		}
+	)
 }
