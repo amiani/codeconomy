@@ -64,7 +64,8 @@ const handlePlayerJoined = (
 ) => {
 	const { x, y } = spawnLocation
 	const rotation = Math.random() * Math.PI * 2
-	const spawner = createSpawner(world, x, y, rotation, player, team, 10, "capital1")
+	const spawnRate = 8
+	const spawner = createSpawner(world, x, y, rotation, player, team, spawnRate, "capital1")
 	spawnLocation.player = player
 }
 
