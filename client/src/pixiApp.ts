@@ -8,7 +8,7 @@ import sidewinder from '../../assets/images/sidewinder.png'
 import condor from '../../assets/images/condor.png'
 import { world } from './world';
 
-const runJavelin = () => {
+function runJavelin() {
 	console.log('starting javelin')
 	let running = true
     const step = (t: number) => {

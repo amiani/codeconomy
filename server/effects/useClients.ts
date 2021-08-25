@@ -129,7 +129,7 @@ interface Client {
   initialized: boolean;
 }
 
-const registerClient = (client: Client) => {
+function registerClient(client: Client) {
   client.socket.on("message", async (data: WebSocket.Data) => {
     //console.log(typeof data.toString())
     scriptTopic.push({

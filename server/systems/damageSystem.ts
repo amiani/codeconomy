@@ -5,7 +5,7 @@ const rapier = require('@a-type/rapier2d-node')
 
 const healths = createQuery(Health)
 
-const handleBulletCollision = (world: World, bulletEntity: Entity, hitEntity: Entity) => {
+function handleBulletCollision(world: World, bulletEntity: Entity, hitEntity: Entity) {
 	try {
 		const bullet = world.get(bulletEntity, Bullet)
 		const bulletAllegiance = world.get(bulletEntity, Allegiance)

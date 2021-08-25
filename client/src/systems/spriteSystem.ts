@@ -20,10 +20,10 @@ const bulletQuery = createQuery(Bullet, Sprite)
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t
 
-const copyInterpolateToSprite = (
+function copyInterpolateToSprite(
   interpolate: ComponentOf<typeof Interpolate>,
   sprite: ComponentOf<typeof Sprite>
-) => {
+) {
   const { start, end } = interpolate
   const t = (performance.now() - 50 - start.time) / (end.time - start.time)
   sprite.x = lerp(start.x, end.x, t)
