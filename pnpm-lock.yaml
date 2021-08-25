@@ -8,6 +8,7 @@ importers:
       '@dimforge/rapier2d': ^0.7.0
       '@geckos.io/client': ^2.0.0
       '@geckos.io/server': ^2.0.0
+      '@javelin/core': workspace:*
       '@javelin/ecs': workspace:*
       '@javelin/hrtime-loop': workspace:*
       '@javelin/net': workspace:*
@@ -46,6 +47,7 @@ importers:
       '@dimforge/rapier2d': 0.7.0
       '@geckos.io/client': 2.0.0
       '@geckos.io/server': 2.0.0
+      '@javelin/core': link:javelin/packages/core
       '@javelin/ecs': link:javelin/packages/ecs
       '@javelin/hrtime-loop': link:javelin/packages/hrtime-loop
       '@javelin/net': link:javelin/packages/net

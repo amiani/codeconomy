@@ -12,6 +12,7 @@ import { getServer } from "../geckosServer"
 import { playerTopic, scriptTopic } from '../topics'
 import { MAX_PLAYERS, MESSAGE_MAX_BYTE_LENGTH } from '../env'
 import { createMessageProducer, encode, MessageProducer } from '@javelin/net'
+import { Header } from '../../common/types'
 
 export default createEffect((world: World<Clock>) => {
   const clients = new Map()
@@ -71,27 +72,34 @@ export default createEffect((world: World<Clock>) => {
     })
   })
 
-  const sendUnreliable = (uid: string, data: ArrayBuffer) => {
-    const client = clients.get(uid)
+  const sendUnreliable = (uid: string, header: Header, data: ArrayBuffer) => {
+    const client = clients.get(uid) as Client
     if (client && client.initialized) {
-      client.channel.raw.emit(data)
+      const packet = writeHeader(header, data)
+      client.channel.raw.emit(packet)
+
       const privateMessage = client.channelProducer.take()
       if (privateMessage) {
-        client.channel.raw.emit(encode(privateMessage))
+        const privatePacket = writeHeader(header, encode(privateMessage))
+        client.channel.raw.emit(privatePacket)
       }
     }
   }
   const sendReliable = (
     uid: string,
+    header: Header,
     data: ArrayBuffer,
     cb?: (err?: Error) => void
   ) => {
-    const client = clients.get(uid)
+    const client = clients.get(uid) as Client
     if (client && client.initialized) {
-      clients.get(uid).socket.send(data, cb)
+      const packet = writeHeader(header, data)
+      client.socket.send(packet, cb)
+
       const privateMessage = client.socketProducer.take()
       if (privateMessage) {
-        client.socket.send(encode(privateMessage))
+        const privatePacket = writeHeader(header, encode(privateMessage))
+        client.socket.send(privatePacket)
       }
     }
   }
@@ -128,4 +136,12 @@ const registerClient = (client: Client) => {
       code: data.toString()
     })
   })
+}
+
+function writeHeader(header: Header, message: ArrayBuffer): ArrayBuffer {
+  const packet = new Uint8Array(message.byteLength + 4)
+  const view = new DataView(packet.buffer)
+  view.setUint32(0, header.tick)
+  packet.set(new Uint8Array(message), 4)
+  return packet.buffer
 }

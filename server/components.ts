@@ -1,4 +1,3 @@
-//@ts-nocheck
 import {
   boolean,
   number,
@@ -6,22 +5,21 @@ import {
   registerSchema,
   arrayOf,
 } from "@javelin/ecs"
-import type { Schema } from "@javelin/core"
 
-export const Player: Schema = {
+export const Player = {
   initialized: boolean,
   uid: { ...string, length: 36 },
   name: { ...string, length: 16 },
   spawners: arrayOf(number)
 }
 
-export const Transform: Schema = {
+export const Transform = {
   x: number,
   y: number,
   rotation: number,
 }
 
-export const Interpolate: Schema = {
+export const Interpolate = {
   start: {
     x: number,
     y: number,
@@ -37,86 +35,86 @@ export const Interpolate: Schema = {
   adaptiveSendRate: number,
 }
 
-export const Body: Schema = {
+export const Body = {
   handle: number
 }
 
-export const Script: Schema = {}
+export const Script = {}
 
-export const Context: Schema = {}
+export const Context = {}
 
-export const Isolate: Schema = {
+export const Isolate = {
   isDisposed: boolean,
   referenceCount: number,
 }
 
-export const Allegiance: Schema = {
+export const Allegiance = {
   player: number,
   team: number
 }
 
-export const Health: Schema = {
+export const Health = {
   current: number,
   max: number,
 }
 
-export const Sprite: Schema = {
+export const Sprite = {
   x: number,
   y: number,
   rotation: number,
   visible: boolean
 }
 
-export const SpriteData: Schema = {
+export const SpriteData = {
   name: { ...string, length: 32 }
 }
 
-export const Action: Schema = {
+export const Action = {
   throttle: number,
   rotate: number,
   fire: boolean
 }
 
-export const Countdown: Schema = {
+export const Countdown = {
   current: number,
   max: number,
 }
 
-export const Weapon: Schema = {
+export const Weapon = {
   damage: number,
   maxCooldown: number,
   currentCooldown: number,
 }
 
 const Vec = { x: number, y: number }
-export const Bullet: Schema = {
+export const Bullet = {
   velocity: Vec,
   lifetime: number,
   damage: number
 }
 
-export const Spawner: Schema = {
+export const Spawner = {
   countdown: Countdown,
   owner: number
 }
 
-export const CombatHistory: Schema = {
+export const CombatHistory = {
   lastHitByPlayer: number
 }
 
-export const HuntScore: Schema = {
+export const HuntScore = {
   points: number
 }
 
-export const GameData: Schema = {
+export const GameData = {
   tick: number
 }
 
-export const Log: Schema = {
+export const Log = {
   logs: arrayOf({ ...string, length: 128 })
 }
 
-export const Bot: Schema = {
+export const Bot = {
   name: { ...string, length: 5 },
 }
 

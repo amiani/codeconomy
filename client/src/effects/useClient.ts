@@ -3,6 +3,8 @@ import geckos, { ClientChannel, RawMessage } from '@geckos.io/client'
 import firebase from 'firebase/app'
 import 'firebase/auth'
 
+import { Header } from '../../../common/types'
+
 interface Client {
   socket: WebSocket,
   channel: ClientChannel,
@@ -35,8 +37,10 @@ export default createEffect(world => {
 					}
 					client = { socket, channel }
 
-					channel.onRaw((message: RawMessage) => {
-						if (message instanceof ArrayBuffer) {
+					channel.onRaw((data: RawMessage) => {
+						if (data instanceof ArrayBuffer) {
+							const [header, message] = readHeader(data)
+							//console.log(`udp packet from tick ${header.tick}`)
 							messages.push(message)
 						}
 					})
@@ -45,7 +49,9 @@ export default createEffect(world => {
 			}
 			socket.onmessage = ({ data }: MessageEvent) => {
 				if (data instanceof ArrayBuffer) {
-					messages.push(data)
+					const [header, message] = readHeader(data)
+					console.log(`tcp packet from tick ${header.tick}`)
+					messages.push(message)
 				}
 			}
 		}
@@ -56,3 +62,9 @@ export default createEffect(world => {
 		messages
 	})
 }, { shared: true })
+
+function readHeader(message: ArrayBuffer): [Header, ArrayBuffer] {
+	const view = new DataView(message)
+	const header = { tick: view.getUint32(0) }
+	return [header, message.slice(4)]
+}
