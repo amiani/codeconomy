@@ -7,7 +7,7 @@ import {
   useMonitor,
   World
 } from "@javelin/ecs"
-import { createMessageProducer, encode } from "@javelin/net"
+import { createMessageProducer, encode, MessageProducer } from "@javelin/net"
 
 import { Player, SpriteData, Allegiance, Transform, HuntScore, Countdown, Log, CombatHistory, Bullet } from "../components"
 import { MESSAGE_MAX_BYTE_LENGTH, SEND_RATE } from "../env"
@@ -23,13 +23,19 @@ const countdownQuery = createQuery(Countdown)
 const shipQuery = createQuery(Transform, CombatHistory).select(Transform)
 const bulletQuery = createQuery(Bullet)
 
-function getInitialMessage(e: Entity, player: ComponentOf<typeof Player>) {
-  const producer = createMessageProducer()
-  producer.attach(e, [player])
+function getInitialMessage(
+  producer: MessageProducer,
+  playerEntity: Entity,
+) {
   visibleQuery(producer.attach)
   scoreQuery(producer.attach)
   countdownQuery(producer.attach)
   bulletQuery(producer.attach)
+  logQuery((e, [log, allegiance]) => {
+    if (allegiance.player == playerEntity) {
+      producer.attach(e, [log])
+    }
+  })
   return producer.take()
 }
 
@@ -95,7 +101,8 @@ export default function netSystem(world: World<Clock>) {
           clients.sendUnreliable(player.uid, updateHeader, encode(updateMessage))
         }
       } else {
-        const initMessage = getInitialMessage(e, player)
+        const producer = clients.getAttachProducer(player.uid)
+        const initMessage = getInitialMessage(producer, e)
         if (initMessage) {
           const initHeader: Header = { tick: world.latestTick, type: MessageType.Init }
           clients.sendReliable(player.uid, initHeader, encode(initMessage), (err) => {

@@ -100,7 +100,7 @@ export default createEffect((world: World<Clock>) => {
       const privateMessage = client.socketProducer.take()
       if (privateMessage && privateMessage.byteLength > 0) {
         const privatePacket = writeHeader(header, encode(privateMessage))
-        //client.socket.send(privatePacket)
+        client.socket.send(privatePacket)
       }
     }
   }
