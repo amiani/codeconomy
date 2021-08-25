@@ -55,10 +55,16 @@ export default createEffect(world => {
 			socket.onmessage = ({ data }: MessageEvent) => {
 				if (data instanceof ArrayBuffer) {
 					const packet = readHeader(data)
-					if (packet.header.type == MessageType.Init) {
-						initPacket = packet
-					} else if (packet.header.type == MessageType.Attach) {
-						attachPackets.push(packet)
+					switch (packet.header.type) {
+						case MessageType.Init:
+							initPacket = packet
+							break
+						case MessageType.Attach:
+							attachPackets.push(packet)
+							break
+						case MessageType.Info:
+							handleInfoMessage(packet)
+							break
 					}
 				}
 			}
@@ -86,4 +92,10 @@ function readHeader(data: ArrayBuffer): Packet {
 		type: view.getUint8(4)
 	}
 	return { header, message: data.slice(5) }
+}
+
+const decoder = new TextDecoder()
+function handleInfoMessage(packet: Packet) {
+	const message = decoder.decode(packet.message)
+	console.log(message)
 }

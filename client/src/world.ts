@@ -11,7 +11,7 @@ import logSystem from "./systems/logSystem"
 export const world = createWorld({
   topics: [
     laserTopic,
-    uploadTopic
+    uploadTopic,
   ]
 })
 

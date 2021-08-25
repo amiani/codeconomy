@@ -1,4 +1,4 @@
-import { createTopic } from "@javelin/ecs";
+import { createTopic, Entity } from "@javelin/ecs";
 
 export enum LogType {
 	Info,
@@ -7,6 +7,7 @@ export enum LogType {
 	
 interface LogEvent {
 	type: LogType;
+	toEntity: Entity;
 	message: string;
 }
 

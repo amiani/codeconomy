@@ -14,7 +14,8 @@ import {
 } from '../components'
 import { useClients } from "../effects"
 import { MAX_PLAYERS } from "../env"
-import { scriptTopic } from "../topics"
+import { logTopic, scriptTopic } from "../topics"
+import { LogType } from "../topics/logTopic"
 
 const moduleShipQuery = createQuery(Module, Body, Action, Allegiance)
 const shipQuery = createQuery(CombatHistory, Transform, Allegiance, Health)
@@ -54,9 +55,9 @@ export default function moduleSystem(world: World) {
 	const clients = useClients()
 
 	for (const scriptEvent of scriptTopic) {
-		const player = clients.getPlayer(scriptEvent.uid)
+		const playerEntity = clients.getPlayer(scriptEvent.uid)
 		try {
-			const isolate = world.get(player, Isolate) as ivm.Isolate
+			const isolate = world.get(playerEntity, Isolate) as ivm.Isolate
 			try {
 				const module = isolate.compileModuleSync(scriptEvent.code)
 				const testContext = isolate.createContextSync()
@@ -64,14 +65,22 @@ export default function moduleSystem(world: World) {
 				module.evaluateSync()
 				const main = module.namespace.getSync('default')
 				if (main instanceof Function) {
-					world.attach(player, toComponent(module, Module))
-					console.log(`Module arrived for player entity ${player}`)
+					world.attach(playerEntity, toComponent(module, Module))
+					console.log(`Module arrived for player entity ${playerEntity}`)
 				} else {
-					//TODO: send this to the client
+					logTopic.push({
+						type: LogType.Error,
+						toEntity: playerEntity,
+						message: `Module did not export a default function`
+					})
 					console.error(`Module did not export a function`)
 				}
 			} catch (err) {
-				//TODO: send error to player
+				logTopic.push({
+					type: LogType.Error,
+					toEntity: playerEntity,
+					message: `Module failed to compile: ${err}`
+				})
 			}
 		} catch (e) {
 			console.log(e)
