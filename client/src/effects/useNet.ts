@@ -2,6 +2,7 @@ import { createEffect, useInterval } from '@javelin/ecs'
 import { createMessageHandler } from '@javelin/net'
 import useClient from './useClient'
 
+const SEND_RATE = 20
 export default createEffect(world => {
     const { messages } = useClient()
     const state = { bytes: 0 }
@@ -14,7 +15,8 @@ export default createEffect(world => {
       handler.push(message)
     }
 
-    let nextUpdate = 100
+    const updateRate = (1 / SEND_RATE) * 1000
+    let nextUpdate = updateRate
 
     return () => {
       let update = useInterval(nextUpdate)
@@ -22,10 +24,11 @@ export default createEffect(world => {
         consumeMessage()
       }
       if (update) {
+        console.log(messages.length)
         if (messages.length) {
           consumeMessage()
         }
-        nextUpdate = messages.length > 8 ? 100 : 105
+        nextUpdate = messages.length > 8 ? updateRate : updateRate * 1.05
       }
       handler.system()
       return Object.assign(state, handler.useInfo())

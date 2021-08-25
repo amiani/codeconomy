@@ -40,7 +40,6 @@ export default createEffect(world => {
 					channel.onRaw((data: RawMessage) => {
 						if (data instanceof ArrayBuffer) {
 							const [header, message] = readHeader(data)
-							//console.log(`udp packet from tick ${header.tick}`)
 							messages.push(message)
 						}
 					})
@@ -50,7 +49,6 @@ export default createEffect(world => {
 			socket.onmessage = ({ data }: MessageEvent) => {
 				if (data instanceof ArrayBuffer) {
 					const [header, message] = readHeader(data)
-					console.log(`tcp packet from tick ${header.tick}`)
 					messages.push(message)
 				}
 			}

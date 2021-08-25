@@ -35,7 +35,8 @@ export default createEffect((world: World<Clock>) => {
           const decodedToken = await admin.auth().verifyIdToken(queryObject.authorization as string)
           const uid = decodedToken.uid
           const socketProducer = createMessageProducer({
-            maxByteLength: MESSAGE_MAX_BYTE_LENGTH
+            //maxByteLength: MESSAGE_MAX_BYTE_LENGTH
+            maxByteLength: Infinity
           })
           clients.set(uid,{
             uid,
