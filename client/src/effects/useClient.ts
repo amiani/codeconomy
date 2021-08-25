@@ -3,7 +3,7 @@ import geckos, { ClientChannel, RawMessage } from '@geckos.io/client'
 import firebase from 'firebase/app'
 import 'firebase/auth'
 
-import { Header } from '../../../common/types'
+import { Header, Packet } from '../../../common/types'
 
 interface Client {
   socket: WebSocket,
@@ -14,7 +14,9 @@ const HOSTNAME = import.meta.env.PROD ? 'outer.space.buns.run' : '127.0.0.1'
 
 export default createEffect(world => {
     let client: Client
-	const messages = Array<ArrayBuffer>()
+
+	const attachPackets = Array<Packet>()
+	const updatePackets = Array<Packet>()
 
     firebase.auth().onAuthStateChanged(async user => {
 		if (user) {
@@ -39,8 +41,8 @@ export default createEffect(world => {
 
 					channel.onRaw((data: RawMessage) => {
 						if (data instanceof ArrayBuffer) {
-							const [header, message] = readHeader(data)
-							messages.push(message)
+							const packet = readHeader(data)
+							updatePackets.push(packet)
 						}
 					})
 					console.log('connected')
@@ -48,8 +50,8 @@ export default createEffect(world => {
 			}
 			socket.onmessage = ({ data }: MessageEvent) => {
 				if (data instanceof ArrayBuffer) {
-					const [header, message] = readHeader(data)
-					messages.push(message)
+					const packet = readHeader(data)
+					attachPackets.push(packet)
 				}
 			}
 		}
@@ -57,12 +59,16 @@ export default createEffect(world => {
 
 	return () => ({
 		client,
-		messages
+		attachPackets,
+		updatePackets
 	})
 }, { shared: true })
 
-function readHeader(message: ArrayBuffer): [Header, ArrayBuffer] {
-	const view = new DataView(message)
-	const header = { tick: view.getUint32(0) }
-	return [header, message.slice(4)]
+function readHeader(data: ArrayBuffer): Packet {
+	const view = new DataView(data)
+	const header = {
+		tick: view.getUint32(0),
+		type: view.getUint8(4)
+	}
+	return { header, message: data.slice(5) }
 }

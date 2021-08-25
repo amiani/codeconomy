@@ -140,9 +140,10 @@ const registerClient = (client: Client) => {
 }
 
 function writeHeader(header: Header, message: ArrayBuffer): ArrayBuffer {
-  const packet = new Uint8Array(message.byteLength + 4)
+  const packet = new Uint8Array(message.byteLength + 5)
   const view = new DataView(packet.buffer)
   view.setUint32(0, header.tick)
-  packet.set(new Uint8Array(message), 4)
+  view.setUint8(4, header.type)
+  packet.set(new Uint8Array(message), 5)
   return packet.buffer
 }

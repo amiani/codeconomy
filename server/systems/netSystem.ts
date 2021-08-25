@@ -15,6 +15,7 @@ import { Player, SpriteData, Allegiance, Transform, HuntScore, Countdown, GameDa
 import { MESSAGE_MAX_BYTE_LENGTH, SEND_RATE } from "../env"
 import { useClients } from "../effects"
 import { Clock } from "@javelin/hrtime-loop"
+import { Header, MessageType } from "../../common/types"
 
 const playerQuery = createQuery(Player)
 const logQuery = createQuery(Log, Allegiance)
@@ -97,21 +98,22 @@ export default function netSystem(world: World<Clock>) {
   }
 
   if (send) {
-    const header = { tick: world.latestTick }
+    const attachHeader: Header = { tick: world.latestTick, type: MessageType.Attach }
+    const updateHeader: Header = { tick: world.latestTick, type: MessageType.Attach }
     const attachMessage = attachProducer.take()
     const updateMessage = updateProducer.take()
     playerQuery((e, [player]) => {
       if (player.initialized) {
         if (attachMessage) {
-          clients.sendReliable(player.uid, header, encode(attachMessage))
+          clients.sendReliable(player.uid, attachHeader, encode(attachMessage))
         }
         if (updateMessage) {
-          clients.sendUnreliable(player.uid, header, encode(updateMessage))
+          clients.sendUnreliable(player.uid, updateHeader, encode(updateMessage))
         }
       } else {
         const initMessage = getInitialMessage(e, player)
         if (initMessage) {
-          clients.sendReliable(player.uid, header, encode(initMessage), (err) => {
+          clients.sendReliable(player.uid, attachHeader, encode(initMessage), (err) => {
             if (err) {
               console.error(err)
             } else {
