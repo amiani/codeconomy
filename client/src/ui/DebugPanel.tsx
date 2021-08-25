@@ -10,8 +10,8 @@ export default function DebugPanel({ debugState, style }: DebugPanelProps) {
 	return (
 		<div className="debug-panel-container" style={style}>
 			<div className="debug-panel" style={debugPanelStyle}>
-				<div>Tick: {debugState.tick}</div>
-				<div style={rateStyle}>Rate: {debugState.downloadRate}kb/s</div>
+				<div>{debugState.tick}</div>
+				<div style={rateStyle}>{debugState.downloadRate.toFixed(1)}kb/s</div>
 			</div>
 		</div>
 	)
