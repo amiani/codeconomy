@@ -13,6 +13,18 @@ interface OverlayProps {
 
 export default function Overlay({ state, actions, upload }: OverlayProps) {
 	const [hidden, setHidden] = useState(false)
+	const [mute, setMute] = useState(true)
+
+	const toggleMute = () => {
+		Pizzicato.context.resume()
+		if (mute) {
+			Pizzicato.volume = 1
+			setMute(false)
+		} else {
+			Pizzicato.volume = 0
+			setMute(true)
+		}
+	}
 
 	return (
 		<div
@@ -27,7 +39,7 @@ export default function Overlay({ state, actions, upload }: OverlayProps) {
 			<div className='toolbar' style={{ display: 'flex' }}>
 				<Button onClick={e => setHidden(!hidden)}>{hidden ? 'Show' : 'Hide'}</Button>
 				<Button onClick={upload}>Upload</Button>
-				<Button onClick={e => Pizzicato.context.resume()}>Unmute</Button>
+				<Button onClick={e => toggleMute()}>{mute ? 'Unmute' : `Mute`}</Button>
 				<Button onClick={e => window.open('mailto:amianijohns@gmail.com')}>Feedback</Button>
 			</div>
 			{!hidden && <Editor code={state.editor.code} setCode={actions.setCode} />}
