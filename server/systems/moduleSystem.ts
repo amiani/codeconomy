@@ -1,4 +1,4 @@
-import { World, createQuery, Entity, toComponent } from "@javelin/ecs"
+import { World, createQuery, Entity, toComponent, useInterval } from "@javelin/ecs"
 import ivm from "isolated-vm"
 const rapier = require('@a-type/rapier2d-node')
 
@@ -50,21 +50,35 @@ interface Action {
 }
 
 export default function moduleSystem(world: World) {
+	const update = useInterval(1000 / 10)
 	const clients = useClients()
 
 	for (const scriptEvent of scriptTopic) {
 		const player = clients.getPlayer(scriptEvent.uid)
 		try {
 			const isolate = world.get(player, Isolate) as ivm.Isolate
-			const module = isolate.compileModuleSync(scriptEvent.code)
-			world.attach(player, toComponent(module, Module))
-			console.log(`Module arrived for player entity ${player}`)
+			try {
+				const module = isolate.compileModuleSync(scriptEvent.code)
+				const testContext = isolate.createContextSync()
+				module.instantiateSync(testContext, (specifier, referrer) => module)
+				module.evaluateSync()
+				const main = module.namespace.getSync('default')
+				if (main instanceof Function) {
+					world.attach(player, toComponent(module, Module))
+					console.log(`Module arrived for player entity ${player}`)
+				} else {
+					//TODO: send this to the client
+					console.error(`Module did not export a function`)
+				}
+			} catch (err) {
+				//TODO: send error to player
+			}
 		} catch (e) {
 			console.log(e)
 		}
 	}
 
-	if (world.latestTick % 10 == 0) {
+	if (update) {
 		//Maybe use number of connected players instead of MAX_PLAYERS
 		const shipStates = Array<Map<Entity, ShipState>>(MAX_PLAYERS)
 		for (let i = 0; i < MAX_PLAYERS; i++) {
