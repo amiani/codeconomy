@@ -1,18 +1,20 @@
 import { createEffect, useInterval } from '@javelin/ecs'
 import { createMessageHandler } from '@javelin/net'
 import { Packet } from '../../../common/types'
+import { actions } from '../ui/state'
 import useClient from './useClient'
 
 const SEND_RATE = 20
 export default createEffect(world => {
-    const { attachPackets, updatePackets } = useClient()
+    const { getInitPacket, attachPackets, updatePackets } = useClient()
     const state = { bytes: 0 }
     const handler = createMessageHandler(world)
-    let latestUpdateTick = 1000
+    let initialized = false
+    let latestUpdateTick = 0
 
 
     const consumeMessage = (packet: Packet) => {
-      state.bytes += packet.message.byteLength
+      state.bytes += packet.message.byteLength + 5
       handler.push(packet.message)
     }
 
@@ -20,30 +22,39 @@ export default createEffect(world => {
     let nextUpdate = updateRate
 
     return () => {
-      while (attachPackets.length && attachPackets[0].header.tick <= latestUpdateTick) {
-        const packet = attachPackets.shift()
-        if (packet) {
-          console.log(`consuming attach packet ${packet.header.tick}`)
-          consumeMessage(packet)
-        }
-      }
-
       let update = useInterval(nextUpdate)
-      if (update) {
-        console.log(updatePackets.length)
-        if (updatePackets.length) {
-          const packet = updatePackets.shift()
+      if (initialized) {
+        //attachPackets.length && console.log(`latest attach packet: ${attachPackets[0].header.tick}`)
+        while (attachPackets.length && attachPackets[0].header.tick <= latestUpdateTick) {
+          const packet = attachPackets.shift()
           if (packet) {
-            console.log(`consuming update packet ${packet.header.tick}`)
-            if (packet.header.tick <= latestUpdateTick) {
-              console.log(`skipping update packet ${packet.header.tick}`)
-            }
+            console.log(`consuming attach packet: ${packet.header.tick}`)
             consumeMessage(packet)
-            latestUpdateTick = packet.header.tick
           }
         }
-        nextUpdate = updatePackets.length > 8 ? (updateRate * .95) : updateRate * 1.05
+
+        if (update) {
+          if (updatePackets.length) {
+            const packet = updatePackets.shift()
+            if (packet && packet.header.tick > latestUpdateTick) {
+              consumeMessage(packet)
+              latestUpdateTick = packet.header.tick
+              console.log(`latest update tick: ${latestUpdateTick}`)
+              actions.setTick(latestUpdateTick)
+            } else {
+              //console.log(`discarding update packet ${packet.header.tick}`)
+            }
+          }
+          nextUpdate = updatePackets.length > 8 ? (updateRate * .99) : updateRate * 1.05
+        }
+      } else if (getInitPacket()) {
+        initialized = true
+        const packet = getInitPacket()
+        latestUpdateTick = packet.header.tick
+        console.log('initialized')
+        consumeMessage(packet)
       }
+
       handler.system()
       return Object.assign(state, handler.useInfo())
     }

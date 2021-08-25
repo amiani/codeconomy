@@ -4,7 +4,6 @@ import { useClient, useNet } from '../effects'
 import { uploadTopic } from '../topics'
 import { actions, states } from '../ui/state'
 
-const gameDatas = createQuery(GameData)
 const countdowns = createQuery(Countdown)
 
 export default function clientSystem(world: World) {
@@ -14,16 +13,6 @@ export default function clientSystem(world: World) {
 	for (const uploadEvent of uploadTopic) {
 		client.socket.send(uploadEvent.code)
 	}
-
-	gameDatas((e, [data]) => {
-		if (net.updated.has(e)) {
-			const latestTick = states().debug.tick
-			if (data.tick <= latestTick) {
-				console.log(`got tick ${data.tick} after ${latestTick}`)
-			}
-			actions.setTick(data.tick)
-		}
-	})
 
 	const update = useInterval(1000)
 	if (update) {

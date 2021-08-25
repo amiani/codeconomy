@@ -99,7 +99,7 @@ export default function netSystem(world: World<Clock>) {
 
   if (send) {
     const attachHeader: Header = { tick: world.latestTick, type: MessageType.Attach }
-    const updateHeader: Header = { tick: world.latestTick, type: MessageType.Attach }
+    const updateHeader: Header = { tick: world.latestTick, type: MessageType.Update }
     const attachMessage = attachProducer.take()
     const updateMessage = updateProducer.take()
     playerQuery((e, [player]) => {
@@ -113,7 +113,8 @@ export default function netSystem(world: World<Clock>) {
       } else {
         const initMessage = getInitialMessage(e, player)
         if (initMessage) {
-          clients.sendReliable(player.uid, attachHeader, encode(initMessage), (err) => {
+          const initHeader: Header = { tick: world.latestTick, type: MessageType.Init }
+          clients.sendReliable(player.uid, initHeader, encode(initMessage), (err) => {
             if (err) {
               console.error(err)
             } else {

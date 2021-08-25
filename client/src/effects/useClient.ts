@@ -3,7 +3,7 @@ import geckos, { ClientChannel, RawMessage } from '@geckos.io/client'
 import firebase from 'firebase/app'
 import 'firebase/auth'
 
-import { Header, Packet } from '../../../common/types'
+import { Header, MessageType, Packet } from '../../../common/types'
 
 interface Client {
   socket: WebSocket,
@@ -17,6 +17,7 @@ export default createEffect(world => {
 
 	const attachPackets = Array<Packet>()
 	const updatePackets = Array<Packet>()
+	let initPacket: Packet
 
     firebase.auth().onAuthStateChanged(async user => {
 		if (user) {
@@ -51,16 +52,23 @@ export default createEffect(world => {
 			socket.onmessage = ({ data }: MessageEvent) => {
 				if (data instanceof ArrayBuffer) {
 					const packet = readHeader(data)
-					attachPackets.push(packet)
+					if (packet.header.type == MessageType.Init) {
+						initPacket = packet
+					} else if (packet.header.type == MessageType.Attach) {
+						attachPackets.push(packet)
+					}
 				}
 			}
 		}
     })
+	
+	const getInitPacket = () => initPacket
 
 	return () => ({
 		client,
 		attachPackets,
-		updatePackets
+		updatePackets,
+		getInitPacket,
 	})
 }, { shared: true })
 
