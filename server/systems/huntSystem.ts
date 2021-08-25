@@ -56,12 +56,12 @@ const useSpawnLocations = createEffect(world => {
 	})
 })
 
-const handlePlayerJoined = (
+function handlePlayerJoined(
 	world: World<Clock>,
 	player: Entity,
 	team: number,
 	spawnLocation: SpawnLocation
-) => {
+) {
 	const { x, y } = spawnLocation
 	const rotation = Math.random() * Math.PI * 2
 	const spawnRate = 8
@@ -69,7 +69,7 @@ const handlePlayerJoined = (
 	spawnLocation.player = player
 }
 
-const handlePlayerLeft = (world: World<Clock>, player: Entity) => {
+function handlePlayerLeft(world: World<Clock>, player: Entity) {
 	spawners((e, [spawner, allegiance]) => {
 		if (allegiance.player == player) {
 			console.log(`removed spawner ${e}`)

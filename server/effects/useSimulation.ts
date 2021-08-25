@@ -6,10 +6,10 @@ import { collisionTopic } from "../topics"
 
 const transformsBody = createQuery(Transform, Body)
 
-const copyBodyToTransform = (
+function copyBodyToTransform(
 	body: typeof rapier.Body,
 	transform: ComponentOf<typeof Transform>
-) => {
+) {
 	const translation = body.translation()
 	transform.x = translation.x
 	transform.y = translation.y

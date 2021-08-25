@@ -4,6 +4,7 @@ import physicsSystem from './physicsSystem'
 import moduleSystem from './moduleSystem'
 import spawnSystem from './spawnSystem'
 import huntSystem from './huntSystem'
+import logSystem from './logSystem'
 
 export {
 	damageSystem,
@@ -11,5 +12,6 @@ export {
 	physicsSystem,
 	moduleSystem,
 	spawnSystem,
-	huntSystem
+	huntSystem,
+	logSystem
 }
