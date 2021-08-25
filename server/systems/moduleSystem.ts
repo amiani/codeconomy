@@ -73,13 +73,13 @@ export default function moduleSystem(world: World) {
 						toEntity: playerEntity,
 						message: `Module did not export a default function`
 					})
-					console.error(`Module did not export a function`)
+					console.error(`Error: Module did not export a function`)
 				}
 			} catch (err) {
 				logTopic.push({
 					type: LogType.Error,
 					toEntity: playerEntity,
-					message: `Module failed to compile: ${err}`
+					message: `Error: ${err}`
 				})
 			}
 		} catch (e) {
