@@ -1,5 +1,4 @@
 import {
-  ComponentOf,
   createImmutableRef,
   createQuery,
   Entity,
@@ -24,10 +23,7 @@ const shipQuery = createQuery(Transform, CombatHistory).select(Transform)
 const bulletQuery = createQuery(Bullet)
 const spawnerQuery = createQuery(Spawner)
 
-function getInitialMessage(
-  producer: MessageProducer,
-  playerEntity: Entity,
-) {
+function getInitialMessage(producer: MessageProducer, playerEntity: Entity) {
   playerQuery(producer.attach)
   visibleQuery(producer.attach)
   scoreQuery(producer.attach)

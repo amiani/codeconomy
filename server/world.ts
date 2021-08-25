@@ -4,7 +4,13 @@ import {
 import { Clock } from "@javelin/hrtime-loop"
 
 import { damageSystem, huntSystem, netSystem, physicsSystem, moduleSystem, spawnSystem } from "./systems"
-import { collisionTopic, playerTopic, scriptTopic, shipTopic } from "./topics"
+import {
+  collisionTopic,
+  playerTopic,
+  scriptTopic,
+  shipTopic,
+  logTopic
+} from "./topics"
 import ffaSystem from "./systems/ffaSystem"
 import bulletSystem from "./systems/bulletSystem"
 
@@ -14,6 +20,7 @@ export const world = createWorld<Clock>({
     scriptTopic,
     shipTopic,
     playerTopic,
+    logTopic
   ]
 })
 

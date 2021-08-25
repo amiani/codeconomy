@@ -2,6 +2,7 @@ export enum MessageType {
 	Init,
 	Attach,
 	Update,
+	Info,
 }
 
 export interface Header {
