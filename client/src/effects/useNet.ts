@@ -24,11 +24,9 @@ export default createEffect(world => {
     return () => {
       let update = useInterval(nextUpdate)
       if (initialized) {
-        //attachPackets.length && console.log(`latest attach packet: ${attachPackets[0].header.tick}`)
         while (attachPackets.length && attachPackets[0].header.tick <= latestUpdateTick) {
           const packet = attachPackets.shift()
           if (packet) {
-            console.log(`consuming attach packet: ${packet.header.tick}`)
             consumeMessage(packet)
           }
         }
@@ -39,7 +37,6 @@ export default createEffect(world => {
             if (packet && packet.header.tick > latestUpdateTick) {
               consumeMessage(packet)
               latestUpdateTick = packet.header.tick
-              console.log(`latest update tick: ${latestUpdateTick}`)
               actions.setTick(latestUpdateTick)
             } else {
               //console.log(`discarding update packet ${packet.header.tick}`)
