@@ -79,7 +79,7 @@ export default createEffect((world: World<Clock>) => {
       client.channel.raw.emit(packet)
 
       const privateMessage = client.channelProducer.take()
-      if (privateMessage) {
+      if (privateMessage && privateMessage.byteLength > 0) {
         const privatePacket = writeHeader(header, encode(privateMessage))
         client.channel.raw.emit(privatePacket)
       }
@@ -97,7 +97,7 @@ export default createEffect((world: World<Clock>) => {
       client.socket.send(packet, cb)
 
       const privateMessage = client.socketProducer.take()
-      if (privateMessage) {
+      if (privateMessage && privateMessage.byteLength > 0) {
         const privatePacket = writeHeader(header, encode(privateMessage))
         client.socket.send(privatePacket)
       }
