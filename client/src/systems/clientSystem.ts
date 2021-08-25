@@ -1,5 +1,5 @@
 import { createQuery, useInterval, World } from '@javelin/ecs'
-import { Countdown, GameData } from '../../../server/components'
+import { Countdown } from '../../../server/components'
 import { useClient, useNet } from '../effects'
 import { uploadTopic } from '../topics'
 import { actions, states } from '../ui/state'

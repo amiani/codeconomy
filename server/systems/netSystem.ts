@@ -11,7 +11,7 @@ import {
 } from "@javelin/ecs"
 import { createMessageProducer, encode } from "@javelin/net"
 
-import { Player, SpriteData, Allegiance, Transform, HuntScore, Countdown, GameData, Log, CombatHistory, Bullet } from "../components"
+import { Player, SpriteData, Allegiance, Transform, HuntScore, Countdown, Log, CombatHistory, Bullet } from "../components"
 import { MESSAGE_MAX_BYTE_LENGTH, SEND_RATE } from "../env"
 import { useClients } from "../effects"
 import { Clock } from "@javelin/hrtime-loop"
@@ -22,7 +22,6 @@ const logQuery = createQuery(Log, Allegiance)
 const visibleQuery = createQuery(Transform, SpriteData, Allegiance)
 const scoreQuery = createQuery(Allegiance, HuntScore)
 const countdownQuery = createQuery(Countdown)
-const gamedataQuery = createQuery(GameData)
 const shipQuery = createQuery(Transform, CombatHistory).select(Transform)
 const bulletQuery = createQuery(Bullet)
 
@@ -32,7 +31,6 @@ function getInitialMessage(e: Entity, player: ComponentOf<typeof Player>) {
   visibleQuery(producer.attach)
   scoreQuery(producer.attach)
   countdownQuery(producer.attach)
-  gamedataQuery(producer.attach)
   bulletQuery(producer.attach)
   return producer.take()
 }
@@ -42,21 +40,10 @@ const useProducers = createImmutableRef(() => ({
   attachProducer: createMessageProducer({ maxByteLength: MESSAGE_MAX_BYTE_LENGTH }),
 }))
 
-let gameData: any
-
 export default function netSystem(world: World<Clock>) {
   const send = useInterval((1 / SEND_RATE) * 1000)
   const clients = useClients()
   const { updateProducer, attachProducer } = useProducers()
-
-  if (useInit()) {
-    gameData = component(GameData, { tick: world.latestTick })
-    world.create(gameData)
-  }
-
-  if (gameData) {
-    gameData.tick = world.latestTick
-  }
 
   useMonitor(visibleQuery, attachProducer.attach, attachProducer.destroy)
   useMonitor(scoreQuery, attachProducer.attach, attachProducer.destroy)
@@ -74,7 +61,6 @@ export default function netSystem(world: World<Clock>) {
     }
   )
 
-  gamedataQuery(updateProducer.update)
   countdownQuery(updateProducer.update)
   scoreQuery(updateProducer.update)
   //ships

@@ -106,10 +106,6 @@ export const HuntScore = {
   points: number
 }
 
-export const GameData = {
-  tick: number
-}
-
 export const Log = {
   logs: arrayOf({ ...string, length: 128 })
 }
@@ -133,6 +129,5 @@ registerSchema(Bullet, 12)
 registerSchema(Spawner, 13)
 registerSchema(HuntScore, 15)
 registerSchema(CombatHistory, 16)
-registerSchema(GameData, 17)
 registerSchema(Log, 18)
 registerSchema(Bot, 19)
