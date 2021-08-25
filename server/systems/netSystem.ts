@@ -1,10 +1,8 @@
 import {
-  component,
   ComponentOf,
   createImmutableRef,
   createQuery,
   Entity,
-  useInit,
   useInterval,
   useMonitor,
   World
