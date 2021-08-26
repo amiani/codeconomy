@@ -54,6 +54,7 @@ export default createEffect((world: World) => {
 		viewport.moveCenter(x, y)
 		viewport.emit('moved')
 	}
+	viewport.on('drag-start', () => viewport.plugins.remove('follow'))
 
 	return () => {
 		if (!hasBackground && app.loader.resources[bgName].texture) {
