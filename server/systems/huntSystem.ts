@@ -23,7 +23,7 @@ import { GamePhase } from "../effects/usePhase";
 
 const players = createQuery(Player)
 const bots = createQuery(Bot)
-const spawners = createQuery(Spawner, Allegiance)
+const spawners = createQuery(Spawner, Allegiance).select(Allegiance)
 const ships = createQuery(Transform, Action)
 const scores = createQuery(HuntScore)
 
@@ -70,7 +70,7 @@ function handlePlayerJoined(
 }
 
 function handlePlayerLeft(world: World<Clock>, player: Entity) {
-	spawners((e, [spawner, allegiance]) => {
+	spawners((e, [allegiance]) => {
 		if (allegiance.player == player) {
 			console.log(`removed spawner ${e}`)
 			world.destroy(e)
