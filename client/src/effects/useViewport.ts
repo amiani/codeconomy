@@ -47,9 +47,11 @@ export default createEffect((world: World) => {
 	let hasBackground = false
 	let background: PIXI.TilingSprite
 
+	const bgName = 'goldstartile'
 	return () => {
-		if (!hasBackground && app.loader.resources.seamless_space.texture) {
-			background = new PIXI.TilingSprite(app.loader.resources.seamless_space.texture)
+		if (!hasBackground && app.loader.resources[bgName].texture) {
+			//@ts-ignore
+			background = new PIXI.TilingSprite(app.loader.resources[bgName].texture)
 			background.scale.x = 1/viewport.scale.x
 			background.scale.y = 1/viewport.scale.y
 			viewport.addChild(background)
