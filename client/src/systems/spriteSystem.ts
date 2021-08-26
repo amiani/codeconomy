@@ -33,7 +33,7 @@ function copyInterpolateToSprite(
 
 
 export default function spriteSystem(world: World) {
-  const viewport = useViewport()
+  const { viewport } = useViewport()
   useMonitor(
     transformSpriteDatas,
     (e, [transform, data, allegiance]) => {

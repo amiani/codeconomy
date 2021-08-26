@@ -15,7 +15,7 @@ const laserZap = new Pizzicato.Sound({
 })
 
 export default function soundSystem(world: World) {
-	const viewport = useViewport()
+	const { viewport } = useViewport()
 	const visibleBounds = viewport.getVisibleBounds()
 	for (const event of laserTopic) {
 		if (visibleBounds.contains(event.position.x, -event.position.y)) {

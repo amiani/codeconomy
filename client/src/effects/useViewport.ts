@@ -1,10 +1,12 @@
-import { createEffect, World } from '@javelin/ecs'
+import { ComponentOf, createEffect, World } from '@javelin/ecs'
 import { Viewport } from 'pixi-viewport'
 import * as PIXI from 'pixi.js';
+import { Transform } from '../../../server/components';
 
 import app from '../pixiApp'
 
 function updateBackground(background: PIXI.TilingSprite, viewport: Viewport) {
+	console.log(`updateBackground`)
 	background.x = viewport.left
 	background.y = viewport.top
 	background.tilePosition.x = -viewport.left * viewport.scale.x
@@ -44,10 +46,15 @@ export default createEffect((world: World) => {
 		}
 	})
 
+	const bgName = 'goldstartile'
 	let hasBackground = false
 	let background: PIXI.TilingSprite
+	
+	const move = (x: number, y: number) => {
+		viewport.moveCenter(x, y)
+		viewport.emit('moved')
+	}
 
-	const bgName = 'goldstartile'
 	return () => {
 		if (!hasBackground && app.loader.resources[bgName].texture) {
 			//@ts-ignore
@@ -58,6 +65,9 @@ export default createEffect((world: World) => {
 			updateBackground(background, viewport)
 			hasBackground = true
 		}
-		return viewport
+		return {
+			move,
+			viewport
+		}
 	}
 }, { shared: true })
