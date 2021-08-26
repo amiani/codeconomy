@@ -11,7 +11,6 @@ import {
 	Allegiance,
 	Transform,
 	Action,
-	Module,
 	Isolate,
 	Bot,
 	Code,
