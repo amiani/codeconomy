@@ -113,6 +113,10 @@ export const Bot = {
   name: { ...string, length: 5 },
 }
 
+export const Code = {
+  code: string
+}
+
 registerSchema(Player, 1)
 registerSchema(Transform, 2)
 registerSchema(Body, 3)
@@ -130,3 +134,4 @@ registerSchema(HuntScore, 15)
 registerSchema(CombatHistory, 16)
 registerSchema(Log, 18)
 registerSchema(Bot, 19)
+registerSchema(Code, 20)

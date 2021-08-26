@@ -1,4 +1,4 @@
-import { World, createQuery, Entity, toComponent, useInterval } from "@javelin/ecs"
+import { World, createQuery, Entity, toComponent, useInterval, component } from "@javelin/ecs"
 import ivm from "isolated-vm"
 const rapier = require('@a-type/rapier2d-node')
 
@@ -10,11 +10,12 @@ import {
 	Allegiance,
 	Transform,
 	Isolate,
-	CombatHistory
+	CombatHistory,
+	Code
 } from '../components'
 import { useClients } from "../effects"
 import { MAX_PLAYERS } from "../env"
-import { logTopic, scriptTopic } from "../topics"
+import { logTopic, moduleTopic } from "../topics"
 import { LogType } from "../topics/logTopic"
 
 const moduleShipQuery = createQuery(Module, Body, Action, Allegiance)
@@ -54,33 +55,12 @@ export default function moduleSystem(world: World) {
 	const update = useInterval(1000 / 10)
 	const clients = useClients()
 
-	for (const scriptEvent of scriptTopic) {
-		const playerEntity = clients.getPlayer(scriptEvent.uid)
+	for (const moduleEvent of moduleTopic) {
+		const playerEntity = clients.getPlayer(moduleEvent.uid)
 		try {
 			const isolate = world.get(playerEntity, Isolate) as ivm.Isolate
-			try {
-				const module = isolate.compileModuleSync(scriptEvent.code)
-				const testContext = isolate.createContextSync()
-				module.instantiateSync(testContext, (specifier, referrer) => module)
-				module.evaluateSync()
-				const main = module.namespace.getSync('default')
-				if (main instanceof Function) {
-					world.attach(playerEntity, toComponent(module, Module))
-					console.log(`Module arrived for player entity ${playerEntity}`)
-				} else {
-					logTopic.push({
-						type: LogType.Error,
-						toEntity: playerEntity,
-						message: `Module did not export a default function`
-					})
-					console.error(`Error: Module did not export a function`)
-				}
-			} catch (err) {
-				logTopic.push({
-					type: LogType.Error,
-					toEntity: playerEntity,
-					message: `Error: ${err}`
-				})
+			if (validateModule(isolate, moduleEvent.code, playerEntity)) {
+				world.attach(playerEntity, component(Code, { code: moduleEvent.code }))
 			}
 		} catch (e) {
 			console.log(e)
@@ -135,5 +115,31 @@ export default function moduleSystem(world: World) {
 			//do something with cputime
 		})
 		*/
+	}
+}
+
+function validateModule(
+	isolate: ivm.Isolate,
+	code: string,
+	playerEntity: Entity
+): boolean {
+	try {
+		const module = isolate.compileModuleSync(code)
+		const testContext = isolate.createContextSync()
+		module.instantiateSync(testContext, (specifier, referrer) => module)
+		module.evaluateSync()
+		const main = module.namespace.getSync('default')
+		if (main instanceof Function) {
+			console.log(`Module arrived for player entity ${playerEntity}`)
+			return true
+		}
+		throw new Error('Module did not export a default function')
+	} catch (err) {
+		logTopic.push({
+			type: LogType.Error,
+			toEntity: playerEntity,
+			message: `Error: ${err}`
+		})
+		return false
 	}
 }

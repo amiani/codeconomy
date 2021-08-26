@@ -2,7 +2,7 @@ import { createQuery, World } from '@javelin/ecs'
 import { Clock } from '@javelin/hrtime-loop'
 import ivm from 'isolated-vm'
 
-import { Isolate, Module, Spawner, Allegiance, Transform, Player } from '../components'
+import { Isolate, Module, Spawner, Allegiance, Transform, Player, Code } from '../components'
 import { GamePhase } from '../effects/usePhase'
 import { createShip } from '../factories'
 import { phaseTopic } from '../topics'
@@ -23,7 +23,7 @@ export default function spawnSystem(world: World<Clock>): void {
 		spawner.countdown.current -= dt / 1000
 		if (spawner.countdown.current <= 0) {
 			try {
-				const module = world.get(allegiance.player, Module) as ivm.Module
+				const code = world.get(allegiance.player, Code).code
 				const isolate = world.get(allegiance.player, Isolate) as ivm.Isolate
 				const player = world.tryGet(allegiance.player, Player)
 				const withLog = !!player
@@ -35,7 +35,7 @@ export default function spawnSystem(world: World<Clock>): void {
 					rot,
 					allegiance.player,
 					allegiance.team,
-					module,
+					code,
 					isolate, 
 					withLog
 				)

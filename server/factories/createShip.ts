@@ -13,7 +13,7 @@ export default function createShip(
 	rotation: number,
 	player: Entity,
 	team: number,
-	module: ivm.Module,
+	code: string,
 	isolate: ivm.Isolate,
 	withLog: boolean,
 ) {
@@ -44,7 +44,8 @@ export default function createShip(
 	} else {
 		context = createContext(isolate)
 	}
-	const res = module.instantiate(context, (specifier, referrer) => {
+	const module = isolate.compileModuleSync(code)
+	const res = module.instantiateSync(context, (specifier, referrer) => {
 		//TODO: return actual dependencies
 		return module
 	})

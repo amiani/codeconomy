@@ -14,6 +14,7 @@ import {
 	Module,
 	Isolate,
 	Bot,
+	Code,
 } from '../components'
 import { createBot, createSpawner } from "../factories";
 import { MAX_PLAYERS } from "../env";
@@ -97,9 +98,8 @@ export default function huntSystem(world: World<Clock>) {
 		case GamePhase.setup:
 			world.create(phaseTimer)
 			const isolate = new ivm.Isolate({ memoryLimit: 128 })
-			const module = isolate.compileModuleSync(testScript)
 			const owner = world.create(
-				toComponent(module, Module),
+				component(Code, { code: testScript }),
 				toComponent(isolate, Isolate),
 				component(HuntScore)
 			)

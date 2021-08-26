@@ -33,7 +33,7 @@ function angleBetween(a, b) { return Math.atan2(cross(a, b), dot(a, b)) }
 
 const kp = 50
 const kv = -10
-function turnTo({ position, rotation, angularVelocity }, targetPosition) {
+function aimAt({ position, rotation, angularVelocity }, targetPosition) {
 	const unit = { x: Math.cos(rotation), y: Math.sin(rotation) }
 	const targetLocal = { x: targetPosition.x - position.x, y: targetPosition.y - position.y }
 	const error = angleBetween(unit, targetLocal)
@@ -50,7 +50,7 @@ export default function run({ self, allies, enemies }) {
 		target = getClosest(self.position, enemies)
 	}
 	if (target) {
-		action.rotate = turnTo(self, target.position)
+		action.rotate = aimAt(self, target.position)
 	}
 	action.fire = true
 

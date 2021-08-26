@@ -1,7 +1,7 @@
 import { createTopic } from '@javelin/ecs'
 
-interface ScriptEvent {
+interface ModuleEvent {
 	uid: string,
 	code: string
 }
-export default createTopic<ScriptEvent>()
+export default createTopic<ModuleEvent>()

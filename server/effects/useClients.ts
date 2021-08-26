@@ -9,7 +9,7 @@ import { server } from '../server'
 import { createPlayer } from '../factories'
 //@ts-ignore
 import { getServer } from "../geckosServer"
-import { playerTopic, scriptTopic } from '../topics'
+import { playerTopic, moduleTopic } from '../topics'
 import { MAX_PLAYERS, MESSAGE_MAX_BYTE_LENGTH } from '../env'
 import { createMessageProducer, encode, MessageProducer } from '@javelin/net'
 import { Header } from '../../common/types'
@@ -132,7 +132,7 @@ interface Client {
 function registerClient(client: Client) {
   client.socket.on("message", async (data: WebSocket.Data) => {
     //console.log(typeof data.toString())
-    scriptTopic.push({
+    moduleTopic.push({
       uid: client.uid,
       code: data.toString()
     })

@@ -8,7 +8,7 @@ import {
   collisionTopic,
   logTopic,
   playerTopic,
-  scriptTopic,
+  moduleTopic,
   shipTopic,
 } from "./topics"
 import ffaSystem from "./systems/ffaSystem"
@@ -18,7 +18,7 @@ import logSystem from "./systems/logSystem"
 export const world = createWorld<Clock>({
   topics: [
     collisionTopic,
-    scriptTopic,
+    moduleTopic,
     shipTopic,
     playerTopic,
     logTopic
