@@ -1,9 +1,9 @@
 import { createQuery, World } from '@javelin/ecs'
 import { Clock } from '@javelin/hrtime-loop'
 import ivm from 'isolated-vm'
+import { Phase } from '../../common/types'
 
 import { Isolate, Module, Spawner, Allegiance, Transform, Player, Code } from '../components'
-import { GamePhase } from '../effects/usePhase'
 import { createShip } from '../factories'
 import { phaseTopic } from '../topics'
 
@@ -13,7 +13,7 @@ const spawners = createQuery(Spawner)
 export default function spawnSystem(world: World<Clock>): void {
 	const { dt } = world.latestTickData
 	for (const phaseEvent of phaseTopic) {
-		if (phaseEvent.phase === GamePhase.run) {
+		if (phaseEvent.phase === Phase.run) {
 			spawners((e, [spawner]) =>
 				spawner.countdown.current = spawner.countdown.max)
 		}

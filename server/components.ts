@@ -117,6 +117,10 @@ export const Code = {
   code: string
 }
 
+export const GamePhase = {
+  phase: number,
+}
+
 registerSchema(Player, 1)
 registerSchema(Transform, 2)
 registerSchema(Body, 3)
@@ -135,3 +139,4 @@ registerSchema(CombatHistory, 16)
 registerSchema(Log, 18)
 registerSchema(Bot, 19)
 registerSchema(Code, 20)
+registerSchema(GamePhase, 21)

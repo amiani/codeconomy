@@ -1,8 +1,8 @@
 import { createTopic } from "@javelin/ecs";
-import { GamePhase } from "../effects/usePhase";
+import { Phase } from "../../common/types";
 
 interface PhaseEvent {
-	phase: GamePhase
+	phase: Phase
 }
 
 export default createTopic<PhaseEvent>()

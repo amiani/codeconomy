@@ -19,7 +19,7 @@ import { createBot, createSpawner } from "../factories";
 import { MAX_PLAYERS } from "../env";
 import { usePhase, useTeams } from "../effects";
 import testScript from "../../scripts/testScript";
-import { GamePhase } from "../effects/usePhase";
+import { Phase } from "../../common/types";
 
 const players = createQuery(Player)
 const bots = createQuery(Bot)
@@ -84,7 +84,7 @@ const END_TIME = 20
 const phaseTimer = component(Countdown, { current: RUN_TIME, max: RUN_TIME })
 
 export default function huntSystem(world: World<Clock>) {
-	const { phase, changePhase } = usePhase()
+	const { phaseComp, changePhase } = usePhase()
 	const dt = world.latestTickData.dt
 	phaseTimer.current -= dt / 1000
 
@@ -92,9 +92,9 @@ export default function huntSystem(world: World<Clock>) {
 	useMonitor(players,(e, [p]) => world.attach(e, component(HuntScore)))
 	useMonitor(bots,(e, [b]) => world.attach(e, component(HuntScore)))
 
-	switch (phase) {
+	switch (phaseComp.phase as Phase) {
 		//Runs once only at game start
-		case GamePhase.setup:
+		case Phase.setup:
 			world.create(phaseTimer)
 			const isolate = new ivm.Isolate({ memoryLimit: 128 })
 			const owner = world.create(
@@ -110,13 +110,13 @@ export default function huntSystem(world: World<Clock>) {
 				createBot(world, "bot" + i)
 			}
 			phaseTimer.current = RUN_TIME
-			changePhase(GamePhase.run)
+			changePhase(Phase.run)
 			break
 
-		case GamePhase.run:
+		case Phase.run:
 			if (phaseTimer.current <= 0) {
 				phaseTimer.current = END_TIME
-				changePhase(GamePhase.end)
+				changePhase(Phase.end)
 			}
 
 			ships((e, [transform, command]) => {
@@ -133,19 +133,19 @@ export default function huntSystem(world: World<Clock>) {
 							const score = world.get(shipEvent.combatHistory.lastHitByPlayer, HuntScore)
 							score && score.points++
 						} catch (err) {
-							console.log(err)
+							//console.log(err)
 						}
 					}
 				}
 			}
 			break
 
-		case GamePhase.end:
+		case Phase.end:
 			if (phaseTimer.current <= 0) {
 				scores((e, [score]) => score.points = 0)
 				ships((e, [t, a]) => world.destroy(e))
 				phaseTimer.current = RUN_TIME
-				changePhase(GamePhase.run)
+				changePhase(Phase.run)
 			}
 			break
 

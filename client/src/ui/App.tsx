@@ -7,10 +7,13 @@ import 'firebase/auth'
 import testScript from '../../../scripts/testScript'
 import { uploadTopic } from '../topics'
 import Overlay from './Overlay'
-import Scoreboard from './Scoreboard';
+import CornerScoreboard from './CornerScoreboard';
 import * as store from './state'
 import DebugPanel from './DebugPanel';
-import WelcomeModal from './WelcomeModal'
+import Welcome from './Welcome'
+import { Phase } from '../../../common/types';
+import Modal from './Modal';
+import BigScoreboard from './BigScoreboard';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -44,12 +47,11 @@ function App({ states, actions }: AppProps) {
     states.map(setState)
   }
   
-  const [hideModal, setHideModal] = useState(localStorage.getItem('hideModal') === 'true')
   const closeModal = () => {
-    localStorage.setItem('hideModal', 'true')
-    setHideModal(true)
+    localStorage.setItem('showWelcomeModal', 'false')
+    actions.hideWelcomeModal()
   }
-  const upload = () => uploadTopic.push({ code: state.editor.code })
+  const upload = () => uploadTopic.push({ code: state.ui.editor.code })
 
   return (
     <div className="App">
@@ -59,8 +61,18 @@ function App({ states, actions }: AppProps) {
         actions={actions}
         upload={upload}
       />
-      <Scoreboard gameState={state.game} style={scoreboardStyle} />
-      {!hideModal && <WelcomeModal onClose={closeModal}/>}
+      {state.game.phase == Phase.run && 
+        <CornerScoreboard gameState={state.game} style={scoreboardStyle} />
+      }
+      {state.game.phase == Phase.end &&
+        <Modal>
+          <BigScoreboard gameState={state.game} />
+        </Modal>
+      }
+      {state.ui.showWelcomeModal &&
+        <Modal onClose={closeModal}><Welcome /></Modal>
+      }
+
       <DebugPanel debugState={state.debug} style={debugPanelStyle} />
     </div>
   )
@@ -71,6 +83,9 @@ const scoreboardStyle: React.CSSProperties = {
   right: '0',
   top: '0',
   zIndex: 1000
+}
+
+const modalScoreboardStyle: React.CSSProperties = {
 }
 
 const debugPanelStyle: React.CSSProperties = {

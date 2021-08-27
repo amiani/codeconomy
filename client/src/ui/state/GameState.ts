@@ -1,3 +1,5 @@
+import { Phase } from "../../../../common/types";
+
 export interface Score {
 	name: string;
 	color: string;
@@ -7,4 +9,5 @@ export interface Score {
 export interface GameState {
 	scores: Array<Score>,
 	timer: number,
+	phase: Phase
 }

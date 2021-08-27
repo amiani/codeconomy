@@ -6,7 +6,6 @@ import { Transform } from '../../../server/components';
 import app from '../PixiApp'
 
 function updateBackground(background: PIXI.TilingSprite, viewport: Viewport) {
-	console.log(`updateBackground`)
 	background.x = viewport.left
 	background.y = viewport.top
 	background.tilePosition.x = -viewport.left * viewport.scale.x

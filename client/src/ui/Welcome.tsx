@@ -1,23 +1,15 @@
-import React, { CSSProperties, useRef, useState } from 'react'
-import ReactDOM from 'react-dom'
+import React, { CSSProperties, useState } from 'react'
 
-interface WelcomeModalProps {
-	onClose: () => void,
-}
-
-export default function WelcomeModal({ onClose }: WelcomeModalProps): React.ReactPortal {
-	const modal = useRef(document.getElementById('modal') as HTMLDivElement)
+export default function Welcome() {
 	const [currPage, setCurrPage] = useState(0)
 	const nextPage = () => setCurrPage(Math.min(currPage + 1, pages.length-1))
-	return ReactDOM.createPortal(
+	return (
 		<div style={containerStyle}>
-			<div style={closeButtonStyle} onClick={onClose}>X</div>
 			{pages[currPage]}
 			{currPage < pages.length - 1 &&
 				<a style={pageTurnButtonStyle} onClick={nextPage}>Next</a>
 			}
-		</div>,
-		modal.current
+		</div>
 	)
 }
 
@@ -35,7 +27,7 @@ function Intro(): JSX.Element {
 			</p>
 			<p style={introStyle}>
 				Prototype 1 represents only a tiny fraction of what I'm imagining, but I hope you enjoy it! <br />
-				Thanks for playing, and I would be very grateful to hear any feedback you have, especially about the api.
+				Thanks for playing, and I would be very grateful to hear any feedback you have.
 			</p>
 		</>
 	)
@@ -63,34 +55,6 @@ function Rules() : JSX.Element {
 }
 
 const containerStyle: CSSProperties = {
-	position: 'absolute',
-	top: '200px',
-	left: 'calc(50% - 250px)',
-	width: '500px',
-	minHeight: '200px',
-	zIndex: 2,
-	maxHeight: 'calc(100% - 200)',
-	color: 'rgb(212, 212, 212)',
-	backgroundColor: '#1e1e1e',
-	opacity: .92,
-	padding: '20px',
-}
-
-const closeButtonStyle: CSSProperties = {
-	position: 'absolute',
-	top: '0',
-	right: '0',
-	width: '15px',
-	height: '15px',
-	color: '#7A3CE5',
-	userSelect: 'none',
-	display: 'flex',
-	justifyContent: 'center',
-	alignItems: 'center',
-	cursor: 'pointer',
-	fontSize: '17px',
-	fontStyle: 'bold',
-	padding: '2px',
 }
 
 const introStyle: CSSProperties = {

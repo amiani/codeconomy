@@ -6,11 +6,11 @@ import {
   useMonitor,
   World
 } from "@javelin/ecs"
-import { createMessageProducer, encode, MessageProducer } from "@javelin/net"
+import { attach, createMessageProducer, encode, MessageProducer } from "@javelin/net"
 
-import { Player, SpriteData, Allegiance, Transform, HuntScore, Countdown, Log, CombatHistory, Bullet, Spawner } from "../components"
+import { Player, SpriteData, Allegiance, Transform, HuntScore, Countdown, Log, CombatHistory, Bullet, Spawner, GamePhase } from "../components"
 import { MESSAGE_MAX_BYTE_LENGTH, SEND_RATE } from "../env"
-import { useClients } from "../effects"
+import { useClients, usePhase } from "../effects"
 import { Clock } from "@javelin/hrtime-loop"
 import { Header, MessageType } from "../../common/types"
 
@@ -22,8 +22,10 @@ const countdownQuery = createQuery(Countdown)
 const shipQuery = createQuery(Transform, CombatHistory).select(Transform)
 const bulletQuery = createQuery(Bullet)
 const spawnerQuery = createQuery(Spawner)
+const phaseQuery = createQuery(GamePhase)
 
 function getInitialMessage(producer: MessageProducer, playerEntity: Entity) {
+  phaseQuery(producer.attach)
   playerQuery(producer.attach)
   visibleQuery(producer.attach)
   scoreQuery(producer.attach)
@@ -48,6 +50,7 @@ export default function netSystem(world: World<Clock>) {
   const clients = useClients()
   const { updateProducer, attachProducer } = useProducers()
 
+  useMonitor(phaseQuery, attachProducer.attach, attachProducer.destroy)
   useMonitor(visibleQuery, attachProducer.attach, attachProducer.destroy)
   useMonitor(scoreQuery, attachProducer.attach, attachProducer.destroy)
   useMonitor(countdownQuery, attachProducer.attach, attachProducer.destroy)
@@ -64,7 +67,8 @@ export default function netSystem(world: World<Clock>) {
       }
     }
   )
-
+  
+  phaseQuery(updateProducer.update)
   countdownQuery(updateProducer.update)
   scoreQuery(updateProducer.update)
   //ships

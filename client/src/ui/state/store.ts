@@ -3,10 +3,12 @@ import flyd from 'flyd'
 
 import { GameState, Score } from './GameState'
 import { DebugState } from './DebugState'
+import { Phase } from '../../../../common/types'
+import { UIState } from './UIState'
 
 export interface AppState {
 	user: any,
-	editor: any,
+	ui: UIState,
 	game: GameState,
 	debug: DebugState,
 }
@@ -15,12 +17,16 @@ const initial: AppState = {
 	user: {
 		token: '',
 	},
-	editor: {
-		code: '',
+	ui: {
+		editor: {
+			code: '',
+		},
+		showWelcomeModal: localStorage.getItem('showWelcomeModal') !== 'false',
 	},
 	game: {
 		scores: [],
 		timer: 180,
+		phase: Phase.run,
 	},
 	debug: {
 		downloadRate: 0,
@@ -41,6 +47,8 @@ const store = {
 		setRate: (downloadRate: number) => update({ debug: { downloadRate } }),
 		setTick: (tick: number) => update({ debug: { tick } }),
 		setTime: (time: number) => update({ game: { timer: time } }),
+		setPhase: (phase: Phase) => update({ game: { phase } }),
+		hideWelcomeModal: () => update({ ui: { showWelcomeModal: false } }),
 	}),
 
 	Effects: (update: flyd.Stream<any>, actions: any) => [

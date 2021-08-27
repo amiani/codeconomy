@@ -14,3 +14,10 @@ export interface Packet {
 	header: Header,
 	message: ArrayBuffer
 }
+
+export enum Phase {
+	setup,
+	run,
+	end,
+	cleanup
+}

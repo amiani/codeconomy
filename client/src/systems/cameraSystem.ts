@@ -16,7 +16,6 @@ export default function cameraSystem(world: World) {
 	useMonitor(
 		spawnerQuery,
 		(e, [transform, allegiance]) => {
-			console.log(`spawner team: ${allegiance.team}`)
 			try {
 				const team = world.get(playerEntity, Allegiance).team
 				if (allegiance.team === team) {
