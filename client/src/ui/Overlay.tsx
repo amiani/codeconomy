@@ -19,10 +19,10 @@ export default function Overlay({ state, actions, upload }: OverlayProps) {
 	const toggleMute = () => {
 		Pizzicato.context.resume()
 		if (mute) {
-			Pizzicato.volume.set(1)
+			Pizzicato.volume = 1
 			setMute(false)
 		} else {
-			Pizzicato.volume.set(0)
+			Pizzicato.volume = 0
 			setMute(true)
 		}
 	}
