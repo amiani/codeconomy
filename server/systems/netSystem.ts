@@ -6,11 +6,11 @@ import {
   useMonitor,
   World
 } from "@javelin/ecs"
-import { attach, createMessageProducer, encode, MessageProducer } from "@javelin/net"
+import { createMessageProducer, encode, MessageProducer } from "@javelin/net"
 
 import { Player, SpriteData, Allegiance, Transform, HuntScore, Countdown, Log, CombatHistory, Bullet, Spawner, GamePhase } from "../components"
 import { MESSAGE_MAX_BYTE_LENGTH, SEND_RATE } from "../env"
-import { useClients, usePhase } from "../effects"
+import { useClients } from "../effects"
 import { Clock } from "@javelin/hrtime-loop"
 import { Header, MessageType } from "../../common/types"
 
