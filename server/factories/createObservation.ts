@@ -27,7 +27,7 @@ export interface ShipObservation {
 
 interface Command {
 	throttle: number,
-	rotate: number,
+	yaw: number,
 	fire: boolean,
 }
 
