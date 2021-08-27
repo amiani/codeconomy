@@ -21,7 +21,7 @@ export default function WelcomeModal({ onClose }: WelcomeModalProps): React.Reac
 	)
 }
 
-const pages = [<Intro />, <Rules />, <API />]
+const pages = [<Intro />, <Rules />]
 function Intro(): JSX.Element {
 	return (
 		<>
@@ -54,66 +54,9 @@ function Rules() : JSX.Element {
 				This is where you write the script that your ships will run. You are free to write any
 				valid javascript, but your script's default export must be a function that takes a single
 				argument and returns an object.<br/>
+				Click the Open API button to see the documentation for the api.<br/>
 				Once you are happy with your script, click the Upload button to send it to your carrier.
 				New ships will be launched with your script onboard.
-			</p>
-		</>
-	)
-}
-
-function API(): JSX.Element {
-	return (
-		<>
-			<h3>API</h3>
-			<p style={apiStyle}>
-				Each ship runs its default function at a set interval in its own global context i.e. there is no way
-				to communicate between ships (for now).<br/>
-				Your default function is passed an Observation and must return a Command.<br/>
-
-				<h4 style={typeStyle}>Observation</h4>
-				<div style={indentStyle}>
-					Represents the ship's observation of its environment.<br/>
-					<h5>Properties</h5>
-					self: <span style={typeStyle}>SelfState</span><br/>
-					allies: <span style={typeStyle}>ShipObservation[]</span> -- The currently observed allies.<br/>
-					enemies: <span style={typeStyle}>ShipObservation[]</span> -- The currently observed enemies.<br/>
-				</div>
-
-				<h4 style={typeStyle}>SelfState</h4>
-				<div style={indentStyle}>
-					Represents the ship's current state.<br/>
-					<h5>Properties</h5>
-					position: <span style={typeStyle}>Vector</span> -- The ship's current position.<br/>
-					velocity: <span style={typeStyle}>Vector</span> -- The ship's current velocity.<br/>
-					rotation: <span style={typeStyle}>number</span> -- The ship's current rotation in radians.<br/>
-					angularVelocity: <span style={typeStyle}>number</span> -- The ship's current angular velocity.<br/>
-				</div>
-
-				<h4 style={typeStyle}>ShipObservation</h4>
-				<div style={indentStyle}>
-					The data known about another ship.<br/>
-					<h5>Properties</h5>
-					position: <span style={typeStyle}>Vector</span> -- The ship's current position.<br/>
-					rotation: <span style={typeStyle}>number</span> -- The ship's current rotation in radians.<br/>
-					health: <span style={typeStyle}>number</span> -- The ship's current health.<br/>
-					team: <span style={typeStyle}>number</span> -- The ship's team.<br/>
-				</div>
-
-				<h4 style={typeStyle}>Command</h4>
-				<div style={indentStyle}>
-					The ship's desired action.<br/>
-					<h5>Properties</h5>
-					throttle: <span style={typeStyle}>number</span> -- How much forward thrust to apply.<br/>
-					yaw: <span style={typeStyle}>number</span> -- How much turning force to apply.<br/>
-					fire: <span style={typeStyle}>boolean</span> -- Whether to fire the laser or not.<br/>
-				</div>
-
-				<h4 style={typeStyle}>Vector</h4>
-				<div style={indentStyle}>
-					<h5>Properties</h5>
-					x: <span style={typeStyle}>number</span><br/>
-					y: <span style={typeStyle}>number</span><br/>
-				</div>
 			</p>
 		</>
 	)
@@ -164,16 +107,4 @@ const pageTurnButtonStyle: CSSProperties = {
 	cursor: 'pointer',
 	fontSize: '17px',
 	fontStyle: 'bold',
-}
-
-const apiStyle: CSSProperties = {
-	...introStyle
-}
-
-const indentStyle: CSSProperties = {
-	paddingLeft: '20px',
-}
-
-const typeStyle: CSSProperties = {
-	color: '#559BE1'
 }

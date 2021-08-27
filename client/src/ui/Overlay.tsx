@@ -4,6 +4,7 @@ import * as Pizzicato from 'pizzicato'
 import Button from './Button'
 import Editor from './Editor'
 import { actions } from './state'
+import apiPage from '../../api.html?url'
 
 interface OverlayProps {
 	state: any,
@@ -45,6 +46,7 @@ export default function Overlay({ state, actions, upload }: OverlayProps) {
 				</Button>
 				<Button onClick={e => window.open('mailto:amianijohns@gmail.com')}>Feedback</Button>
 				<Button onClick={e => toggleMute()}>{mute ? 'Unmute' : `Mute`}</Button>
+				<Button><a href={apiPage}>Open API</a></Button>
 			</div>
 			{!showEditor && <div>
 				<Editor code={state.editor.code} setCode={actions.setCode} />

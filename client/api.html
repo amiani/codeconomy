@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="src/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Space Code API</title>
+	<style>
+		body {
+			background-color: #1e1e1e;
+			color: rgb(212, 212, 212);
+			font-family: "Lato", "proxima-nova", "Helvetica Neue", Arial, sans-serif;
+		}
+		a {
+			text-decoration: none;
+		}
+		.indent {
+			padding-left: 20px;
+		}
+		.type {
+			color: #559BE1
+		}
+	</style>
+  </head>
+
+  <body>
+	<h3>Space Code API</h3>
+	<p class='api'>
+		Each ship runs its default function at a set interval in its own global context i.e. there is no way
+		to communicate between ships (for now).<br/>
+		Your default function is passed an Observation and must return a Command.<br/>
+	</p>
+
+	<h4 id='observation' class='type'>Observation</h4>
+	<div class='indent'>
+		Represents the ship's observation of its environment.<br/>
+		<h5>Properties</h5>
+		self: <a href='#self-state' class='type'>SelfState</a><br/>
+		allies: <a href='#ship-observation' class='type'>ShipObservation[]</a> -- The currently observed allies.<br/>
+		enemies: <a href='#ship-observation' class='type'>ShipObservation[]</a> -- The currently observed enemies.<br/>
+	</div>
+
+	<h4 id='self-state' class='type'>SelfState</h4>
+	<div class='indent'>
+		Represents the ship's current state.<br/>
+		<h5>Properties</h5>
+		position: <a href='#Vector' class='type'>Vector</a> -- The ship's current position.<br/>
+		velocity: <a href='#Vector' class='type'>Vector</a> -- The ship's current velocity.<br/>
+		rotation: <span class='type'>number</span> -- The ship's current rotation in radians.<br/>
+		angularVelocity: <span class='type'>number</span> -- The ship's current angular velocity.<br/>
+	</div>
+
+	<h4 id='ship-observation' class='type'>ShipObservation</h4>
+	<div class='indent'>
+		The data known about another ship.<br/>
+		<h5>Properties</h5>
+		position: <a href='#Vector' class='type'>Vector</a> -- The ship's current position.<br/>
+		rotation: <span class='type'>number</span> -- The ship's current rotation in radians.<br/>
+		health: <span class='type'>number</span> -- The ship's current health.<br/>
+		team: <span class='type'>number</span> -- The ship's team.<br/>
+	</div>
+
+	<h4 id='command' class='type'>Command</h4>
+	<div class='indent'>
+		The ship's desired action.<br/>
+		<h5>Properties</h5>
+		throttle: <span class='type'>number</span> -- How much forward thrust to apply.<br/>
+		yaw: <span class='type'>number</span> -- How much turning force to apply.<br/>
+	</div>
+
+	<h4 class='type'>Vector</h4>
+	<div class='indent'>
+		<h5>Properties</h5>
+		x: <span class='type'>number</span><br/>
+		y: <span class='type'>number</span><br/>
+	</div>
+  </body>
+</html>
