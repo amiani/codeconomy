@@ -1,10 +1,10 @@
 import { createQuery, useInterval, useMonitor, World } from '@javelin/ecs'
-import { Countdown, Player } from '../../../server/components'
+import { Allegiance, Countdown, Player } from '../../../server/components'
 import { useClient, useNet } from '../effects'
 import { uploadTopic } from '../topics'
 import { actions, states } from '../ui/state'
 
-const playerQuery = createQuery(Player)
+const playerQuery = createQuery(Player, Allegiance)
 const countdownQuery = createQuery(Countdown)
 
 export default function clientSystem(world: World) {
@@ -23,7 +23,7 @@ export default function clientSystem(world: World) {
 
 	useMonitor(
 		playerQuery,
-		(e, [player]) => {
+		(e, [player, allegiance]) => {
 			if (player.uid === uid) {
 				setPlayerEntity(e)
 			}
