@@ -10,7 +10,7 @@ import {
 	Spawner,
 	Allegiance,
 	Transform,
-	Action,
+	Command,
 	Isolate,
 	Bot,
 	Code,
@@ -24,7 +24,7 @@ import { GamePhase } from "../effects/usePhase";
 const players = createQuery(Player)
 const bots = createQuery(Bot)
 const spawners = createQuery(Spawner, Allegiance)//.select(Allegiance)
-const ships = createQuery(Transform, Action)
+const ships = createQuery(Transform, Command)
 const scores = createQuery(HuntScore)
 
 interface SpawnLocation {
@@ -119,7 +119,7 @@ export default function huntSystem(world: World<Clock>) {
 				changePhase(GamePhase.end)
 			}
 
-			ships((e, [transform, action]) => {
+			ships((e, [transform, command]) => {
 				const distance = Math.sqrt(Math.pow(transform.x, 2) + Math.pow(transform.y, 2))
 				if (distance > 700) {
 					world.destroy(e)

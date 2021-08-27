@@ -1,5 +1,5 @@
 function createVec(x, y) { return { x, y } }
-function createAction() {
+function createCommand() {
 	return {
 		throttle: 100,
 		rotate: 0,
@@ -42,17 +42,17 @@ function aimAt({ position, rotation, angularVelocity }, targetPosition) {
 
 
 let target
-export default function run({ self, allies, enemies }) {
-	const action = createAction()
+export default function run({ state, allies, enemies }) {
+	const command = createCommand()
 	if (target) {
 		target = getClosest(target.position, enemies)
 	} else {
-		target = getClosest(self.position, enemies)
+		target = getClosest(state.position, enemies)
 	}
 	if (target) {
-		action.rotate = aimAt(self, target.position)
+		command.rotate = aimAt(state, target.position)
 	}
-	action.fire = true
+	command.fire = true
 
-	return action
+	return command
 }

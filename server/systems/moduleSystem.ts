@@ -53,7 +53,7 @@ export default function moduleSystem(world: World) {
 				team: allegiance.team,
 			})
 		})
-		moduleShipQuery(async (e, [moduleComp, bodyComp, action, allegiance]) => {
+		moduleShipQuery(async (e, [moduleComp, bodyComp, command, allegiance]) => {
 			const body = bodyComp as typeof rapier.Body
 			const module = moduleComp as ivm.Module
 			const allies = Array<ShipObservation>()
@@ -71,11 +71,11 @@ export default function moduleSystem(world: World) {
 			const observation = createObservation(body, allies, enemies)
 			try {
 				const main = await module.namespace.get('default')
-				const nextAction = await main(observation)
-				if (nextAction) {
-					action.throttle = nextAction.throttle ? nextAction.throttle : 0
-					action.yaw = nextAction.yaw ? nextAction.yaw : 0
-					action.fire = nextAction.fire ? nextAction.fire : false
+				const nextCommand = await main(observation)
+				if (nextCommand) {
+					command.throttle = nextCommand.throttle ? nextCommand.throttle : 0
+					command.yaw = nextCommand.yaw ? nextCommand.yaw : 0
+					command.fire = nextCommand.fire ? nextCommand.fire : false
 				}
 			} catch (error) {
 				console.log(`${e} threw ${error}`)
