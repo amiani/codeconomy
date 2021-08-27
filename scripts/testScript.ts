@@ -1,5 +1,5 @@
-export default `export default function(state) {
-  const { self, allies, enemies } = state
+export default `export default function(observation) {
+  const { self, allies, enemies } = observation
   return {
     throttle: 50,
     rotate: 0,

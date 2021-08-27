@@ -56,7 +56,7 @@ function App({ states, actions }: AppProps) {
         upload={upload}
       />
       <Scoreboard gameState={state.game} style={scoreboardStyle} />
-      {showModal && <WelcomeModal />}
+      {showModal && <WelcomeModal onClose={() => setShowModal(false)}/>}
       <DebugPanel debugState={state.debug} style={debugPanelStyle} />
     </div>
   )

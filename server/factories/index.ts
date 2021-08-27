@@ -3,6 +3,7 @@ import createShip from "./createShip";
 import createSpawner from "./createSpawner";
 import createPlayer from "./createPlayer";
 import createBot from "./createBot";
+import createObservation from "./createObservation";
 
 export {
 	createLaser,
@@ -10,4 +11,5 @@ export {
 	createSpawner,
 	createPlayer,
 	createBot,
+	createObservation
 }

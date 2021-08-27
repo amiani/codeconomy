@@ -68,9 +68,9 @@ export const SpriteData = {
   name: { ...string, length: 32 }
 }
 
-export const Action = {
+export const Command = {
   throttle: number,
-  rotate: number,
+  yaw: number,
   fire: boolean
 }
 
@@ -126,7 +126,7 @@ registerSchema(Health, 6)
 registerSchema(Sprite, 7)
 registerSchema(SpriteData, 8)
 registerSchema(Context, 9)
-registerSchema(Action, 10)
+registerSchema(Command, 10)
 registerSchema(Weapon, 11)
 registerSchema(Bullet, 12)
 registerSchema(Spawner, 13)

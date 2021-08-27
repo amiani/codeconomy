@@ -5,7 +5,7 @@ const rapier = require('@a-type/rapier2d-node')
 import {
 	Body,
 	Module,
-	Action,
+	Command,
 	Health,
 	Allegiance,
 	Transform,
@@ -15,41 +15,13 @@ import {
 } from '../components'
 import { useClients } from "../effects"
 import { MAX_PLAYERS } from "../env"
+import { createObservation } from "../factories"
+import { ShipObservation } from "../factories/createObservation"
 import { logTopic, moduleTopic } from "../topics"
 import { LogType } from "../topics/logTopic"
 
-const moduleShipQuery = createQuery(Module, Body, Action, Allegiance)
+const moduleShipQuery = createQuery(Module, Body, Command, Allegiance)
 const shipQuery = createQuery(CombatHistory, Transform, Allegiance, Health)
-
-function createState(
-	body: typeof rapier.RigidBody,
-	allies: Array<ShipState>,
-	enemies: Array<ShipState>,
-) {
-	return {
-		self: {
-			position: body.translation(),
-			velocity: body.linvel(),
-			rotation: body.rotation(),
-			angularVelocity: body.angvel(),
-		},
-		allies,
-		enemies,
-	}
-}
-
-interface ShipState {
-	position: { x: number, y: number },
-	rotation: number,
-	health: number,
-	team: number,
-}
-
-interface Action {
-	throttle: number,
-	rotate: number,
-	fire: boolean,
-}
 
 export default function moduleSystem(world: World) {
 	const update = useInterval(1000 / 10)
@@ -69,7 +41,7 @@ export default function moduleSystem(world: World) {
 
 	if (update) {
 		//Maybe use number of connected players instead of MAX_PLAYERS
-		const shipStates = Array<Map<Entity, ShipState>>(MAX_PLAYERS)
+		const shipStates = Array<Map<Entity, ShipObservation>>(MAX_PLAYERS)
 		for (let i = 0; i < MAX_PLAYERS; i++) {
 			shipStates[i] = new Map()
 		}
@@ -84,7 +56,7 @@ export default function moduleSystem(world: World) {
 		moduleShipQuery(async (e, [moduleComp, bodyComp, action, allegiance]) => {
 			const body = bodyComp as typeof rapier.Body
 			const module = moduleComp as ivm.Module
-			const allies = Array<ShipState>()
+			const allies = Array<ShipObservation>()
 			for (const [shipEntity, state] of shipStates[allegiance.team].entries()) {
 				if (shipEntity !== e) {
 					allies.push(state)
@@ -96,13 +68,13 @@ export default function moduleSystem(world: World) {
 					enemies.push(...shipStates[i].values())
 				}
 			}
-			const state = createState(body, allies, enemies)
+			const observation = createObservation(body, allies, enemies)
 			try {
 				const main = await module.namespace.get('default')
-				const nextAction = await main(state)
+				const nextAction = await main(observation)
 				if (nextAction) {
 					action.throttle = nextAction.throttle ? nextAction.throttle : 0
-					action.rotate = nextAction.rotate ? nextAction.rotate : 0
+					action.yaw = nextAction.yaw ? nextAction.yaw : 0
 					action.fire = nextAction.fire ? nextAction.fire : false
 				}
 			} catch (error) {
