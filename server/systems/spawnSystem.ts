@@ -33,6 +33,7 @@ export default function spawnSystem(world: World<Clock>): void {
 					transform.x,
 					transform.y,
 					rot,
+					0,
 					allegiance.player,
 					allegiance.team,
 					code,

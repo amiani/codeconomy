@@ -11,6 +11,7 @@ export default function createShip(
 	x: number,
 	y: number,
 	rotation: number,
+	launchSpeed: number,
 	player: Entity,
 	team: number,
 	code: string,
@@ -19,11 +20,14 @@ export default function createShip(
 ) {
 	//console.log(`Creating ship at ${x}, ${y}`)
 	const e = world.create()
+	const vx = Math.cos(rotation) * launchSpeed
+	const vy = Math.sin(rotation) * launchSpeed
 	const bodyDesc = rapier.RigidBodyDesc.newDynamic()
 		.setTranslation(x, y)
 		.setRotation(rotation)
 		.setLinearDamping(0.9)
 		.setAngularDamping(0.7)
+		.setLinvel(vx, vy)
 	const colliderDesc = rapier.ColliderDesc.cuboid(1, 1)
 			.setCollisionGroups(0x00010000 + 0x0003)
 		.setActiveEvents(
