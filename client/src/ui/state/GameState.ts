@@ -1,5 +1,3 @@
-import React from "react";
-
 export interface Score {
 	name: string;
 	color: string;
