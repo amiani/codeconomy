@@ -50,7 +50,7 @@ export default function run({ state, allies, enemies }) {
 		target = getClosest(state.position, enemies)
 	}
 	if (target) {
-		command.rotate = aimAt(state, target.position)
+		command.yaw = aimAt(state, target.position)
 	}
 	command.fire = true
 

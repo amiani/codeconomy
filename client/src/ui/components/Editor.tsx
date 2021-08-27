@@ -1,7 +1,7 @@
 import React from 'react'
 import SimpleEditor from 'react-simple-code-editor'
 import { highlight, languages } from 'prismjs'
-import './prism-vsc-dark-plus.css'
+import '../prism-vsc-dark-plus.css'
 
 interface EditorProps {
 	code: string,

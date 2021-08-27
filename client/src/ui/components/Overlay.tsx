@@ -3,8 +3,8 @@ import React, { useState}  from 'react'
 import * as Pizzicato from 'pizzicato'
 import Button from './Button'
 import Editor from './Editor'
-import { actions } from './state'
-import apiPage from '../../api.html?url'
+import { actions } from '../state'
+import apiPage from '../../../api.html?url'
 
 interface OverlayProps {
 	state: any,

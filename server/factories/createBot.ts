@@ -1,7 +1,7 @@
 import { component, toComponent, World } from "@javelin/ecs"
 import { Clock } from "@javelin/hrtime-loop"
 import ivm from "isolated-vm"
-import { Bot, Code, Isolate, Module } from "../components"
+import { Bot, Code, Isolate }  from "../components"
 import { playerTopic } from "../topics"
 import fs from 'fs'
 

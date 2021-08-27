@@ -1,6 +1,6 @@
 import React, { CSSProperties } from 'react'
 import ScoreList from './ScoreList';
-import { GameState } from './state'
+import { GameState } from '../state'
 
 interface ScoreboardProps {
 	gameState: GameState,

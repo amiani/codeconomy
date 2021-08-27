@@ -1,5 +1,5 @@
 import React from 'react'
-import { DebugState } from "./state"
+import { DebugState } from "../state"
 
 interface DebugPanelProps {
 	debugState: DebugState;

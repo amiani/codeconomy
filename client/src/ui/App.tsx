@@ -6,14 +6,14 @@ import firebase from 'firebase/app';
 import 'firebase/auth'
 import testScript from '../../../scripts/testScript'
 import { uploadTopic } from '../topics'
-import Overlay from './Overlay'
-import CornerScoreboard from './CornerScoreboard';
+import Overlay from './components/Overlay'
+import CornerScoreboard from './components/CornerScoreboard';
 import * as store from './state'
-import DebugPanel from './DebugPanel';
-import Welcome from './Welcome'
+import DebugPanel from './components/DebugPanel';
+import Welcome from './components/Welcome'
 import { Phase } from '../../../common/types';
-import Modal from './Modal';
-import BigScoreboard from './BigScoreboard';
+import Modal from './components/Modal';
+import BigScoreboard from './components/BigScoreboard';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
