@@ -37,7 +37,6 @@ function App({ states, actions }: AppProps) {
 
   const [init, setInit] = useState(false)
   const [state, setState] = useState(states())
-  const [showModal, setShowModal] = useState(true)
 
   if (!init) {
     setInit(true)
@@ -45,6 +44,11 @@ function App({ states, actions }: AppProps) {
     states.map(setState)
   }
   
+  const [hideModal, setHideModal] = useState(localStorage.getItem('hideModal') === 'true')
+  const closeModal = () => {
+    localStorage.setItem('hideModal', 'true')
+    setHideModal(true)
+  }
   const upload = () => uploadTopic.push({ code: state.editor.code })
 
   return (
@@ -56,7 +60,7 @@ function App({ states, actions }: AppProps) {
         upload={upload}
       />
       <Scoreboard gameState={state.game} style={scoreboardStyle} />
-      {showModal && <WelcomeModal onClose={() => setShowModal(false)}/>}
+      {!hideModal && <WelcomeModal onClose={closeModal}/>}
       <DebugPanel debugState={state.debug} style={debugPanelStyle} />
     </div>
   )
