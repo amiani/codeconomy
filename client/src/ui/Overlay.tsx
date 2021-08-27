@@ -12,8 +12,7 @@ interface OverlayProps {
 }
 
 export default function Overlay({ state, actions, upload }: OverlayProps) {
-	const [editorHidden, setEditorHidden] = useState(false)
-	const [helpHidden, setHelpHidden] = useState(false)
+	const [showEditor, setShowEditor] = useState(true)
 	const [mute, setMute] = useState(true)
 
 	const toggleMute = () => {
@@ -38,11 +37,11 @@ export default function Overlay({ state, actions, upload }: OverlayProps) {
 			}}
 		>
 			<div className='toolbar' style={{ display: 'flex' }}>
-				<Button onClick={e => setEditorHidden(!editorHidden)}>{editorHidden ? 'Show Editor' : 'Hide Editor'}</Button>
+				<Button onClick={e => setShowEditor(!showEditor)}>{showEditor ? 'Show Editor' : 'Hide Editor'}</Button>
 				<Button onClick={e => window.open('mailto:amianijohns@gmail.com')}>Feedback</Button>
 				<Button onClick={e => toggleMute()}>{mute ? 'Unmute' : `Mute`}</Button>
 			</div>
-			{!editorHidden && <div>
+			{!showEditor && <div>
 				<Editor code={state.editor.code} setCode={actions.setCode} />
 				<Button onClick={upload}>Upload</Button>
 			</div>}

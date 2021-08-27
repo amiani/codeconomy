@@ -7,10 +7,10 @@ import 'firebase/auth'
 import testScript from '../../../scripts/testScript'
 import { uploadTopic } from '../topics'
 import Overlay from './Overlay'
-import { Feedback } from './Feedback';
 import Scoreboard from './Scoreboard';
 import * as store from './state'
 import DebugPanel from './DebugPanel';
+import WelcomeModal from './WelcomeModal'
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -37,6 +37,7 @@ function App({ states, actions }: AppProps) {
 
   const [init, setInit] = useState(false)
   const [state, setState] = useState(states())
+  const [showModal, setShowModal] = useState(true)
 
   if (!init) {
     setInit(true)
@@ -55,6 +56,7 @@ function App({ states, actions }: AppProps) {
         upload={upload}
       />
       <Scoreboard gameState={state.game} style={scoreboardStyle} />
+      {showModal && <WelcomeModal />}
       <DebugPanel debugState={state.debug} style={debugPanelStyle} />
     </div>
   )
