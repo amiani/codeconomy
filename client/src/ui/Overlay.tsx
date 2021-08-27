@@ -39,7 +39,7 @@ export default function Overlay({ state, actions, upload }: OverlayProps) {
 		>
 			<div className='toolbar' style={{ display: 'flex' }}>
 				<Button 
-					style={{ width: '86.44px' }}
+					style={{ width: '88px' }}
 					onClick={e => setShowEditor(!showEditor)}
 				>
 					{showEditor ? 'Show Editor' : 'Hide Editor'}
