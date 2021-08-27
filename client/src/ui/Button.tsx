@@ -3,13 +3,15 @@ import React, { MouseEventHandler } from 'react'
 interface ButtonProps {
 	onClick?: MouseEventHandler
 	children?: React.ReactNode
+	style?: React.CSSProperties
 }
 
-export default function Button({ onClick, children }: ButtonProps) {
+export default function Button({ onClick, children, style }: ButtonProps) {
 	return (
 		<button
 			style={{
-				minWidth: '50px'
+				...style,
+				minWidth: '50px',
 			}}
 			onClick={onClick}
 		>
