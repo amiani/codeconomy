@@ -9,7 +9,7 @@ import * as PIXI from 'pixi.js'
 import { GlowFilter } from '@pixi/filter-glow'
 
 import { Interpolate, Sprite, SpriteData, Allegiance, Transform, Bullet } from '../../../server/components'
-import app from '../pixiApp'
+import app from '../PixiApp'
 import { useViewport } from '../effects'
 import { teamColors } from '../ui/colors'
 

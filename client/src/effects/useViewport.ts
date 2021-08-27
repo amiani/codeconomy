@@ -3,7 +3,7 @@ import { Viewport } from 'pixi-viewport'
 import * as PIXI from 'pixi.js';
 import { Transform } from '../../../server/components';
 
-import app from '../pixiApp'
+import app from '../PixiApp'
 
 function updateBackground(background: PIXI.TilingSprite, viewport: Viewport) {
 	console.log(`updateBackground`)
