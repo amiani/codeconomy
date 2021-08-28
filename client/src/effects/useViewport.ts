@@ -1,7 +1,6 @@
 import { ComponentOf, createEffect, World } from '@javelin/ecs'
 import { Viewport } from 'pixi-viewport'
 import * as PIXI from 'pixi.js';
-import { Transform } from '../../../server/components';
 
 import app from '../PixiApp'
 
