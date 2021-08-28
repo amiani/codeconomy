@@ -28,7 +28,8 @@
 	<p class='api'>
 		Each ship runs its default function at a set interval in its own global context i.e. there is no way
 		to communicate between ships (for now).<br/>
-		Your default function is passed an Observation and must return a Command.<br/>
+		Your default function is passed an <a class='type' href='#observation'>Observation</a>
+		 and must return a <a class='type' href='#command'>Command</a>.<br/>
 	</p>
 
 	<h4 id='observation' class='type'>Observation</h4>
@@ -64,8 +65,9 @@
 	<div class='indent'>
 		The ship's desired action.<br/>
 		<h5>Properties</h5>
-		throttle: <span class='type'>number</span> -- How much forward thrust to apply.<br/>
+		throttle: <span class='type'>number</span> -- Must be between 0 and 100. How much forward thrust to apply.<br/>
 		yaw: <span class='type'>number</span> -- How much turning force to apply.<br/>
+		fire: <span class='type'>boolean</span> -- Whether to fire the primary weapon.<br/>
 	</div>
 
 	<h4 class='type'>Vector</h4>

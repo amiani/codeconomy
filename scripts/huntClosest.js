@@ -1,4 +1,6 @@
 function createVec(x, y) { return { x, y } }
+function vecToString(vec) { return `[${vec.x}, ${vec.y}]` }
+
 function createCommand() {
 	return {
 		throttle: 100,
@@ -24,7 +26,6 @@ function getClosest(position, enemies) {
 	return closest
 }
 
-function vecToString(vec) { return `[${vec.x}, ${vec.y}]` }
 
 function cross(a, b) { return a.x * b.y - a.y * b.x }
 function dot(a, b) { return a.x * b.x + a.y * b.y }
