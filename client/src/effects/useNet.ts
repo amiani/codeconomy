@@ -48,8 +48,8 @@ export default createEffect(world => {
         initialized = true
         const packet = getInitPacket()
         latestUpdateTick = packet.header.tick
-        console.log('initialized')
         consumeMessage(packet)
+        console.log('initialized')
       }
 
       handler.system()
