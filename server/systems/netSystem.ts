@@ -25,12 +25,9 @@ const spawnerQuery = createQuery(Spawner)
 const phaseQuery = createQuery(GamePhase)
 
 function getInitialMessage(producer: MessageProducer, playerEntity: Entity) {
-  /*
   phaseQuery(producer.attach)
   playerQuery(producer.attach)
-  */
   visibleQuery(producer.attach)
-  /*
   scoreQuery(producer.attach)
   countdownQuery(producer.attach)
   bulletQuery(producer.attach)
@@ -40,7 +37,6 @@ function getInitialMessage(producer: MessageProducer, playerEntity: Entity) {
     }
   })
   spawnerQuery(producer.attach)
-  */
   return producer.take()
 }
 
@@ -54,9 +50,8 @@ export default function netSystem(world: World<Clock>) {
   const clients = useClients()
   const { updateProducer, attachProducer } = useProducers()
 
-  //useMonitor(phaseQuery, attachProducer.attach, attachProducer.destroy)
+  useMonitor(phaseQuery, attachProducer.attach, attachProducer.destroy)
   useMonitor(visibleQuery, attachProducer.attach, attachProducer.destroy)
-  /*
   useMonitor(scoreQuery, attachProducer.attach, attachProducer.destroy)
   useMonitor(countdownQuery, attachProducer.attach, attachProducer.destroy)
   useMonitor(bulletQuery, attachProducer.attach)
@@ -95,7 +90,6 @@ export default function netSystem(world: World<Clock>) {
       }
     }
   }
-  */
 
   if (send) {
     const attachHeader: Header = { tick: world.latestTick, type: MessageType.Attach }

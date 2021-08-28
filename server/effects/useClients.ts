@@ -39,6 +39,9 @@ export default createEffect((world: World<Clock>) => {
             //maxByteLength: MESSAGE_MAX_BYTE_LENGTH
             maxByteLength: Infinity
           })
+          if (clients.has(uid)) {
+            removePlayer(uid)
+          }
           clients.set(uid, {
             uid,
             socket,
@@ -55,24 +58,30 @@ export default createEffect((world: World<Clock>) => {
   getServer.then((io: GeckosServer) => {
     io.onConnection(channel => {
       const { uid } = channel.userData
-      const player = createPlayer(world, uid)
+      const playerEntity = createPlayer(world, uid)
       const client = clients.get(uid)
       client.channel = channel
       client.channelProducer = createMessageProducer({
         maxByteLength: MESSAGE_MAX_BYTE_LENGTH
       })
-      client.player = player
+      client.player = playerEntity
       client.initialized = true
       registerClient(client)
 
       channel.onDisconnect(() => {
-        //console.log('disconnect')
-        playerTopic.push({ type: 'player-left', entity: player })
-        world.destroy(player)
-        clients.delete(player)
+        console.log('disconnect')
+        removePlayer(uid)
       })
     })
   })
+
+  const removePlayer = (uid: string) => {
+    const client = clients.get(uid)
+    playerTopic.push({ type: 'player-left', entity: client.player })
+    world.destroy(client.player)
+    clients.delete(uid)
+  }
+    
 
   const sendUnreliable = (uid: string, header: Header, data: ArrayBuffer) => {
     const client = clients.get(uid) as Client
