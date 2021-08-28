@@ -1,7 +1,7 @@
 const admin = require("firebase-admin")
 const { server } = require('./server')
 
-const authenticate = async (token, req, res) => {
+async function authenticate(token, req, res) {
   if (token) {
     try {
       const decodedToken = await admin.auth().verifyIdToken(token)
