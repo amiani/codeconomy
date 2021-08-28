@@ -39,7 +39,7 @@ const store = {
 
 	Actions: (update: flyd.Stream<any>) => ({
 		setCode: (code: string) => {
-			update({ editor: { code } })
+			update({ ui: { editor: { code } } })
 			localStorage.setItem('code', code)
 		},
 		setToken: (token: string) => update({ user: { token } }),

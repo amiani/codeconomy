@@ -106,11 +106,11 @@ function validateModule(
 			return true
 		}
 		throw new Error('Module did not export a default function')
-	} catch (err) {
+	} catch (err: any) {
 		logTopic.push({
 			type: LogType.Error,
 			toEntity: playerEntity,
-			message: `Error: ${err}`
+			message: err.toString()
 		})
 		return false
 	}

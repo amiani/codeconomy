@@ -2,7 +2,7 @@ function createVec(x, y) { return { x, y } }
 function createCommand() {
 	return {
 		throttle: 100,
-		rotate: 0,
+		yaw: 0,
 		fire: false
 	}
 }

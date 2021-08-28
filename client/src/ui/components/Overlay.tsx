@@ -49,7 +49,7 @@ export default function Overlay({ state, actions, upload }: OverlayProps) {
 				<Button><a href={apiPage}>Open API</a></Button>
 			</div>
 			{!showEditor && <div>
-				<Editor code={state.editor.code} setCode={actions.setCode} />
+				<Editor code={state.ui.editor.code} setCode={actions.setCode} />
 				<Button onClick={upload}>Upload</Button>
 			</div>}
 		</div>
