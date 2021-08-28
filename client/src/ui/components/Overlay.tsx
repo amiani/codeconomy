@@ -44,7 +44,7 @@ export default function Overlay({ state, actions, upload }: OverlayProps) {
 				>
 					{showEditor ? 'Show Editor' : 'Hide Editor'}
 				</Button>
-				<Button onClick={e => window.open('mailto:amianijohns@gmail.com')}>Feedback</Button>
+				<Button onClick={e => window.open('mailto:ratang@buns.run')}>Feedback</Button>
 				<Button onClick={e => toggleMute()}>{mute ? 'Unmute' : `Mute`}</Button>
 				<Button><a href={apiPage} target='_blank'>Open API</a></Button>
 			</div>
