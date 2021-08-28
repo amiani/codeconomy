@@ -40,8 +40,10 @@ function Rules() : JSX.Element {
 			<p style={rulesStyle}>
 				The rules of prototype 1 are simple:<br/>
 				- Each time one of your fighters kills an enemy, you gain a point.<br/>
-				- After three minutes whoever has the most points wins.<br/><br/>
-
+				- After three minutes whoever has the most points wins.
+			</p>
+			<h4>Writing Code</h4>
+			<p style={rulesStyle}>
 				Your carrier spawns a fighter every few seconds that is controlled by code that you write.<br/>
 				Open the code editor by clicking the Show Editor button in the top left of your screen.
 				This is where you write the script that your ships will run. You are free to write any
@@ -49,7 +51,7 @@ function Rules() : JSX.Element {
 				argument and returns an object.<br/><br/>
 				Click the Open API button to see the documentation for the api.<br/>
 				Once you are happy with your script, click the Upload button to send it to your carrier.
-				New ships will be launched with your script onboard.
+				New ships will be launched with your script onboard.<br/><br/>
 			</p>
 		</>
 	)
