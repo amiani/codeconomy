@@ -20,7 +20,7 @@ import { ShipObservation } from "../factories/createObservation"
 import { logTopic, moduleTopic } from "../topics"
 import { LogType } from "../topics/logTopic"
 
-const moduleShipQuery = createQuery(Module, Body, Command, Allegiance)
+const moduleShipQuery = createQuery(Module, Body, Command, Allegiance, Health)
 const shipQuery = createQuery(CombatHistory, Transform, Allegiance, Health)
 
 export default function moduleSystem(world: World) {
@@ -53,7 +53,7 @@ export default function moduleSystem(world: World) {
 				team: allegiance.team,
 			})
 		})
-		moduleShipQuery(async (e, [moduleComp, bodyComp, command, allegiance]) => {
+		moduleShipQuery(async (e, [moduleComp, bodyComp, command, allegiance, health]) => {
 			const body = bodyComp as typeof rapier.Body
 			const module = moduleComp as ivm.Module
 			const allies = Array<ShipObservation>()
@@ -68,7 +68,7 @@ export default function moduleSystem(world: World) {
 					enemies.push(...shipStates[i].values())
 				}
 			}
-			const observation = createObservation(body, allies, enemies)
+			const observation = createObservation(body, health, allies, enemies)
 			try {
 				const main = await module.namespace.get('default')
 				const nextCommand = await main(observation)
