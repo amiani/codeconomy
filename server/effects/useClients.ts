@@ -13,6 +13,7 @@ import { playerTopic, moduleTopic } from '../topics'
 import { MAX_PLAYERS, MESSAGE_MAX_BYTE_LENGTH } from '../env'
 import { createMessageProducer, encode, MessageProducer } from '@javelin/net'
 import { Header } from '../../common/types'
+import { GeckosServer } from '@geckos.io/server'
 
 export default createEffect((world: World<Clock>) => {
   const clients = new Map()
@@ -51,8 +52,8 @@ export default createEffect((world: World<Clock>) => {
       socket.close()
     }
   })
-  getServer.then((io: any) => {
-    io.onConnection((channel: any) => {
+  getServer.then((io: GeckosServer) => {
+    io.onConnection(channel => {
       const { uid } = channel.userData
       const player = createPlayer(world, uid)
       const client = clients.get(uid)
