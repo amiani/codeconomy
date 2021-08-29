@@ -15,7 +15,7 @@ import { createLaser } from '../factories'
 
 const ships = createQuery(Body, Command, Allegiance, Weapon)
 
-export default function physicsSystem(world: World) {
+export default function commandSystem(world: World) {
 	const sim = useSimulation()
 	ships((e, [bodyComp, command, allegiance, weapon]) => {
 		const body = bodyComp as typeof rapier.Body

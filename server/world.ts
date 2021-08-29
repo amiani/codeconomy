@@ -3,7 +3,7 @@ import {
 } from "@javelin/ecs"
 import { Clock } from "@javelin/hrtime-loop"
 
-import { damageSystem, huntSystem, netSystem, physicsSystem, moduleSystem, spawnSystem } from "./systems"
+import { damageSystem, huntSystem, netSystem, commandSystem, moduleSystem, spawnSystem } from "./systems"
 import {
   collisionTopic,
   logTopic,
@@ -27,7 +27,7 @@ export const world = createWorld<Clock>({
 
 world.addSystem(spawnSystem)
 world.addSystem(moduleSystem)
-world.addSystem(physicsSystem)
+world.addSystem(commandSystem)
 world.addSystem(bulletSystem)
 world.addSystem(damageSystem)
 world.addSystem(ffaSystem)
