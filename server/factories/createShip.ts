@@ -2,12 +2,12 @@ import { component, Entity, toComponent, World } from "@javelin/ecs"
 import ivm from 'isolated-vm'
 const rapier = require("@a-type/rapier2d-node")
 
-import { useColliderToEntity, useSimulation } from '../effects'
 import { Command, Body, CombatHistory, Context, Health, Module, SpriteData, Allegiance, Transform, Weapon, Log } from "../components"
-import createContext from "../createContext"
+import createContext from "./createContext"
 
 export default function createShip(
 	world: World,
+	sim: any,
 	x: number,
 	y: number,
 	rotation: number,
@@ -17,6 +17,7 @@ export default function createShip(
 	code: string,
 	isolate: ivm.Isolate,
 	withLog: boolean,
+	colliderToEntity: Map<any, Entity>,
 ) {
 	//console.log(`Creating ship at ${x}, ${y}`)
 	const e = world.create()
@@ -34,10 +35,8 @@ export default function createShip(
 		rapier.ActiveEvents.CONTACT_EVENTS
 		| rapier.ActiveEvents.INTERSECTION_EVENTS)
 	
-	const sim = useSimulation()
 	const body = sim.createRigidBody(bodyDesc)
 	const collider = sim.createCollider(colliderDesc, body.handle)
-	const colliderToEntity = useColliderToEntity()
 	colliderToEntity.set(collider.handle, e)
 	
 	let context

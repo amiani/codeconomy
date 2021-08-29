@@ -1,6 +1,6 @@
 import { ComponentOf } from '@javelin/ecs'
 import ivm from 'isolated-vm'
-import { Log } from './components'
+import { Log } from '../components'
 
 export default function createContext(
 	isolate: ivm.Isolate,

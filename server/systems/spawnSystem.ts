@@ -4,6 +4,7 @@ import ivm from 'isolated-vm'
 import { Phase } from '../../common/types'
 
 import { Isolate, Module, Spawner, Allegiance, Transform, Player, Code } from '../components'
+import { useColliderToEntity, useSimulation } from '../effects'
 import { createShip } from '../factories'
 import { phaseTopic } from '../topics'
 
@@ -21,6 +22,8 @@ export default function spawnSystem(world: World<Clock>): void {
 
 	spawnersTransformTeam((e, [spawner, transform, allegiance]) => {
 		spawner.countdown.current -= dt / 1000
+		const sim = useSimulation()
+		const colliderToEntity = useColliderToEntity()
 		if (spawner.countdown.current <= 0) {
 			try {
 				const code = world.get(allegiance.player, Code).code
@@ -30,6 +33,7 @@ export default function spawnSystem(world: World<Clock>): void {
 				const rot = Math.random() * Math.PI * 2
 				createShip(
 					world,
+					sim,
 					transform.x,
 					transform.y,
 					rot,
@@ -38,7 +42,8 @@ export default function spawnSystem(world: World<Clock>): void {
 					allegiance.team,
 					code,
 					isolate, 
-					withLog
+					withLog,
+					colliderToEntity
 				)
 				spawner.countdown.current = spawner.countdown.max
 			} catch (err) {
