@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { CSSProperties, useEffect, useState } from 'react'
 import "./App.css"
 import Game from './Game'
 import { world } from "../world"
@@ -14,6 +14,7 @@ import Welcome from './components/Welcome'
 import { Phase } from '../../../common/types';
 import Modal from './components/Modal';
 import BigScoreboard from './components/BigScoreboard';
+import RightSidebar from './components/RightSidebar';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -61,9 +62,10 @@ function App({ states, actions }: AppProps) {
         actions={actions}
         upload={upload}
       />
-      {state.game.phase == Phase.run && 
-        <CornerScoreboard gameState={state.game} style={scoreboardStyle} />
-      }
+      <RightSidebar
+        gameState={state.game}
+        style={styles.rightSidebar}
+      />
       {state.game.phase == Phase.end &&
         <Modal>
           <BigScoreboard gameState={state.game} />
@@ -73,27 +75,30 @@ function App({ states, actions }: AppProps) {
         <Modal onClose={closeModal}><Welcome /></Modal>
       }
 
-      <DebugPanel debugState={state.debug} style={debugPanelStyle} />
+      <DebugPanel debugState={state.debug} style={styles.debugPanelStyle} />
     </div>
   )
 }
 
-const scoreboardStyle: React.CSSProperties = {
-  position: 'absolute',
-  right: '0',
-  top: '0',
-  zIndex: 1000
+const styles = {
+  modalScoreboardStyle: {
+  } as CSSProperties,
+
+  debugPanelStyle: {
+    position: 'absolute',
+    right: '0',
+    bottom: '0',
+    zIndex: 1000
+  } as CSSProperties,
+
+  rightSidebar: {
+    position: 'absolute',
+    right: '0',
+    top: '0',
+    zIndex: 1000
+  } as CSSProperties,
 }
 
-const modalScoreboardStyle: React.CSSProperties = {
-}
-
-const debugPanelStyle: React.CSSProperties = {
-  position: 'absolute',
-  right: '0',
-  bottom: '0',
-  zIndex: 1000
-}
 
 ;(window as any).world = world
 export default App
