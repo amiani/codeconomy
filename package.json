@@ -13,8 +13,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "@geckos.io/client": "^2.0.0",
-    "@geckos.io/server": "^2.0.0",
+    "@geckos.io/client": "^2.1.8",
+    "@geckos.io/server": "^2.1.8",
     "@javelin/ecs": "^1.0.0-alpha.12",
     "@javelin/hrtime-loop": "^1.0.0-alpha.4",
     "@javelin/net": "^1.0.0-alpha.12",
@@ -22,19 +22,19 @@
     "firebase": "^8.9.0",
     "firebase-admin": "^9.11.0",
     "flyd": "^0.2.8",
-    "isolated-vm": "^4.3.3",
+    "isolated-vm": "^4.3.6",
     "mergerino": "^0.4.0",
     "pixi-viewport": "^4.32.0",
     "pixi.js": "^6.1.0",
     "pizzicato": "^0.6.4",
     "prismjs": "^1.24.1",
     "rapier2d-node": "^0.7.7",
-    "react": "^17.0.0",
-    "react-dom": "^17.0.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "react-simple-code-editor": "^0.11.0",
     "ts-node": "^9.1.1",
-    "typescript": "^4.1.2",
-    "ws": "^8.1.0"
+    "typescript": "^4.5.5",
+    "ws": "^8.4.2"
   },
   "devDependencies": {
     "@types/jest": "^26.0.24",
