@@ -1,7 +1,7 @@
 import { ComponentOf } from "@javelin/ecs"
 import { Health } from "../components"
 
-const rapier = require('@a-type/rapier2d-node')
+import { RigidBody } from 'rapier2d-node'
 
 interface Vector {
 	x: number
@@ -37,7 +37,7 @@ interface Command {
 }
 
 export default function createObservation(
-	body: typeof rapier.RigidBody,
+	body: RigidBody,
 	health: ComponentOf<typeof Health>,
 	allies: Array<ShipObservation>,
 	enemies: Array<ShipObservation>,

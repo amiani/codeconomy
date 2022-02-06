@@ -1,4 +1,4 @@
-const rapier = require("@a-type/rapier2d-node")
+import Rapier, { RigidBody, ColliderHandle } from 'rapier2d-node';
 import { ComponentOf, createEffect, createQuery, useMonitor, World } from "@javelin/ecs"
 import { Body, Transform } from "../components"
 import useColliderToEntity from "./useColliderToEntity"
@@ -7,7 +7,7 @@ import { collisionTopic } from "../topics"
 const transformsBody = createQuery(Transform, Body)
 
 function copyBodyToTransform(
-	body: typeof rapier.Body,
+	body: RigidBody,
 	transform: ComponentOf<typeof Transform>
 ) {
 	const translation = body.translation()
@@ -19,20 +19,20 @@ function copyBodyToTransform(
 const bodies = createQuery(Body)
 
 export default createEffect((world: World) => {
-	const sim = new rapier.World({ x: 0, y: 0 })
-	const eventQueue = new rapier.EventQueue(true)
+	const sim = new Rapier.World({ x: 0, y: 0 })
+	const eventQueue = new Rapier.EventQueue(true)
 
 	return () => {
 		sim.step(eventQueue)
 
 		transformsBody((e, [transform, body]) => {
-			copyBodyToTransform(body, transform)
+			copyBodyToTransform(body as RigidBody, transform)
 		})
 
 		const colliders = useColliderToEntity()
 		eventQueue.drainIntersectionEvents((
-			handle1: typeof rapier.CollisionHandle,
-			handle2: typeof rapier.CollisionHandle,
+			handle1: ColliderHandle,
+			handle2: ColliderHandle,
 			started: boolean,
 		) => {
 			if (started) {
@@ -47,11 +47,11 @@ export default createEffect((world: World) => {
 		useMonitor(
 			bodies,
 			() => {},
-			(e, [body]: [typeof rapier.Body]) => {
+			(e, [body]) => {
 				//console.log(`${e}: ${body.handle} Removing collider mapping`)
-				const handle = body.collider(0)
+				const handle = (body as RigidBody).collider(0)
 				colliders.delete(handle)
-				sim.removeRigidBody(body)
+				sim.removeRigidBody(body as RigidBody)
 			}
 		)
 

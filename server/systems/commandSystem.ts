@@ -2,7 +2,7 @@ import {
 	World,
 	createQuery,
 } from '@javelin/ecs'
-const rapier = require('@a-type/rapier2d-node')
+import { RigidBody } from 'rapier2d-node'
 
 import { useSimulation } from '../effects'
 import {
@@ -18,7 +18,7 @@ const ships = createQuery(Body, Command, Allegiance, Weapon)
 export default function commandSystem(world: World) {
 	const sim = useSimulation()
 	ships((e, [bodyComp, command, allegiance, weapon]) => {
-		const body = bodyComp as typeof rapier.Body
+		const body = bodyComp as RigidBody
 		const shipRotation = body.rotation()
 		const clampedThrottle = Math.max(Math.min(command.throttle, 100), 0)
 		body.applyForce({

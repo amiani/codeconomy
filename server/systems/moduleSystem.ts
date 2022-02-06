@@ -1,6 +1,6 @@
 import { World, createQuery, Entity, toComponent, useInterval, component } from "@javelin/ecs"
 import ivm from "isolated-vm"
-const rapier = require('@a-type/rapier2d-node')
+import { RigidBody } from 'rapier2d-node'
 
 import {
 	Body,
@@ -54,7 +54,7 @@ export default function moduleSystem(world: World) {
 			})
 		})
 		moduleShipQuery(async (e, [moduleComp, bodyComp, command, allegiance, health]) => {
-			const body = bodyComp as typeof rapier.Body
+			const body = bodyComp as RigidBody
 			const module = moduleComp as ivm.Module
 			const allies = Array<ShipObservation>()
 			for (const [shipEntity, state] of shipStates[allegiance.team].entries()) {

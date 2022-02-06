@@ -1,6 +1,5 @@
 import { component, Entity, World } from "@javelin/ecs"
 import { Allegiance, Bullet, SpriteData, Transform } from "../components"
-const rapier = require('@a-type/rapier2d-node')
 
 export default function createLaser(
 	world: World,

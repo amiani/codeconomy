@@ -1,6 +1,6 @@
 import { createQuery, World } from "@javelin/ecs";
 import { Clock } from "@javelin/hrtime-loop";
-const rapier = require("@a-type/rapier2d-node")
+import { Ray } from 'rapier2d-node';
 
 import { Bullet, Transform } from "../components"
 import { useColliderToEntity, useSimulation } from "../effects";
@@ -13,7 +13,7 @@ export default function bulletSystem(world: World<Clock>) {
 	const colliders = useColliderToEntity()
 	const dt = world.latestTickData.dt
 	bullets((e, [bullet, transform]) => {
-		const ray = new rapier.Ray(
+		const ray = new Ray(
 			{ x: transform.x, y: transform.y },
 			{ x: bullet.velocity.x, y: bullet.velocity.y }
 		)

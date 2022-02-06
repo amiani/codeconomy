@@ -1,6 +1,6 @@
 import { component, Entity, toComponent, World } from "@javelin/ecs"
 import ivm from 'isolated-vm'
-const rapier = require("@a-type/rapier2d-node")
+import { ActiveEvents, ColliderDesc, RigidBodyDesc } from 'rapier2d-node'
 
 import { Command, Body, CombatHistory, Context, Health, Module, SpriteData, Allegiance, Transform, Weapon, Log } from "../components"
 import createContext from "./createContext"
@@ -23,17 +23,17 @@ export default function createShip(
 	const e = world.create()
 	const vx = Math.cos(rotation) * launchSpeed
 	const vy = Math.sin(rotation) * launchSpeed
-	const bodyDesc = rapier.RigidBodyDesc.newDynamic()
+	const bodyDesc = RigidBodyDesc.newDynamic()
 		.setTranslation(x, y)
 		.setRotation(rotation)
 		.setLinearDamping(0.9)
 		.setAngularDamping(0.7)
 		.setLinvel(vx, vy)
-	const colliderDesc = rapier.ColliderDesc.cuboid(1, 1)
+	const colliderDesc = ColliderDesc.cuboid(1, 1)
 			.setCollisionGroups(0x00010000 + 0x0003)
 		.setActiveEvents(
-		rapier.ActiveEvents.CONTACT_EVENTS
-		| rapier.ActiveEvents.INTERSECTION_EVENTS)
+		ActiveEvents.CONTACT_EVENTS
+		| ActiveEvents.INTERSECTION_EVENTS)
 	
 	const body = sim.createRigidBody(bodyDesc)
 	const collider = sim.createCollider(colliderDesc, body.handle)
