@@ -1,5 +1,5 @@
 import React, { CSSProperties } from 'react'
-import { Score } from './state';
+import { Score } from '../state';
 
 interface ScoreListProps {
 	scores: Score[],

@@ -1,7 +1,7 @@
 import { createEffect, Entity } from "@javelin/ecs";
 import geckos, { ClientChannel, RawMessage } from '@geckos.io/client'
-import firebase from 'firebase/app'
-import 'firebase/auth'
+import { getApp } from 'firebase/app'
+import { getAuth, onAuthStateChanged } from 'firebase/auth'
 
 import { Header, MessageType, Packet } from '../../../common/types'
 
@@ -21,7 +21,8 @@ export default createEffect(world => {
 	const updatePackets = Array<Packet>()
 	let initPacket: Packet
 
-    firebase.auth().onAuthStateChanged(async user => {
+		const auth = getAuth(getApp())
+    onAuthStateChanged(auth, async user => {
 		if (user) {
 			uid = user.uid
 			const token: string = await user.getIdToken(true)

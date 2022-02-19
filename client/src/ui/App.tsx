@@ -2,18 +2,18 @@ import React, { useEffect, useState } from 'react'
 import "./App.css"
 import Game from './Game'
 import { world } from "../world"
-import firebase from 'firebase/app';
-import 'firebase/auth'
+import { initializeApp } from 'firebase/app'
+import { getAuth, signInAnonymously } from 'firebase/auth'
 import testScript from '../../../scripts/testScript'
 import { uploadTopic } from '../topics'
 import Overlay from './components/Overlay'
-import CornerScoreboard from './components/CornerScoreboard';
+import CornerScoreboard from './components/CornerScoreboard'
 import * as store from './state'
-import DebugPanel from './components/DebugPanel';
+import DebugPanel from './components/DebugPanel'
 import Welcome from './components/Welcome'
-import { Phase } from '../../../common/types';
-import Modal from './components/Modal';
-import BigScoreboard from './components/BigScoreboard';
+import { Phase } from '../../../common/types'
+import Modal from './components/Modal'
+import BigScoreboard from './components/BigScoreboard'
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -25,7 +25,8 @@ const firebaseConfig = {
   appId: "1:817410369808:web:039a84fe15916b6c33dd95",
   measurementId: "G-1Q85KBS613"
 };
-firebase.initializeApp(firebaseConfig);
+const firebaseApp = initializeApp(firebaseConfig)
+const auth = getAuth(firebaseApp)
 
 interface AppProps {
   states: typeof store.states,
@@ -34,7 +35,7 @@ interface AppProps {
 
 function App({ states, actions }: AppProps) {
   useEffect(() => {
-    firebase.auth().signInAnonymously()
+    signInAnonymously(auth)
     return () => {}
   }, [])
 
