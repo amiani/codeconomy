@@ -62,6 +62,15 @@ const createClient = (uid: string, entity: number, socket: WebSocket, channel: S
   })
 })
 
+function writeHeader(header: Header, message: ArrayBuffer): ArrayBuffer {
+  const packet = new Uint8Array(message.byteLength + 5)
+  const view = new DataView(packet.buffer)
+  view.setUint32(0, header.tick)
+  view.setUint8(4, header.type)
+  packet.set(new Uint8Array(message), 5)
+  return packet.buffer
+}
+
 export default createEffect((world: World<Clock>) => {
   const sockets = new Map<string, WebSocket>()
   const clients = new Map<string, Client>()
@@ -170,12 +179,3 @@ export default createEffect((world: World<Clock>) => {
 }, { shared: true })
 
 
-
-function writeHeader(header: Header, message: ArrayBuffer): ArrayBuffer {
-  const packet = new Uint8Array(message.byteLength + 5)
-  const view = new DataView(packet.buffer)
-  view.setUint32(0, header.tick)
-  view.setUint8(4, header.type)
-  packet.set(new Uint8Array(message), 5)
-  return packet.buffer
-}
