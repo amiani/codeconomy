@@ -14,18 +14,13 @@ import { playerTopic, moduleTopic } from '../topics'
 import { MAX_PLAYERS, MESSAGE_MAX_BYTE_LENGTH } from '../env'
 import { Header } from '../../common/types'
 
-interface Pipe {
-  channel: ServerChannel;
-  producer: MessageProducer;
-}
-
 interface Client {
   uid: string;
   entity: Entity;
   socket: WebSocket;
   socketProducer: MessageProducer;
-  pipe?: Pipe;
-  initialized: boolean;
+  channel: ServerChannel;
+  channelProducer: MessageProducer;
 }
 
 const isString = (value: unknown): value is string => typeof value === 'string'
@@ -52,7 +47,23 @@ const registerClient = (client: Client) =>
     })
   )
 
+const createClient = (uid: string, entity: number, socket: WebSocket, channel: ServerChannel): Client => ({
+  uid,
+  entity,
+  socket,
+  socketProducer: createMessageProducer({
+    //maxByteLength: MESSAGE_MAX_BYTE_LENGTH
+    maxByteLength: Infinity
+
+  }),
+  channel,
+  channelProducer: createMessageProducer({
+    maxByteLength: MESSAGE_MAX_BYTE_LENGTH
+  })
+})
+
 export default createEffect((world: World<Clock>) => {
+  const sockets = new Map<string, WebSocket>()
   const clients = new Map<string, Client>()
 
   const wss = new WebSocketServer({
@@ -65,27 +76,13 @@ export default createEffect((world: World<Clock>) => {
       socket.close(503, "Server is full")
       return
     }
-    
 
     const authorization = getAuthorization(req)
     if (!authorization) return
     try {
-      const decodedToken = await admin.auth().verifyIdToken(authorization)
-      const uid = decodedToken.uid
-      const socketProducer = createMessageProducer({
-        //maxByteLength: MESSAGE_MAX_BYTE_LENGTH
-        maxByteLength: Infinity
-      })
-      if (clients.has(uid)) {
-        removePlayer(uid)
-      }
-      clients.set(uid, {
-        uid,
-        socket,
-        socketProducer,
-        entity: createPlayer(world, uid),
-        initialized: false
-      })
+      const { uid } = await admin.auth().verifyIdToken(authorization)
+      removePlayer(uid)
+      sockets.set(uid, socket)
     } catch (err: unknown) {
       console.error(err)
       socket.close()
@@ -93,19 +90,14 @@ export default createEffect((world: World<Clock>) => {
   })
 
   io.onConnection(channel => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const uid = channel.userData.uid as string
-    const client = clients.get(uid)
-    if (!client) {
+    const { uid } = channel.userData as { uid: string }
+    const socket = sockets.get(uid)
+    if (!socket) {
+      void channel.close()
       return
     }
-    client.pipe = {
-      channel,
-      producer: createMessageProducer({
-        maxByteLength: MESSAGE_MAX_BYTE_LENGTH
-      })
-    }
-    client.initialized = true
+    const entity = createPlayer(world, uid)
+    const client: Client = createClient(uid, entity, socket, channel)
     registerClient(client)
 
     channel.onDisconnect(() => {
@@ -122,23 +114,27 @@ export default createEffect((world: World<Clock>) => {
     playerTopic.push({ type: 'player-left', entity: client.entity })
     world.destroy(client.entity)
     clients.delete(uid)
+    sockets.delete(uid)
   }
     
 
   const sendUnreliable = (uid: string, header: Header, data: ArrayBuffer) => {
     const client = clients.get(uid)
-    if (!client || !client.pipe) {
+    if (!client) {
       return
     }
     const packet = writeHeader(header, data)
-    client.pipe.channel.raw.emit(packet)
+    client.channel.raw.emit(packet)
 
-    const privateMessage = client.pipe.producer.take()
+    /*
+    const privateMessage = client.channelProducer.take()
     if (privateMessage && privateMessage.byteLength > 0) {
-      //const privatePacket = writeHeader(header, encode(privateMessage))
-      //client.channel.raw.emit(privatePacket)
+      const privatePacket = writeHeader(header, encode(privateMessage))
+      client.channel.raw.emit(privatePacket)
     }
+    */
   }
+
   const sendReliable = (
     uid: string,
     header: Header,
@@ -146,21 +142,23 @@ export default createEffect((world: World<Clock>) => {
     cb?: (err?: Error) => void
   ) => {
     const client = clients.get(uid)
-    if (!client || !client.initialized) {
+    if (!client) {
       return
     }
     const packet = writeHeader(header, data)
     client.socket.send(packet, cb)
 
+    /*
     const privateMessage = client.socketProducer.take()
     if (privateMessage && privateMessage.byteLength > 0) {
-      //const privatePacket = writeHeader(header, encode(privateMessage))
-      //client.socket.send(privatePacket)
+      const privatePacket = writeHeader(header, encode(privateMessage))
+      client.socket.send(privatePacket)
     }
+    */
   }
   const getPlayer = (uid: string) => clients.get(uid)?.entity
   const getAttachProducer = (uid: string) => clients.get(uid)?.socketProducer
-  const getUpdateProducer = (uid: string) => clients.get(uid)?.pipe?.producer
+  const getUpdateProducer = (uid: string) => clients.get(uid)?.channelProducer
 
   return () => ({
     sendUnreliable,

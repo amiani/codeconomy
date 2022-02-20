@@ -70,7 +70,6 @@ function handlePlayerJoined(
 }
 
 function handlePlayerLeft(world: World<Clock>, player: Entity) {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	spawners((e, [spawner, allegiance]) => {
 		if (allegiance.player == player) {
 			console.log(`removed spawner ${e}`)
