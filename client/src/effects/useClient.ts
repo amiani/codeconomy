@@ -70,7 +70,7 @@ export default createEffect(world => {
 			})
 		}
 		socket.onmessage = ({ data }: MessageEvent) => {
-			if (data !instanceof ArrayBuffer) {
+			if (!(data instanceof ArrayBuffer)) {
 				return
 			}
 			const packet = readHeader(data)
