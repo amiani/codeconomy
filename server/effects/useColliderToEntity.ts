@@ -1,11 +1,7 @@
-import { ComponentOf, createEffect, createQuery, Entity, useMonitor } from '@javelin/ecs'
+import { createEffect, Entity } from '@javelin/ecs'
 import { ColliderHandle } from 'rapier2d-node'
 
-import { Body } from '../components'
-
-const bodies = createQuery(Body)
-
-export default createEffect(world => {
+export default createEffect(() => {
 	const entities = new Map<ColliderHandle, Entity>()
 
 	return () => {

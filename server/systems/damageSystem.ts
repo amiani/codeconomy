@@ -1,6 +1,6 @@
-import { createQuery, Entity, useMonitor, World } from "@javelin/ecs";
+import { createQuery, Entity, World } from "@javelin/ecs";
 import { collisionTopic, shipTopic } from "../topics"
-import { Allegiance, Body, Bullet, CombatHistory, Health } from "../components"
+import { Allegiance, Bullet, CombatHistory, Health } from "../components"
 
 const healths = createQuery(Health)
 

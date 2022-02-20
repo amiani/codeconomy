@@ -3,7 +3,7 @@ import { Clock } from '@javelin/hrtime-loop'
 import ivm from 'isolated-vm'
 import { Phase } from '../../common/types'
 
-import { Isolate, Module, Spawner, Allegiance, Transform, Player, Code } from '../components'
+import { Isolate, Spawner, Allegiance, Transform, Player, Code } from '../components'
 import { useColliderToEntity, useSimulation } from '../effects'
 import { createShip } from '../factories'
 import { phaseTopic } from '../topics'

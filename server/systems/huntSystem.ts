@@ -1,4 +1,4 @@
-import { component, createEffect, createQuery, Entity, toComponent, useInit, useMonitor, World } from "@javelin/ecs";
+import { component, createEffect, createQuery, Entity, toComponent, useMonitor, World } from "@javelin/ecs";
 import { Clock } from "@javelin/hrtime-loop";
 import ivm from 'isolated-vm'
 
@@ -33,7 +33,7 @@ interface SpawnLocation {
 	player: Entity;
 }
 
-const useSpawnLocations = createEffect(world => {
+const useSpawnLocations = createEffect(() => {
 	const distance = 200
 	const spawnLocations = Array<SpawnLocation>()
 	for (let i = 0; i != MAX_PLAYERS; ++i) {
@@ -65,11 +65,12 @@ function handlePlayerJoined(
 	const { x, y } = spawnLocation
 	const rotation = Math.random() * Math.PI * 2
 	const spawnRate = 8
-	const spawner = createSpawner(world, x, y, rotation, player, team, spawnRate, "capital1")
+	createSpawner(world, x, y, rotation, player, team, spawnRate, "capital1")
 	spawnLocation.player = player
 }
 
 function handlePlayerLeft(world: World<Clock>, player: Entity) {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	spawners((e, [spawner, allegiance]) => {
 		if (allegiance.player == player) {
 			console.log(`removed spawner ${e}`)
@@ -94,7 +95,7 @@ export default function huntSystem(world: World<Clock>) {
 
 	switch (phaseComp.phase as Phase) {
 		//Runs once only at game start
-		case Phase.setup:
+		case Phase.setup: {
 			world.create(phaseTimer)
 			const isolate = new ivm.Isolate({ memoryLimit: 128 })
 			const owner = world.create(
@@ -107,19 +108,19 @@ export default function huntSystem(world: World<Clock>) {
 			createSpawner(world, 0, 0, 0, owner, team, 2, "spawn2")
 
 			for (let i = 0; i < NUM_BOTS; ++i) {
-				createBot(world, "bot" + i)
+				createBot(world, `bot${i}`)
 			}
 			phaseTimer.current = RUN_TIME
 			changePhase(Phase.run)
 			break
-
+		}
 		case Phase.run:
 			if (phaseTimer.current <= 0) {
 				phaseTimer.current = END_TIME
 				changePhase(Phase.end)
 			}
 
-			ships((e, [transform, command]) => {
+			ships((e, [transform, ]) => {
 				const distance = Math.sqrt(Math.pow(transform.x, 2) + Math.pow(transform.y, 2))
 				if (distance > 700) {
 					world.destroy(e)
@@ -143,7 +144,7 @@ export default function huntSystem(world: World<Clock>) {
 		case Phase.end:
 			if (phaseTimer.current <= 0) {
 				scores((e, [score]) => score.points = 0)
-				ships((e, [t, a]) => world.destroy(e))
+				ships((e, [,]) => world.destroy(e))
 				phaseTimer.current = RUN_TIME
 				changePhase(Phase.run)
 			}

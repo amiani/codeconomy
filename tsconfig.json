@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "ESNext",
     "downlevelIteration": true,
     "composite": true,
     "declaration": true,

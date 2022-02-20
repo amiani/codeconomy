@@ -1,4 +1,4 @@
-import { component, Entity, toComponent, World } from "@javelin/ecs"
+import { component, Entity, World } from "@javelin/ecs"
 import { Clock } from "@javelin/hrtime-loop"
 import { Spawner, SpriteData, Allegiance, Transform } from "../components"
 

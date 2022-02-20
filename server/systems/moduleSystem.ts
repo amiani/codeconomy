@@ -1,4 +1,4 @@
-import { World, createQuery, Entity, toComponent, useInterval, component } from "@javelin/ecs"
+import { World, createQuery, Entity, useInterval, component } from "@javelin/ecs"
 import ivm from "isolated-vm"
 import { RigidBody } from 'rapier2d-node'
 
@@ -16,7 +16,7 @@ import {
 import { useClients } from "../effects"
 import { MAX_PLAYERS } from "../env"
 import { createObservation } from "../factories"
-import { ShipObservation } from "../factories/createObservation"
+import { Observation, Command as ShipCommand, ShipObservation } from "../factories/createObservation"
 import { logTopic, moduleTopic } from "../topics"
 import { LogType } from "../topics/logTopic"
 
@@ -27,12 +27,15 @@ export default function moduleSystem(world: World) {
 	const update = useInterval(1000 / 10)
 	const clients = useClients()
 
-	for (const moduleEvent of moduleTopic) {
-		const playerEntity = clients.getPlayer(moduleEvent.uid)
+	for (const { uid, code } of moduleTopic) {
+		const playerEntity = clients.getPlayer(uid)
+		if (!playerEntity) {
+			break
+		}
 		try {
 			const isolate = world.get(playerEntity, Isolate) as ivm.Isolate
-			if (validateModule(isolate, moduleEvent.code, playerEntity)) {
-				world.attach(playerEntity, component(Code, { code: moduleEvent.code }))
+			if (validateModule(isolate, code, playerEntity)) {
+				world.attach(playerEntity, component(Code, { code }))
 			}
 		} catch (e) {
 			console.log(e)
@@ -45,6 +48,7 @@ export default function moduleSystem(world: World) {
 		for (let i = 0; i < MAX_PLAYERS; i++) {
 			shipStates[i] = new Map()
 		}
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		shipQuery((e, [combatHistory, transform, allegiance, health]) => {
 			shipStates[allegiance.team].set(e, {
 				position: { x: transform.x, y: transform.y },
@@ -70,10 +74,10 @@ export default function moduleSystem(world: World) {
 			}
 			const observation = createObservation(body, health, allies, enemies)
 			try {
-				const main = await module.namespace.get('default')
+				const main = await module.namespace.get('default') as Policy
 				const nextCommand = await main(observation)
 				if (nextCommand) {
-					command.throttle = nextCommand.throttle ? nextCommand.throttle : 0
+					command.throttle = nextCommand.throttle ?? 0
 					command.yaw = nextCommand.yaw ? nextCommand.yaw : 0
 					command.fire = nextCommand.fire ? nextCommand.fire : false
 				}
@@ -90,6 +94,12 @@ export default function moduleSystem(world: World) {
 	}
 }
 
+type Policy = (o: Observation) => Promise<ShipCommand>
+
+const isPolicy = (value: unknown): value is Policy => {
+	return value instanceof Function
+}
+
 function validateModule(
 	isolate: ivm.Isolate,
 	code: string,
@@ -98,19 +108,20 @@ function validateModule(
 	try {
 		const module = isolate.compileModuleSync(code)
 		const testContext = isolate.createContextSync()
-		module.instantiateSync(testContext, (specifier, referrer) => module)
+		module.instantiateSync(testContext, () => module)
 		module.evaluateSync()
-		const main = module.namespace.getSync('default')
-		if (main instanceof Function) {
+		const defaultExport: unknown = module.namespace.getSync('default')
+		if (isPolicy(defaultExport)) {
 			console.log(`Module arrived for player entity ${playerEntity}`)
 			return true
 		}
-		throw new Error('Module did not export a default function')
-	} catch (err: any) {
+		console.log(`Invalid module arrived for player entity ${playerEntity}`)
+		return false
+	} catch (err: unknown) {
 		logTopic.push({
 			type: LogType.Error,
 			toEntity: playerEntity,
-			message: err.toString()
+			message: `Server received invalid script: ${err}`
 		})
 		return false
 	}

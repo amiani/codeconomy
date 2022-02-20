@@ -1,9 +1,8 @@
 import { createEffect, Entity } from "@javelin/ecs";
 import geckos, { ClientChannel, RawMessage } from '@geckos.io/client'
-import { getApp } from 'firebase/app'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 
-import { Header, MessageType, Packet } from '../../../common/types'
+import { MessageType, Packet } from '../../../common/types'
 
 interface Client {
   socket: WebSocket,
@@ -15,13 +14,13 @@ const HOSTNAME = import.meta.env.PROD ? 'outer.space.buns.run' : '127.0.0.1'
 export default createEffect(world => {
 	let uid: string
 	let playerEntity: Entity
-    let client: Client
+	let client: Client
 
 	const attachPackets = Array<Packet>()
 	const updatePackets = Array<Packet>()
 	let initPacket: Packet
 
-		const auth = getAuth(getApp())
+		const auth = getAuth()
     onAuthStateChanged(auth, async user => {
 		if (user) {
 			uid = user.uid

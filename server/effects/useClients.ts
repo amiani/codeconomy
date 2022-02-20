@@ -1,99 +1,142 @@
-import WebSocket from 'ws'
+import WebSocket, { WebSocketServer } from 'ws'
 import url from 'url'
 import { createEffect, Entity, World } from '@javelin/ecs'
 import { Clock } from '@javelin/hrtime-loop'
-import * as admin from 'firebase-admin'
-//@ts-ignore
-import { server } from '../server'
+import admin from 'firebase-admin'
+import { ServerChannel } from '@geckos.io/server'
+import { IncomingMessage } from 'http'
+import { createMessageProducer, MessageProducer } from '@javelin/net'
 
+import server from '../server'
 import { createPlayer } from '../factories'
-//@ts-ignore
-import { getServer } from "../geckosServer"
+import io from "../geckosServer"
 import { playerTopic, moduleTopic } from '../topics'
 import { MAX_PLAYERS, MESSAGE_MAX_BYTE_LENGTH } from '../env'
-import { createMessageProducer, encode, MessageProducer } from '@javelin/net'
 import { Header } from '../../common/types'
-import { GeckosServer } from '@geckos.io/server'
+
+interface Pipe {
+  channel: ServerChannel;
+  producer: MessageProducer;
+}
+
+interface Client {
+  uid: string;
+  entity: Entity;
+  socket: WebSocket;
+  socketProducer: MessageProducer;
+  pipe?: Pipe;
+  initialized: boolean;
+}
+
+const isString = (value: unknown): value is string => typeof value === 'string'
+
+const getAuthorization = (req: IncomingMessage): string | undefined => {
+  if (!req.url) {
+    return
+  }
+
+  const auth = url.parse(req.url, true).query?.authorization
+  if (!isString(auth)) {
+    console.error(`useClients got invalid auth query string. Got `, auth)
+    return
+  }
+  return auth
+}
+
+const registerClient = (client: Client) =>
+  client.socket.on("message", (data: WebSocket.Data) =>
+    //TODO: rename moduleTopic and moduleSystem
+    moduleTopic.push({
+      uid: client.uid,
+      code: data.toString()
+    })
+  )
 
 export default createEffect((world: World<Clock>) => {
-  const clients = new Map()
+  const clients = new Map<string, Client>()
 
-  const wss = new WebSocket.Server({
+  const wss = new WebSocketServer({
     server,
     path: '/connect'
   })
-  wss.on("connection", async (socket: WebSocket, req) => {
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  wss.on("connection", async (socket: WebSocket, req: IncomingMessage) => {
     if (clients.size >= MAX_PLAYERS) {
       socket.close(503, "Server is full")
       return
     }
     
 
+    const authorization = getAuthorization(req)
+    if (!authorization) return
     try {
-      if (req.url) {
-        const queryObject = url.parse(req.url,true).query;
-        if (queryObject.authorization) {
-          const decodedToken = await admin.auth().verifyIdToken(queryObject.authorization as string)
-          const uid = decodedToken.uid
-          const socketProducer = createMessageProducer({
-            //maxByteLength: MESSAGE_MAX_BYTE_LENGTH
-            maxByteLength: Infinity
-          })
-          if (clients.has(uid)) {
-            removePlayer(uid)
-          }
-          clients.set(uid, {
-            uid,
-            socket,
-            socketProducer,
-            initialized: false
-          })
-        }
+      const decodedToken = await admin.auth().verifyIdToken(authorization)
+      const uid = decodedToken.uid
+      const socketProducer = createMessageProducer({
+        //maxByteLength: MESSAGE_MAX_BYTE_LENGTH
+        maxByteLength: Infinity
+      })
+      if (clients.has(uid)) {
+        removePlayer(uid)
       }
-    } catch (err: any) {
+      clients.set(uid, {
+        uid,
+        socket,
+        socketProducer,
+        entity: createPlayer(world, uid),
+        initialized: false
+      })
+    } catch (err: unknown) {
       console.error(err)
       socket.close()
     }
   })
-  getServer.then((io: GeckosServer) => {
-    io.onConnection(channel => {
-      const { uid } = channel.userData
-      const playerEntity = createPlayer(world, uid)
-      const client = clients.get(uid)
-      client.channel = channel
-      client.channelProducer = createMessageProducer({
+
+  io.onConnection(channel => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const uid = channel.userData.uid as string
+    const client = clients.get(uid)
+    if (!client) {
+      return
+    }
+    client.pipe = {
+      channel,
+      producer: createMessageProducer({
         maxByteLength: MESSAGE_MAX_BYTE_LENGTH
       })
-      client.player = playerEntity
-      client.initialized = true
-      registerClient(client)
+    }
+    client.initialized = true
+    registerClient(client)
 
-      channel.onDisconnect(() => {
-        console.log('disconnect')
-        removePlayer(uid)
-      })
+    channel.onDisconnect(() => {
+      console.log('disconnect')
+      removePlayer(uid)
     })
   })
 
   const removePlayer = (uid: string) => {
     const client = clients.get(uid)
-    playerTopic.push({ type: 'player-left', entity: client.player })
-    world.destroy(client.player)
+    if (!client) {
+      return
+    }
+    playerTopic.push({ type: 'player-left', entity: client.entity })
+    world.destroy(client.entity)
     clients.delete(uid)
   }
     
 
   const sendUnreliable = (uid: string, header: Header, data: ArrayBuffer) => {
-    const client = clients.get(uid) as Client
-    if (client && client.initialized) {
-      const packet = writeHeader(header, data)
-      client.channel.raw.emit(packet)
+    const client = clients.get(uid)
+    if (!client || !client.pipe) {
+      return
+    }
+    const packet = writeHeader(header, data)
+    client.pipe.channel.raw.emit(packet)
 
-      const privateMessage = client.channelProducer.take()
-      if (privateMessage && privateMessage.byteLength > 0) {
-        const privatePacket = writeHeader(header, encode(privateMessage))
-        //client.channel.raw.emit(privatePacket)
-      }
+    const privateMessage = client.pipe.producer.take()
+    if (privateMessage && privateMessage.byteLength > 0) {
+      //const privatePacket = writeHeader(header, encode(privateMessage))
+      //client.channel.raw.emit(privatePacket)
     }
   }
   const sendReliable = (
@@ -102,51 +145,33 @@ export default createEffect((world: World<Clock>) => {
     data: ArrayBuffer,
     cb?: (err?: Error) => void
   ) => {
-    const client = clients.get(uid) as Client
-    if (client && client.initialized) {
-      const packet = writeHeader(header, data)
-      client.socket.send(packet, cb)
+    const client = clients.get(uid)
+    if (!client || !client.initialized) {
+      return
+    }
+    const packet = writeHeader(header, data)
+    client.socket.send(packet, cb)
 
-      const privateMessage = client.socketProducer.take()
-      if (privateMessage && privateMessage.byteLength > 0) {
-        const privatePacket = writeHeader(header, encode(privateMessage))
-        //client.socket.send(privatePacket)
-      }
+    const privateMessage = client.socketProducer.take()
+    if (privateMessage && privateMessage.byteLength > 0) {
+      //const privatePacket = writeHeader(header, encode(privateMessage))
+      //client.socket.send(privatePacket)
     }
   }
-  const getPlayer = (uid: string) => clients.get(uid).player
-  const getAttachProducer = (uid: string) => clients.get(uid).socketProducer
-  const getUpdateProducer = (uid: string) => clients.get(uid).channelProducer
+  const getPlayer = (uid: string) => clients.get(uid)?.entity
+  const getAttachProducer = (uid: string) => clients.get(uid)?.socketProducer
+  const getUpdateProducer = (uid: string) => clients.get(uid)?.pipe?.producer
 
-  return function useClients() {
-    return {
-      sendUnreliable,
-      sendReliable,
-      getPlayer,
-      getAttachProducer,
-      getUpdateProducer,
-    }
-  }
+  return () => ({
+    sendUnreliable,
+    sendReliable,
+    getPlayer,
+    getAttachProducer,
+    getUpdateProducer,
+  })
 }, { shared: true })
 
-interface Client {
-  uid: string;
-  socket: WebSocket;
-  socketProducer: MessageProducer;
-  channel: any;
-  channelProducer: MessageProducer;
-  player: Entity;
-  initialized: boolean;
-}
 
-function registerClient(client: Client) {
-  client.socket.on("message", async (data: WebSocket.Data) => {
-    moduleTopic.push({
-      uid: client.uid,
-      code: data.toString()
-    })
-  })
-}
 
 function writeHeader(header: Header, message: ArrayBuffer): ArrayBuffer {
   const packet = new Uint8Array(message.byteLength + 5)

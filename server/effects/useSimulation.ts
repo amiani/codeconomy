@@ -1,5 +1,5 @@
 import Rapier, { RigidBody, ColliderHandle } from 'rapier2d-node';
-import { ComponentOf, createEffect, createQuery, useMonitor, World } from "@javelin/ecs"
+import { ComponentOf, createEffect, createQuery, useMonitor } from "@javelin/ecs"
 import { Body, Transform } from "../components"
 import useColliderToEntity from "./useColliderToEntity"
 import { collisionTopic } from "../topics"
@@ -18,7 +18,7 @@ function copyBodyToTransform(
 
 const bodies = createQuery(Body)
 
-export default createEffect((world: World) => {
+export default createEffect(() => {
 	const sim = new Rapier.World({ x: 0, y: 0 })
 	const eventQueue = new Rapier.EventQueue(true)
 
@@ -46,7 +46,7 @@ export default createEffect((world: World) => {
 
 		useMonitor(
 			bodies,
-			() => {},
+			() => void 0,
 			(e, [body]) => {
 				//console.log(`${e}: ${body.handle} Removing collider mapping`)
 				const handle = (body as RigidBody).collider(0)

@@ -8,7 +8,7 @@ export default function createContext(
 ): ivm.Context {
 	const context = isolate.createContextSync()
 	if (log) {
-		context.global.setSync('log', (...args: any[]) => log.logs.push(...args.map(a => String(a))))
+		context.global.setSync('log', (...args: unknown[]) => log.logs.push(...args.map(a => String(a))))
 	}
 	return context
 }

@@ -11,7 +11,6 @@ const bullets = createQuery(Bullet, Transform)
 export default function bulletSystem(world: World<Clock>) {
 	const sim = useSimulation()
 	const colliders = useColliderToEntity()
-	const dt = world.latestTickData.dt
 	bullets((e, [bullet, transform]) => {
 		const ray = new Ray(
 			{ x: transform.x, y: transform.y },

@@ -10,7 +10,7 @@ import { world } from './world';
 
 function runJavelin() {
 	console.log('starting javelin')
-	let running = true
+	const running = true
     const step = (t: number) => {
       if (running) {
         world.step()

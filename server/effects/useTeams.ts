@@ -1,7 +1,7 @@
-import { createEffect, Entity, World } from "@javelin/ecs";
+import { createEffect, Entity } from "@javelin/ecs";
 import { MAX_PLAYERS } from "../env";
 
-export default createEffect((world: World) => {
+export default createEffect(() => {
 	const teams = Array<Entity>(MAX_PLAYERS+1).fill(-1)
 	const assign = (player: Entity) => {
 		const index = teams.findIndex(t => t == -1)

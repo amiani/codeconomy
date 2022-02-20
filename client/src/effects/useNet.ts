@@ -22,7 +22,7 @@ export default createEffect(world => {
     let nextUpdate = updateRate
 
     return () => {
-      let update = useInterval(nextUpdate)
+      const update = useInterval(nextUpdate)
       if (initialized) {
         while (attachPackets.length && attachPackets[0].header.tick <= latestUpdateTick) {
           const packet = attachPackets.shift()

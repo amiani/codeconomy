@@ -25,18 +25,19 @@ const spawnerQuery = createQuery(Spawner)
 const phaseQuery = createQuery(GamePhase)
 
 function getInitialMessage(producer: MessageProducer, playerEntity: Entity) {
-  phaseQuery(producer.attach)
-  playerQuery(producer.attach)
-  visibleQuery(producer.attach)
-  scoreQuery(producer.attach)
-  countdownQuery(producer.attach)
-  bulletQuery(producer.attach)
+  const attach = producer.attach.bind(producer)
+  phaseQuery(attach)
+  playerQuery(attach)
+  visibleQuery(attach)
+  scoreQuery(attach)
+  countdownQuery(attach)
+  bulletQuery(attach)
+  spawnerQuery(attach)
   logQuery((e, [log, allegiance]) => {
     if (allegiance.player == playerEntity) {
-      producer.attach(e, [log])
+      attach(e, [log])
     }
   })
-  spawnerQuery(producer.attach)
   return producer.take()
 }
 
@@ -46,16 +47,19 @@ const useProducers = createImmutableRef(() => ({
 }))
 
 export default function netSystem(world: World<Clock>) {
-  const send = useInterval((1 / SEND_RATE) * 1000)
+  const shouldSend = useInterval((1 / SEND_RATE) * 1000)
   const clients = useClients()
   const { updateProducer, attachProducer } = useProducers()
 
-  useMonitor(phaseQuery, attachProducer.attach, attachProducer.destroy)
-  useMonitor(visibleQuery, attachProducer.attach, attachProducer.destroy)
-  useMonitor(scoreQuery, attachProducer.attach, attachProducer.destroy)
-  useMonitor(countdownQuery, attachProducer.attach, attachProducer.destroy)
-  useMonitor(bulletQuery, attachProducer.attach)
-  useMonitor(spawnerQuery, attachProducer.attach)
+  const attach = attachProducer.attach.bind(attachProducer)
+  const destroy = attachProducer.destroy.bind(attachProducer)
+  useMonitor(phaseQuery, attach, destroy)
+  useMonitor(visibleQuery, attach, destroy)
+  useMonitor(scoreQuery, attach, destroy)
+  useMonitor(countdownQuery, attach, destroy)
+  useMonitor(bulletQuery, attach)
+  useMonitor(spawnerQuery, attach)
+  /*
   useMonitor(
     logQuery,
     (e, [log, allegiance]) => {
@@ -64,19 +68,23 @@ export default function netSystem(world: World<Clock>) {
         const attachProducer = clients.getAttachProducer(player.uid)
         attachProducer.attach(e, [log])
       } catch (err) {
+        console.log(err)
       }
     }
   )
+  */
   
-  phaseQuery(updateProducer.update)
-  countdownQuery(updateProducer.update)
-  scoreQuery(updateProducer.update)
+  const update = updateProducer.update.bind(updateProducer)
+  phaseQuery(update)
+  countdownQuery(update)
+  scoreQuery(update)
   //ships
   for (const [entities, [transforms]] of shipQuery) {
     for (let i = 0, n = entities.length; i < n; ++i) {
-      updateProducer.update(entities[i], [transforms[i]])
+      update(entities[i], [transforms[i]])
     }
   }
+  /*
   //logs
   for (const [entities, [logs, allegiances]] of logQuery) {
     for (let i = 0, n = entities.length; i < n; ++i) {
@@ -86,12 +94,14 @@ export default function netSystem(world: World<Clock>) {
           const updateProducer = clients.getUpdateProducer(player.uid)
           updateProducer.update(entities[i], [logs[i]])
         } catch (err) {
+          console.log(err)
         }
       }
     }
   }
+  */
 
-  if (send) {
+  if (shouldSend) {
     const attachHeader: Header = { tick: world.latestTick, type: MessageType.Attach }
     const updateHeader: Header = { tick: world.latestTick, type: MessageType.Update }
     const attachMessage = attachProducer.take()
@@ -106,6 +116,9 @@ export default function netSystem(world: World<Clock>) {
         }
       } else {
         const producer = clients.getAttachProducer(player.uid)
+        if (!producer) {
+          return
+        }
         const initMessage = getInitialMessage(producer, e)
         if (initMessage) {
           const initHeader: Header = { tick: world.latestTick, type: MessageType.Init }

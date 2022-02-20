@@ -8,7 +8,7 @@ interface Vector {
 	y: number
 }
 
-interface Observation {
+export interface Observation {
 	state: SelfState
 	allies: ShipObservation[]
 	enemies: ShipObservation[]
@@ -30,7 +30,7 @@ export interface ShipObservation {
 	team: number
 }
 
-interface Command {
+export interface Command {
 	throttle: number,
 	yaw: number,
 	fire: boolean,

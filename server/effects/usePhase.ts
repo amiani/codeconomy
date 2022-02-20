@@ -6,7 +6,7 @@ import { phaseTopic } from "../topics";
 
 
 export default createEffect((world: World<Clock>) => {
-	let phaseComp = component(GamePhase, { phase: Phase.setup });
+	const phaseComp = component(GamePhase, { phase: Phase.setup });
 	world.create(phaseComp)
 	//let phase = GamePhase.setup
 	const setPhase = (p: Phase) => {
