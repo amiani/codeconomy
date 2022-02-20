@@ -19,7 +19,8 @@ import {
   Bullet,
   Spawner,
   GamePhase,
-  ClientSchema
+  ClientSchema,
+  Player
 } from "../components"
 import { MESSAGE_MAX_BYTE_LENGTH, SEND_RATE } from "../env"
 import { useClients } from "../effects"
@@ -28,6 +29,7 @@ import { Header, MessageType } from "../../common/types"
 import { Client } from '../effects/useClients'
 
 const clientQuery = createQuery(ClientSchema)
+const playerQuery = createQuery(Player)
 const logQuery = createQuery(Log, Allegiance)
 const visibleQuery = createQuery(Transform, SpriteData, Allegiance)
 const scoreQuery = createQuery(Allegiance, HuntScore)
@@ -40,7 +42,7 @@ const phaseQuery = createQuery(GamePhase)
 function getInitialMessage(producer: MessageProducer, playerEntity: Entity) {
   const attach = producer.attach.bind(producer)
   phaseQuery(attach)
-  clientQuery(attach)
+  playerQuery(attach)
   visibleQuery(attach)
   scoreQuery(attach)
   countdownQuery(attach)

@@ -5,6 +5,29 @@ import Rapier, { ActiveEvents, ColliderDesc, RigidBodyDesc } from 'rapier2d-node
 import { Command, Body, CombatHistory, Context, Health, Module, SpriteData, Allegiance, Transform, Weapon, Log } from "../components"
 import createContext from "./createContext"
 
+const createShipDesc = (x: number, y: number, rotation: number, launchSpeed: number) => {
+	const vx = Math.cos(rotation) * launchSpeed
+	const vy = Math.sin(rotation) * launchSpeed
+
+	const bodyDesc = RigidBodyDesc.newDynamic()
+		.setTranslation(x, y)
+		.setRotation(rotation)
+		.setLinearDamping(0.9)
+		.setAngularDamping(0.7)
+		.setLinvel(vx, vy)
+
+	const colliderDesc = ColliderDesc.cuboid(1, 1)
+			.setCollisionGroups(0x00010000 + 0x0003)
+		.setActiveEvents(
+		ActiveEvents.CONTACT_EVENTS
+		| ActiveEvents.INTERSECTION_EVENTS)
+
+	return {
+		bodyDesc,
+		colliderDesc
+	}
+}
+
 export default function createShip(
 	world: World,
 	sim: Rapier.World,
@@ -21,20 +44,7 @@ export default function createShip(
 ) {
 	//console.log(`Creating ship at ${x}, ${y}`)
 	const e = world.create()
-	const vx = Math.cos(rotation) * launchSpeed
-	const vy = Math.sin(rotation) * launchSpeed
-	const bodyDesc = RigidBodyDesc.newDynamic()
-		.setTranslation(x, y)
-		.setRotation(rotation)
-		.setLinearDamping(0.9)
-		.setAngularDamping(0.7)
-		.setLinvel(vx, vy)
-	const colliderDesc = ColliderDesc.cuboid(1, 1)
-			.setCollisionGroups(0x00010000 + 0x0003)
-		.setActiveEvents(
-		ActiveEvents.CONTACT_EVENTS
-		| ActiveEvents.INTERSECTION_EVENTS)
-	
+	const { bodyDesc, colliderDesc } = createShipDesc(x, y, rotation, launchSpeed)
 	const body = sim.createRigidBody(bodyDesc)
 	const collider = sim.createCollider(colliderDesc, body.handle)
 	colliderToEntity.set(collider.handle, e)
@@ -48,12 +58,10 @@ export default function createShip(
 		context = createContext(isolate)
 	}
 	const module = isolate.compileModuleSync(code)
-	/*
 	const res = module.instantiateSync(context, () => {
 		//TODO: return actual dependencies
 		return module
 	})
-	*/
 	module.evaluateSync()
 
 	world.attach(e,

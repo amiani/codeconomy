@@ -7,13 +7,13 @@ import { collisionTopic } from "../topics"
 const transformsBody = createQuery(Transform, Body)
 
 function copyBodyToTransform(
-	body: RigidBody,
+	body: ComponentOf<typeof Body>,
 	transform: ComponentOf<typeof Transform>
 ) {
-	const translation = body.translation()
+	const translation = (body as RigidBody).translation()
 	transform.x = translation.x
 	transform.y = translation.y
-	transform.rotation = body.rotation()
+	transform.rotation = (body as RigidBody).rotation()
 }
 
 const bodies = createQuery(Body)
@@ -25,9 +25,9 @@ export default createEffect(() => {
 	return () => {
 		sim.step(eventQueue)
 
-		transformsBody((e, [transform, body]) => {
-			copyBodyToTransform(body as RigidBody, transform)
-		})
+		transformsBody((e, [transform, body]) =>
+			copyBodyToTransform(body, transform)
+		)
 
 		const colliders = useColliderToEntity()
 		eventQueue.drainIntersectionEvents((
