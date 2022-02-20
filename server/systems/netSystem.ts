@@ -8,13 +8,26 @@ import {
 } from "@javelin/ecs"
 import { createMessageProducer, encode, MessageProducer } from "@javelin/net"
 
-import { Player, SpriteData, Allegiance, Transform, HuntScore, Countdown, Log, CombatHistory, Bullet, Spawner, GamePhase } from "../components"
+import {
+  SpriteData,
+  Allegiance,
+  Transform,
+  HuntScore,
+  Countdown,
+  Log,
+  CombatHistory,
+  Bullet,
+  Spawner,
+  GamePhase,
+  ClientSchema
+} from "../components"
 import { MESSAGE_MAX_BYTE_LENGTH, SEND_RATE } from "../env"
 import { useClients } from "../effects"
 import { Clock } from "@javelin/hrtime-loop"
 import { Header, MessageType } from "../../common/types"
+import { Client } from '../effects/useClients'
 
-const playerQuery = createQuery(Player)
+const clientQuery = createQuery(ClientSchema)
 const logQuery = createQuery(Log, Allegiance)
 const visibleQuery = createQuery(Transform, SpriteData, Allegiance)
 const scoreQuery = createQuery(Allegiance, HuntScore)
@@ -27,7 +40,7 @@ const phaseQuery = createQuery(GamePhase)
 function getInitialMessage(producer: MessageProducer, playerEntity: Entity) {
   const attach = producer.attach.bind(producer)
   phaseQuery(attach)
-  playerQuery(attach)
+  clientQuery(attach)
   visibleQuery(attach)
   scoreQuery(attach)
   countdownQuery(attach)
@@ -48,7 +61,6 @@ const useProducers = createImmutableRef(() => ({
 
 export default function netSystem(world: World<Clock>) {
   const shouldSend = useInterval((1 / SEND_RATE) * 1000)
-  const clients = useClients()
   const { updateProducer, attachProducer } = useProducers()
 
   const attach = attachProducer.attach.bind(attachProducer)
@@ -101,32 +113,29 @@ export default function netSystem(world: World<Clock>) {
   }
   */
 
+  const { sendReliable, sendUnreliable } = useClients()
   if (shouldSend) {
     const attachHeader: Header = { tick: world.latestTick, type: MessageType.Attach }
     const updateHeader: Header = { tick: world.latestTick, type: MessageType.Update }
     const attachMessage = attachProducer.take()
     const updateMessage = updateProducer.take()
-    playerQuery((e, [player]) => {
-      if (player.initialized) {
+    clientQuery((e, [client]) => {
+      if (client.isInitialized) {
         if (attachMessage) {
-          clients.sendReliable(player.uid, attachHeader, encode(attachMessage))
+          sendReliable(client, attachHeader, encode(attachMessage))
         }
         if (updateMessage) {
-          clients.sendUnreliable(player.uid, updateHeader, encode(updateMessage))
+          sendUnreliable(client, updateHeader, encode(updateMessage))
         }
       } else {
-        const producer = clients.getAttachProducer(player.uid)
-        if (!producer) {
-          return
-        }
-        const initMessage = getInitialMessage(producer, e)
+        const initMessage = getInitialMessage((client as Client).socketProducer, e)
         if (initMessage) {
           const initHeader: Header = { tick: world.latestTick, type: MessageType.Init }
-          clients.sendReliable(player.uid, initHeader, encode(initMessage), (err) => {
+          sendReliable(client, initHeader, encode(initMessage), (err) => {
             if (err) {
               console.error(err)
             } else {
-              player.initialized = true
+              client.isInitialized = true
             }
           })
         }

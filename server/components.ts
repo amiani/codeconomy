@@ -4,6 +4,7 @@ import {
   string,
   registerSchema,
   arrayOf,
+  ComponentOf,
 } from "@javelin/ecs"
 
 export const Player = {
@@ -121,6 +122,13 @@ export const GamePhase = {
   phase: number,
 }
 
+export const ClientSchema = {
+  uid: string,
+  entity: number,
+  isInitialized: boolean,
+}
+export type ClientComponent = ComponentOf<typeof ClientSchema>
+
 registerSchema(Player, 1)
 registerSchema(Transform, 2)
 registerSchema(Body, 3)
@@ -140,3 +148,4 @@ registerSchema(Log, 18)
 registerSchema(Bot, 19)
 registerSchema(Code, 20)
 registerSchema(GamePhase, 21)
+registerSchema(ClientSchema, 22)

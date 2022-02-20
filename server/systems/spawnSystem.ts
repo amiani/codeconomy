@@ -6,14 +6,14 @@ import { Phase } from '../../common/types'
 import { Isolate, Spawner, Allegiance, Transform, Player, Code } from '../components'
 import { useColliderToEntity, useSimulation } from '../effects'
 import { createShip } from '../factories'
-import { scriptTopic } from '../topics'
+import { phaseTopic } from '../topics'
 
 const spawnersTransformTeam = createQuery(Spawner, Transform, Allegiance)
 const spawners = createQuery(Spawner)
 
 export default function spawnSystem(world: World<Clock>): void {
 	const { dt } = world.latestTickData
-	for (const phaseEvent of scriptTopic) {
+	for (const phaseEvent of phaseTopic) {
 		if (phaseEvent.phase === Phase.run) {
 			spawners((e, [spawner]) =>
 				spawner.countdown.current = spawner.countdown.max)

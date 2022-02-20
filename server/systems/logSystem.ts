@@ -1,6 +1,6 @@
 import { World } from "@javelin/ecs";
 import { Header, MessageType } from "../../common/types";
-import { Player } from "../components";
+import { ClientSchema } from "../components";
 import { useClients } from "../effects";
 import { logTopic } from "../topics";
 
@@ -10,13 +10,13 @@ export default function logSystem(world: World) {
 	const { sendReliable } = useClients()
 	for (const event of logTopic) {
 		try {
-			const player = world.get(event.toEntity, Player)
+			const client = world.get(event.toEntity, ClientSchema)
 			const header: Header = {
 				tick: world.latestTick,
 				type: MessageType.Info,
 			}
 			const data = encoder.encode(event.message)
-			sendReliable(player.uid, header, data.buffer)
+			sendReliable(client, header, data.buffer)
 		} catch (err) {
 			console.error(err)
 		}

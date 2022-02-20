@@ -2,7 +2,7 @@ import { component, createEffect, World } from "@javelin/ecs";
 import { Clock } from "@javelin/hrtime-loop";
 import { Phase } from "../../common/types";
 import { GamePhase } from "../components";
-import { scriptTopic } from "../topics";
+import { phaseTopic } from "../topics";
 
 
 export default createEffect((world: World<Clock>) => {
@@ -11,7 +11,7 @@ export default createEffect((world: World<Clock>) => {
 	//let phase = GamePhase.setup
 	const setPhase = (p: Phase) => {
 		phaseComp.phase = p
-		scriptTopic.push({ phase: phaseComp.phase })
+		phaseTopic.push({ phase: phaseComp.phase })
 	}
 
 	return () => ({
