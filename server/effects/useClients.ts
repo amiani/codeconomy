@@ -10,7 +10,7 @@ import { createMessageProducer, MessageProducer } from '@javelin/net'
 import server from '../server'
 import { createPlayer } from '../factories'
 import io from "../geckosServer"
-import { playerTopic, moduleTopic } from '../topics'
+import { playerTopic, scriptTopic } from '../topics'
 import { MAX_PLAYERS, MESSAGE_MAX_BYTE_LENGTH } from '../env'
 import { Header } from '../../common/types'
 
@@ -40,8 +40,7 @@ const getAuthorization = (req: IncomingMessage): string | undefined => {
 
 const registerClient = (client: Client) =>
   client.socket.on("message", (data: WebSocket.Data) =>
-    //TODO: rename moduleTopic and moduleSystem
-    moduleTopic.push({
+    scriptTopic.push({
       uid: client.uid,
       code: data.toString()
     })
@@ -79,6 +78,18 @@ export default createEffect((world: World<Clock>) => {
     server,
     path: '/connect'
   })
+
+  const removePlayer = (uid: string) => {
+    const client = clients.get(uid)
+    if (!client) {
+      return
+    }
+    playerTopic.push({ type: 'player-left', entity: client.entity })
+    world.destroy(client.entity)
+    clients.delete(uid)
+    sockets.delete(uid)
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   wss.on("connection", async (socket: WebSocket, req: IncomingMessage) => {
     if (clients.size >= MAX_PLAYERS) {
@@ -98,6 +109,7 @@ export default createEffect((world: World<Clock>) => {
     }
   })
 
+  //sets up the client with player entity
   io.onConnection(channel => {
     const { uid } = channel.userData as { uid: string }
     const socket = sockets.get(uid)
@@ -114,18 +126,6 @@ export default createEffect((world: World<Clock>) => {
       removePlayer(uid)
     })
   })
-
-  const removePlayer = (uid: string) => {
-    const client = clients.get(uid)
-    if (!client) {
-      return
-    }
-    playerTopic.push({ type: 'player-left', entity: client.entity })
-    world.destroy(client.entity)
-    clients.delete(uid)
-    sockets.delete(uid)
-  }
-    
 
   const sendUnreliable = (uid: string, header: Header, data: ArrayBuffer) => {
     const client = clients.get(uid)

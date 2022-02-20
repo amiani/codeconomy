@@ -1,5 +1,5 @@
 import collisionTopic from './collisionTopic'
-import moduleTopic from './moduleTopic'
+import scriptTopic from './scriptTopic'
 import shipTopic from './shipTopic'
 import playerTopic from './playerTopic'
 import phaseTopic from './phaseTopic'
@@ -7,7 +7,7 @@ import logTopic from './logTopic'
 
 export {
 	collisionTopic,
-	moduleTopic,
+	scriptTopic,
 	shipTopic,
 	playerTopic,
 	phaseTopic,

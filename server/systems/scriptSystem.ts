@@ -17,17 +17,17 @@ import { useClients } from "../effects"
 import { MAX_PLAYERS } from "../env"
 import { createObservation } from "../factories"
 import { Observation, Command as ShipCommand, ShipObservation } from "../factories/createObservation"
-import { logTopic, moduleTopic } from "../topics"
+import { logTopic, scriptTopic } from "../topics"
 import { LogType } from "../topics/logTopic"
 
 const moduleShipQuery = createQuery(Module, Body, Command, Allegiance, Health)
 const shipQuery = createQuery(CombatHistory, Transform, Allegiance, Health)
 
-export default function moduleSystem(world: World) {
+export default function scriptSystem(world: World) {
 	const update = useInterval(1000 / 10)
 	const clients = useClients()
 
-	for (const { uid, code } of moduleTopic) {
+	for (const { uid, code } of scriptTopic) {
 		const playerEntity = clients.getPlayer(uid)
 		if (!playerEntity) {
 			break
@@ -48,7 +48,6 @@ export default function moduleSystem(world: World) {
 		for (let i = 0; i < MAX_PLAYERS; i++) {
 			shipStates[i] = new Map()
 		}
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		shipQuery((e, [combatHistory, transform, allegiance, health]) => {
 			shipStates[allegiance.team].set(e, {
 				position: { x: transform.x, y: transform.y },
