@@ -7,13 +7,23 @@ import { ServerChannel } from '@geckos.io/server'
 import { IncomingMessage } from 'http'
 import { createMessageProducer, MessageProducer } from '@javelin/net'
 
-import server from '../server'
-import { createPlayer } from '../factories'
-import io from "../geckosServer"
-import { playerTopic, scriptTopic } from '../topics'
-import { MAX_PLAYERS, MESSAGE_MAX_BYTE_LENGTH } from '../env'
-import { Header } from '../../common/types'
-import { ClientSchema, ClientComponent } from '../components'
+import server from '../../server'
+import { createPlayer } from '../../factories'
+import io from "../../geckosServer"
+import { playerTopic, scriptTopic } from '../../topics'
+import { MAX_PLAYERS, MESSAGE_MAX_BYTE_LENGTH } from '../../env'
+import { ClientSchema, ClientComponent } from '../../components'
+import { sendUnreliably, sendReliably } from './send'
+
+interface Client {
+  uid: string;
+  entity: Entity;
+  isInitialized: boolean;
+  socket: WebSocket;
+  socketProducer: MessageProducer;
+  channel: ServerChannel;
+  channelProducer: MessageProducer;
+}
 
 const isString = (value: unknown): value is string => typeof value === 'string'
 
@@ -30,17 +40,7 @@ const getAuthorization = (req: IncomingMessage): string | undefined => {
   return auth
 }
 
-export interface Client {
-  uid: string;
-  entity: Entity;
-  isInitialized: boolean;
-  socket: WebSocket;
-  socketProducer: MessageProducer;
-  channel: ServerChannel;
-  channelProducer: MessageProducer;
-}
-
-const registerClient = (client: ClientComponent) =>
+const notifyScriptTopic = (client: ClientComponent) =>
   (client as Client).socket.on("message", (data: WebSocket.Data) =>
     scriptTopic.push({
       uid: client.uid,
@@ -72,16 +72,7 @@ const createClient = (
   return toComponent(client, ClientSchema)
 }
 
-function writeHeader(header: Header, message: ArrayBuffer): ArrayBuffer {
-  const packet = new Uint8Array(message.byteLength + 5)
-  const view = new DataView(packet.buffer)
-  view.setUint32(0, header.tick)
-  view.setUint8(4, header.type)
-  packet.set(new Uint8Array(message), 5)
-  return packet.buffer
-}
-
-export default createEffect((world: World<Clock>) => {
+const useClients = createEffect((world: World<Clock>) => {
   const sockets = new Map<string, WebSocket>()
   const clients = new Map<string, ClientComponent>()
 
@@ -131,7 +122,7 @@ export default createEffect((world: World<Clock>) => {
     const entity = createPlayer(world, uid)
     const client: ClientComponent = createClient(uid, entity, socket, channel)
     world.attachImmediate(entity, [client])
-    registerClient(client)
+    notifyScriptTopic(client)
 
     channel.onDisconnect(() => {
       console.log('disconnect')
@@ -139,36 +130,6 @@ export default createEffect((world: World<Clock>) => {
     })
   })
 
-  const sendUnreliable = (clientComp: ClientComponent, header: Header, data: ArrayBuffer) => {
-    const packet = writeHeader(header, data);
-    (clientComp as Client).channel.raw.emit(packet)
-
-    /*
-    const privateMessage = client.channelProducer.take()
-    if (privateMessage && privateMessage.byteLength > 0) {
-      const privatePacket = writeHeader(header, encode(privateMessage))
-      client.channel.raw.emit(privatePacket)
-    }
-    */
-  }
-
-  const sendReliable = (
-    clientComp: ClientComponent,
-    header: Header,
-    data: ArrayBuffer,
-    cb?: (err?: Error) => void
-  ) => {
-    const packet = writeHeader(header, data);
-    (clientComp as Client).socket.send(packet, cb)
-
-    /*
-    const privateMessage = client.socketProducer.take()
-    if (privateMessage && privateMessage.byteLength > 0) {
-      const privatePacket = writeHeader(header, encode(privateMessage))
-      client.socket.send(privatePacket)
-    }
-    */
-  }
   const getPlayer = (uid: string) => clients.get(uid)?.entity
   /*
   const getAttachProducer = (uid: string) => clients.get(uid)?.socketProducer
@@ -176,8 +137,8 @@ export default createEffect((world: World<Clock>) => {
   */
 
   return () => ({
-    sendUnreliable,
-    sendReliable,
+    sendUnreliably,
+    sendReliably,
     getPlayer,
     /*
     getAttachProducer,
@@ -186,4 +147,5 @@ export default createEffect((world: World<Clock>) => {
   })
 }, { shared: true })
 
-
+export default useClients
+export type { Client }

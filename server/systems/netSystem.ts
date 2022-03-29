@@ -7,6 +7,7 @@ import {
   World
 } from "@javelin/ecs"
 import { createMessageProducer, encode, MessageProducer } from "@javelin/net"
+import { Clock } from "@javelin/hrtime-loop"
 
 import {
   SpriteData,
@@ -24,9 +25,8 @@ import {
 } from "../components"
 import { MESSAGE_MAX_BYTE_LENGTH, SEND_RATE } from "../env"
 import { useClients } from "../effects"
-import { Clock } from "@javelin/hrtime-loop"
 import { Header, MessageType } from "../../common/types"
-import { Client } from '../effects/useClients'
+import { Client } from '../effects/useClients';
 
 const clientQuery = createQuery(ClientSchema)
 const playerQuery = createQuery(Player)
@@ -115,7 +115,7 @@ export default function netSystem(world: World<Clock>) {
   }
   */
 
-  const { sendReliable, sendUnreliable } = useClients()
+  const { sendReliably, sendUnreliably } = useClients()
   if (shouldSend) {
     const attachHeader: Header = { tick: world.latestTick, type: MessageType.Attach }
     const updateHeader: Header = { tick: world.latestTick, type: MessageType.Update }
@@ -124,16 +124,16 @@ export default function netSystem(world: World<Clock>) {
     clientQuery((e, [client]) => {
       if (client.isInitialized) {
         if (attachMessage) {
-          sendReliable(client, attachHeader, encode(attachMessage))
+          sendReliably(client, attachHeader, encode(attachMessage))
         }
         if (updateMessage) {
-          sendUnreliable(client, updateHeader, encode(updateMessage))
+          sendUnreliably(client, updateHeader, encode(updateMessage))
         }
       } else {
         const initMessage = getInitialMessage((client as Client).socketProducer, e)
         if (initMessage) {
           const initHeader: Header = { tick: world.latestTick, type: MessageType.Init }
-          sendReliable(client, initHeader, encode(initMessage), (err) => {
+          sendReliably(client, initHeader, encode(initMessage), (err) => {
             if (err) {
               console.error(err)
             } else {

@@ -7,7 +7,7 @@ import { logTopic } from "../topics";
 const encoder = new TextEncoder()
 
 export default function logSystem(world: World) {
-	const { sendReliable } = useClients()
+	const { sendReliably } = useClients()
 	for (const event of logTopic) {
 		try {
 			const client = world.get(event.toEntity, ClientSchema)
@@ -16,7 +16,7 @@ export default function logSystem(world: World) {
 				type: MessageType.Info,
 			}
 			const data = encoder.encode(event.message)
-			sendReliable(client, header, data.buffer)
+			sendReliably(client, header, data.buffer)
 		} catch (err) {
 			console.error(err)
 		}

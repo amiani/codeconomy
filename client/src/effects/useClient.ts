@@ -28,7 +28,7 @@ function handleInfoMessage(packet: Packet) {
 	console.log(message)
 }
 
-export default createEffect(world => {
+const useClient = createEffect(world => {
 	let uid: string
 	let playerEntity: Entity
 	let client: Client
@@ -101,3 +101,5 @@ export default createEffect(world => {
 		getInitPacket,
 	})
 }, { shared: true })
+
+export default useClient
