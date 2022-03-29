@@ -1,3 +1,5 @@
+import { Command, Observation } from '../server/factories/createObservation';
+
 export enum MessageType {
 	Init,
 	Attach,
@@ -21,3 +23,5 @@ export enum Phase {
 	end,
 	cleanup
 }
+
+export type Policy = (o: Observation) => Command

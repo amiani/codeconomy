@@ -16,12 +16,44 @@ import {
 import { useClients } from "../effects"
 import { MAX_PLAYERS } from "../env"
 import { createObservation } from "../factories"
-import { Observation, Command as ShipCommand, ShipObservation } from "../factories/createObservation"
+import { ShipObservation } from "../factories/createObservation"
 import { logTopic, scriptTopic } from "../topics"
 import { LogType } from "../topics/logTopic"
+import { Policy } from '../../common/types'
 
 const moduleShipQuery = createQuery(Module, Body, Command, Allegiance, Health)
 const shipQuery = createQuery(CombatHistory, Transform, Allegiance, Health)
+
+const isPolicy = (value: unknown): value is Policy => {
+	return value instanceof Function
+}
+
+function validateModule(
+	isolate: ivm.Isolate,
+	code: string,
+	playerEntity: Entity
+): boolean {
+	try {
+		const module = isolate.compileModuleSync(code)
+		const testContext = isolate.createContextSync()
+		module.instantiateSync(testContext, () => module)
+		module.evaluateSync()
+		const defaultExport: unknown = module.namespace.getSync('default')
+		if (isPolicy(defaultExport)) {
+			console.log(`Module arrived for player entity ${playerEntity}`)
+			return true
+		}
+		console.log(`Invalid module arrived for player entity ${playerEntity}`)
+		return false
+	} catch (err: unknown) {
+		logTopic.push({
+			type: LogType.Error,
+			toEntity: playerEntity,
+			message: `Server received invalid script: ${err}`
+		})
+		return false
+	}
+}
 
 export default function scriptSystem(world: World) {
 	const update = useInterval(1000 / 10)
@@ -56,7 +88,7 @@ export default function scriptSystem(world: World) {
 				team: allegiance.team,
 			})
 		})
-		moduleShipQuery(async (e, [moduleComp, bodyComp, command, allegiance, health]) => {
+		moduleShipQuery((e, [moduleComp, bodyComp, command, allegiance, health]) => {
 			const body = bodyComp as RigidBody
 			const module = moduleComp as ivm.Module
 			const allies = Array<ShipObservation>()
@@ -73,8 +105,8 @@ export default function scriptSystem(world: World) {
 			}
 			const observation = createObservation(body, health, allies, enemies)
 			try {
-				const main = await module.namespace.get('default') as Policy
-				const nextCommand = await main(observation)
+				const run = module.namespace.getSync('default') as Policy
+				const nextCommand = run(observation)
 				if (nextCommand) {
 					command.throttle = nextCommand.throttle ?? 0
 					command.yaw = nextCommand.yaw ? nextCommand.yaw : 0
@@ -90,38 +122,5 @@ export default function scriptSystem(world: World) {
 			//do something with cputime
 		})
 		*/
-	}
-}
-
-type Policy = (o: Observation) => Promise<ShipCommand>
-
-const isPolicy = (value: unknown): value is Policy => {
-	return value instanceof Function
-}
-
-function validateModule(
-	isolate: ivm.Isolate,
-	code: string,
-	playerEntity: Entity
-): boolean {
-	try {
-		const module = isolate.compileModuleSync(code)
-		const testContext = isolate.createContextSync()
-		module.instantiateSync(testContext, () => module)
-		module.evaluateSync()
-		const defaultExport: unknown = module.namespace.getSync('default')
-		if (isPolicy(defaultExport)) {
-			console.log(`Module arrived for player entity ${playerEntity}`)
-			return true
-		}
-		console.log(`Invalid module arrived for player entity ${playerEntity}`)
-		return false
-	} catch (err: unknown) {
-		logTopic.push({
-			type: LogType.Error,
-			toEntity: playerEntity,
-			message: `Server received invalid script: ${err}`
-		})
-		return false
 	}
 }
